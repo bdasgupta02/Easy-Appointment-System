@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Ant-Version: Apache Ant 1.10.4
-Created-By: 12+33 (Oracle Corporation)
-X-COMMENT: Main-Class will be added automatically by build
-Class-Path: javaee-api-8.0.jar javax.persistence-2.1.0.jar lib/javaee-
- api-8.0.jar javax.persistence-2.1.0.jar EasyAppointmentSystemLibrary.
- jar lib/EasyAppointmentSystemLibrary.jar 
-Main-Class: easyappointmentsystemclient.Main
-

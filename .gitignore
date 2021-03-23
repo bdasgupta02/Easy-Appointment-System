@@ -1,0 +1,39 @@
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# User defined
+EasyAppointmentSystem/nbproject/private/
+EasyAppointmentSystem/build/
+EasyAppointmentSystem/dist/
+EasyAppointmentSystem/EasyAppointmentSystem-ejb/nbproject/private/
+EasyAppointmentSystem/EasyAppointmentSystem-ejb/build/
+EasyAppointmentSystem/EasyAppointmentSystem-ejb/dist/
+
+
+EasyAppointmentSystem/EasyAppointmentSystemClient/nbproject/private/
+EasyAppointmentSystem/EasyAppointmentSystemClient/build/
+EasyAppointmentSystem/EasyAppointmentSystemClient/dist/
+
+EasyAppointmentSystem/EasyAppointmentSystemLibrary/nbproject/private/
+EasyAppointmentSystem/EasyAppointmentSystemLibrary/build/
+EasyAppointmentSystem/EasyAppointmentSystemLibrary/dist/
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
