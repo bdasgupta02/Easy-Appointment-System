@@ -5,18 +5,30 @@
  */
 package easyappointmentsystemclient;
 
-/**
- *
- * @author Bikram
- */
-public class Main {
+import ejb.session.stateless.AdminEntitySessionBeanRemote;
+import ejb.session.stateless.CustomerEntitySessionBeanRemote;
+import entity.AdminEntity;
+import javax.ejb.EJB;
 
+
+
+public class Main {
+    
+    @EJB
+    private static AdminEntitySessionBeanRemote admEtyBnRmt;
+    @EJB
+    private static CustomerEntitySessionBeanRemote custEtyRmt;
+ 
     /**
      * @param args the command line arguments
      */
+   
     public static void main(String[] args) {
-        // TODO code application logic here
-        System.out.println("test test");
+    
+       
+            MainApp mainApp = new MainApp(admEtyBnRmt, custEtyRmt);
+            mainApp.runApp();
+        
     }
     
 }

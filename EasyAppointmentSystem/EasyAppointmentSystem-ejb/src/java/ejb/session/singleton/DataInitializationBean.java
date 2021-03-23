@@ -5,8 +5,13 @@
  */
 package ejb.session.singleton;
 
+import ejb.session.stateless.AdminEntitySessionBeanRemote;
+import entity.AdminEntity;
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
+import javax.ejb.Startup;
 
 /**
  *
@@ -14,8 +19,25 @@ import javax.ejb.LocalBean;
  */
 @Singleton
 @LocalBean
-// need to finish
+@Startup
+
 public class DataInitializationBean {
 
+
+    public DataInitializationBean(){}
+    
+    @PostConstruct
+    public void postConstruct()
+    {
+        initializeData();
+    }
+    
+    
+    
+    private void initializeData()
+    {
+        
+        
+    }
     
 }
