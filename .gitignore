@@ -19,21 +19,21 @@
 *.rar
 
 # User defined
-nbproject/private/
-build/
-dist/
-EasyAppointmentSystem-ejb/nbproject/private/
-EasyAppointmentSystem-ejb/build/
-EasyAppointmentSystem-ejb/dist/
+EasyAppointmentSystem/nbproject/private/
+EasyAppointmentSystem/build/
+EasyAppointmentSystem/dist/
+EasyAppointmentSystem/EasyAppointmentSystem-ejb/nbproject/private/
+EasyAppointmentSystem/EasyAppointmentSystem-ejb/build/
+EasyAppointmentSystem/EasyAppointmentSystem-ejb/dist/
 
 
-EasyAppointmentSystemClient/nbproject/private/
-EasyAppointmentSystemClient/build/
-EasyAppointmentSystemClient/dist/
+EasyAppointmentSystem/EasyAppointmentSystemClient/nbproject/private/
+EasyAppointmentSystem/EasyAppointmentSystemClient/build/
+EasyAppointmentSystem/EasyAppointmentSystemClient/dist/
 
-EasyAppointmentSystemLibrary/nbproject/private/
-EasyAppointmentSystemLibrary/build/
-EasyAppointmentSystemLibrary/dist/
+EasyAppointmentSystem/EasyAppointmentSystemLibrary/nbproject/private/
+EasyAppointmentSystem/EasyAppointmentSystemLibrary/build/
+EasyAppointmentSystem/EasyAppointmentSystemLibrary/dist/
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
