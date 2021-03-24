@@ -2,7 +2,7 @@
 
 **Database name:** easyappointmentsystem\
 **Database user:** root\
-**Database password:** password\
+**Database password:** password
 
 ## Architecture
 > Fill in after completion
