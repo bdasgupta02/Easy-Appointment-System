@@ -3,10 +3,13 @@ package entity;
 import java.io.Serializable;
 import java.time.LocalTime;
 import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -16,56 +19,67 @@ public class AppointmentEntity implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long appointmentId;
     
-    private Long custId;
-    private Long serviceProviderId;
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private CustomerEntity customerEntity;
+    
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private ServiceProviderEntity serviceProviderEntity;
+    
+    @Column(nullable=false)
     @Temporal(TemporalType.DATE)
     private Date date;
+    @Column(nullable=false)
     @Temporal(TemporalType.TIME)
     private Date startTime;
+    @Column(nullable=false)
     @Temporal(TemporalType.TIME)
     private Date endTime;
+    
+    @Column(nullable=false, unique=true)
     private String appointmentNum;
 
     public AppointmentEntity() {
     }
 
-    public AppointmentEntity(Long custId, Long serviceProviderId, Date date, Date startTime) {
+    public AppointmentEntity(CustomerEntity customerEntity, ServiceProviderEntity serviceProviderEntity, Date date, Date startTime, Date endTime, String appointmentNum) {
         this();
-        this.custId = custId;
-        this.serviceProviderId = serviceProviderId;
+        this.customerEntity = customerEntity;
+        this.serviceProviderEntity = serviceProviderEntity;
         this.date = date;
         this.startTime = startTime;
-        this.endTime = new Date();
-        endTime.setTime(startTime.getTime() + 3600000);
-        this.appointmentNum = serviceProviderId.toString() + date.toString();
+        this.endTime = endTime;
+        this.appointmentNum = appointmentNum;
     }
 
 
-    public Long getId() {
-        return id;
+
+    public Long getAppointmentId() {
+        return appointmentId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setAppointmentId(Long appointmentId) {
+        this.appointmentId = appointmentId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (appointmentId != null ? appointmentId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // TODO: Warning - this method won't work in the case the appointmentId fields are not set
         if (!(object instanceof AppointmentEntity)) {
             return false;
         }
         AppointmentEntity other = (AppointmentEntity) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.appointmentId == null && other.appointmentId != null) || (this.appointmentId != null && !this.appointmentId.equals(other.appointmentId))) {
             return false;
         }
         return true;
@@ -73,23 +87,23 @@ public class AppointmentEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.AppointmentEntity[ id=" + id + " ]";
-    }
-    
-    public Long getCustId() {
-        return custId;
+        return "entity.AppointmentEntity[ id=" + appointmentId + " ]";
     }
 
-    public void setCustId(Long custId) {
-        this.custId = custId;
+    public CustomerEntity getCustomerEntity() {
+        return customerEntity;
     }
 
-    public Long getServiceProviderId() {
-        return serviceProviderId;
+    public void setCustomerEntity(CustomerEntity customerEntity) {
+        this.customerEntity = customerEntity;
     }
 
-    public void setServiceProviderId(Long serviceProviderId) {
-        this.serviceProviderId = serviceProviderId;
+    public ServiceProviderEntity getServiceProviderEntity() {
+        return serviceProviderEntity;
+    }
+
+    public void setServiceProviderEntity(ServiceProviderEntity serviceProviderEntity) {
+        this.serviceProviderEntity = serviceProviderEntity;
     }
 
     public Date getDate() {
@@ -123,5 +137,4 @@ public class AppointmentEntity implements Serializable {
     public void setAppointmentNum(String appointmentNum) {
         this.appointmentNum = appointmentNum;
     }
-    
 }

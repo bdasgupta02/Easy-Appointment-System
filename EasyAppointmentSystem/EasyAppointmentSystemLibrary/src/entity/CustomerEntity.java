@@ -6,11 +6,13 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class CustomerEntity implements Serializable {
@@ -19,7 +21,7 @@ public class CustomerEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long customerId;
-    @Column(nullable=false)
+    @Column(nullable=false, unique=true)
     private String identityNo;
     @Column(nullable=false)
     private String firstName;
@@ -33,12 +35,15 @@ public class CustomerEntity implements Serializable {
     private Integer age;
     @Column(nullable=false)
     private String city;
-    @Column(nullable=false)
+    @Column(nullable=false, unique=true)
     private String email;
     @Column(nullable=false)
     private Long phone;
     @Column(nullable=false)
     private String password;
+    
+    @OneToMany(mappedBy = "customerEntity")
+    private List<AppointmentEntity> appointments;
 
     public CustomerEntity(String identityNo, String firstName, String lastName, String address, Character gender, Integer age, String city, String email, Long phone, String password) {
         this();
@@ -168,6 +173,10 @@ public class CustomerEntity implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+    
+    public void addAppointment(AppointmentEntity newAppointment) {
+        this.appointments.add(newAppointment);
     }
     
 }

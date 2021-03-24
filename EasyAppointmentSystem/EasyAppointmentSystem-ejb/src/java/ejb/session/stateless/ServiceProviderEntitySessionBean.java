@@ -26,11 +26,11 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     public Long createNewServiceProvider(ServiceProviderEntity newServiceProviderEntity) throws EntityAttributeNullException {
         if (newServiceProviderEntity.getName() != null && newServiceProviderEntity.getBizCategory() != null &&
                 newServiceProviderEntity.getBizRegNum() != null && newServiceProviderEntity.getCity() != null &&
-                newServiceProviderEntity.getBizAddress() != null && newServiceProviderEntity.getEmailAddress() != null &&
+                newServiceProviderEntity.getBizAddress() != null && newServiceProviderEntity.getEmail() != null &&
                 newServiceProviderEntity.getPhoneNum() != null && newServiceProviderEntity.getPassword() != null) {
             em.persist(newServiceProviderEntity);
             em.flush();
-            return(newServiceProviderEntity.getId());
+            return(newServiceProviderEntity.getServiceProviderId());
         } else {
             throw new EntityAttributeNullException("Some values are null! Creation of Service Provider aborted.\n");
         }
@@ -50,7 +50,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     @Override
     public void updateServiceProviderEntity(ServiceProviderEntity updatedServiceProviderEntity) {
         try {
-            ServiceProviderEntity currentServiceProviderEntity = retrieveServiceProviderByServiceProviderId(updatedServiceProviderEntity.getId());
+            ServiceProviderEntity currentServiceProviderEntity = retrieveServiceProviderByServiceProviderId(updatedServiceProviderEntity.getServiceProviderId());
             if (updatedServiceProviderEntity.getCity() != null) {
                 currentServiceProviderEntity.setCity(updatedServiceProviderEntity.getCity());
             }
@@ -59,8 +59,8 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
                 currentServiceProviderEntity.setBizAddress(updatedServiceProviderEntity.getBizAddress());
             } 
 
-            if (updatedServiceProviderEntity.getEmailAddress() != null) {
-                currentServiceProviderEntity.setEmailAddress(updatedServiceProviderEntity.getEmailAddress());
+            if (updatedServiceProviderEntity.getEmail() != null) {
+                currentServiceProviderEntity.setEmail(updatedServiceProviderEntity.getEmail());
             }
 
             if (updatedServiceProviderEntity.getPhoneNum() != null) {

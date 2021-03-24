@@ -93,7 +93,7 @@ public class ServiceProviderModule {
             newServiceProviderEntity.setBizAddress(scanner.nextLine().trim());
             
             System.out.print("Enter Email> ");
-            newServiceProviderEntity.setEmailAddress(scanner.nextLine().trim());
+            newServiceProviderEntity.setEmail(scanner.nextLine().trim());
             
             System.out.print("Enter Password> ");
             newServiceProviderEntity.setPassword(scanner.nextLine().trim());
