@@ -5,7 +5,10 @@ import javax.ejb.Stateless;
 import javax.ejb.Remote;
 import javax.ejb.Local;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
 import util.exception.ServiceProviderNotFoundException;
@@ -24,15 +27,15 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     
     @Override
     public Long createNewServiceProvider(ServiceProviderEntity newServiceProviderEntity) throws EntityAttributeNullException {
-        if (newServiceProviderEntity.getName() != null && newServiceProviderEntity.getBizCategory() != null &&
-                newServiceProviderEntity.getBizRegNum() != null && newServiceProviderEntity.getCity() != null &&
-                newServiceProviderEntity.getBizAddress() != null && newServiceProviderEntity.getEmail() != null &&
-                newServiceProviderEntity.getPhoneNum() != null && newServiceProviderEntity.getPassword() != null) {
+        if (newServiceProviderEntity.getName().isEmpty() || newServiceProviderEntity.getBizCategory() == null ||
+                newServiceProviderEntity.getBizRegNum().isEmpty() || newServiceProviderEntity.getCity().isEmpty() ||
+                newServiceProviderEntity.getBizAddress().isEmpty() || newServiceProviderEntity.getEmail().isEmpty() ||
+                newServiceProviderEntity.getPhoneNum().isEmpty() || newServiceProviderEntity.getPassword().isEmpty()) {
+            throw new EntityAttributeNullException("Some values are null! Creation of Service Provider aborted.\n");
+        } else {
             em.persist(newServiceProviderEntity);
             em.flush();
             return(newServiceProviderEntity.getServiceProviderId());
-        } else {
-            throw new EntityAttributeNullException("Some values are null! Creation of Service Provider aborted.\n");
         }
     }
     
@@ -90,10 +93,16 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         }
     }
     
-    // to edit later
     @Override
-    public ServiceProviderEntity retrieveServiceProviderByEmail(String emailAdd) throws ServiceProviderNotFoundException {
-        return new ServiceProviderEntity();
+    public ServiceProviderEntity retrieveServiceProviderByEmail(String email) throws ServiceProviderNotFoundException {
+        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.email = :inEmail");
+        query.setParameter("inEmail", email);
+        
+        try {
+            return (ServiceProviderEntity) query.getSingleResult();
+        } catch(NoResultException | NonUniqueResultException ex) {
+            throw new ServiceProviderNotFoundException();
+        }
     }
     
     @Override

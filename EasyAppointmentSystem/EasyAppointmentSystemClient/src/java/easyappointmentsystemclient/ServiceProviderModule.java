@@ -17,7 +17,9 @@ public class ServiceProviderModule {
     public ServiceProviderModule(){
     }
     
-    //to add overloaded constructor later
+    public ServiceProviderModule(ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote){
+        this.serviceProviderEntitySessionBeanRemote = serviceProviderEntitySessionBeanRemote;
+    }
     
     public void menuServiceProviderOperation() {
         
@@ -42,6 +44,8 @@ public class ServiceProviderModule {
                     } else if(response == 2) {
                         try {
                             doLogin();
+                            System.out.println("Login successful!\n");
+                            loginMenuServiceProviderOperation();
                         } catch(InvalidLoginException ex) {
                            System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
                         }
@@ -98,6 +102,8 @@ public class ServiceProviderModule {
             System.out.print("Enter Password> ");
             newServiceProviderEntity.setPassword(scanner.nextLine().trim());
             
+            newServiceProviderEntity.setAvgRating(0);
+            newServiceProviderEntity.setStatus("PENDING");
             serviceProviderEntitySessionBeanRemote.createNewServiceProvider(newServiceProviderEntity);
             
         } catch (InputMismatchException ex) {
@@ -123,5 +129,67 @@ public class ServiceProviderModule {
         } else {
             throw new InvalidLoginException("Missing login credential!");
         } 
+    }
+    
+    public void loginMenuServiceProviderOperation() {
+        Scanner scanner = new Scanner(System.in);
+        Integer response = 0;
+        try {
+            while(true) {
+                System.out.println("*** Service Provider Terminal :: Main ***\n");
+                System.out.println("You are login as " + currentServiceProvider.getName());
+                System.out.println("1: View Profile");
+                System.out.println("2: Edit Profile");
+                System.out.println("3: View Appointments");
+                System.out.println("4: Cancel Appointments");
+                System.out.println("5: Logout");
+                response = 0;
+                
+                while(response < 1 || response > 5) {
+                    System.out.print("> ");
+
+                    response = scanner.nextInt();
+                    if(response == 1) {
+                        viewProfile();
+                    } else if (response == 2) {
+                        editProfile();
+                    } else if (response == 3) {
+                        viewAppointments();
+                    } else if (response == 4) {
+                        cancelAppointments();
+                    } else if (response == 5) {
+                        break;
+                    } else {
+                        System.out.println("Invalid option, please try again!\n");                
+                    }
+                }
+                if(response == 5) {
+                    break;
+                }
+            }
+        } catch (InputMismatchException ex) {
+            System.out.println("Input is invalid! Please input a number from 1 to 5.\n");
+            loginMenuServiceProviderOperation();
+        }
+    }
+    
+    // to edit
+    public void viewProfile() {
+        System.out.println("Not supported yet.");
+    }
+    
+    //to edit
+    public void editProfile() {
+        System.out.println("Not supported yet.");
+    }
+    
+    //to edit
+    public void viewAppointments() {
+        System.out.println("Not supported yet.");
+    }
+    
+    //to edit
+    public void cancelAppointments() {
+        System.out.println("Not supported yet.");
     }
 }
