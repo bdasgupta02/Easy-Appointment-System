@@ -7,6 +7,7 @@ package easyappointmentsystemclient;
 
 import ejb.session.stateless.AdminEntitySessionBeanRemote;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
+import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import java.util.Scanner;
 
 /**
@@ -16,13 +17,15 @@ import java.util.Scanner;
 public class MainApp {
     private AdminEntitySessionBeanRemote adminEntitySessionBeanRemote;
     private CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote;
+    private ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote;
     
    
     public MainApp(){}
 
-    public MainApp(AdminEntitySessionBeanRemote adminEntitySessionBeanRemote, CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote) {
+    public MainApp(AdminEntitySessionBeanRemote adminEntitySessionBeanRemote, CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote, ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote) {
         this.adminEntitySessionBeanRemote = adminEntitySessionBeanRemote;
         this.customerEntitySessionBeanRemote = customerEntitySessionBeanRemote;
+        this.serviceProviderEntitySessionBeanRemote = serviceProviderEntitySessionBeanRemote;
     }
     
     public void runApp(){
@@ -36,13 +39,20 @@ public class MainApp {
             System.out.println("3: Login as Customer");
             System.out.println("4: Exit");
             response = 0;
+            System.out.print("> ");
             
             response = scanner.nextInt();
             if(response == 1){
                 AdminModule adminModule = new AdminModule(adminEntitySessionBeanRemote, customerEntitySessionBeanRemote);
                 adminModule.createAdminStaff();
             }
-        
+            if(response == 2){
+                ServiceProviderModule serviceProviderModule = new ServiceProviderModule(serviceProviderEntitySessionBeanRemote);
+                serviceProviderModule.menuServiceProviderOperation();
+            }
+            if (response == 4) {
+                break;
+            }
         }
                
       
