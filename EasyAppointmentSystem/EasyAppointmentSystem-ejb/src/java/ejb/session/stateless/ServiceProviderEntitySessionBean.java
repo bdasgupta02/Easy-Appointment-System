@@ -26,7 +26,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     }
     
     @Override
-    public Long createNewServiceProvider(ServiceProviderEntity newServiceProviderEntity) throws EntityAttributeNullException {
+    public Long addNewServiceProvider(ServiceProviderEntity newServiceProviderEntity) throws EntityAttributeNullException {
         if (newServiceProviderEntity.getName().isEmpty() || newServiceProviderEntity.getBizCategory() == null ||
                 newServiceProviderEntity.getBizRegNum().isEmpty() || newServiceProviderEntity.getCity().isEmpty() ||
                 newServiceProviderEntity.getBizAddress().isEmpty() || newServiceProviderEntity.getEmail().isEmpty() ||
@@ -74,9 +74,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
                 currentServiceProviderEntity.setPassword(updatedServiceProviderEntity.getPassword());
             }
 
-            //to allow admin to update status of service provider
-            // check is different as status is assigned to PENDING upon instantiation of object
-            if (updatedServiceProviderEntity.getStatus() != "PENDING") {
+            if (updatedServiceProviderEntity.getStatus() != null) {
                 currentServiceProviderEntity.setStatus(updatedServiceProviderEntity.getStatus());
             }
         } catch (ServiceProviderNotFoundException ex) {

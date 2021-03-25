@@ -1,8 +1,11 @@
 package easyappointmentsystemclient;
 
+import ejb.session.stateless.CategoryEntitySessionBeanRemote;
 import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
+import entity.CategoryEntity;
 import entity.ServiceProviderEntity;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,13 +15,15 @@ import util.exception.InvalidLoginException;
 public class ServiceProviderModule {
     
     private ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote;
+    private CategoryEntitySessionBeanRemote categoryEntitySessionBeanRemote;
     private ServiceProviderEntity currentServiceProvider;
     
     public ServiceProviderModule(){
     }
     
-    public ServiceProviderModule(ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote){
+    public ServiceProviderModule(ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, CategoryEntitySessionBeanRemote categoryEntitySessionBeanRemote){
         this.serviceProviderEntitySessionBeanRemote = serviceProviderEntitySessionBeanRemote;
+        this.categoryEntitySessionBeanRemote = categoryEntitySessionBeanRemote;
     }
     
     public void menuServiceProviderOperation() {
@@ -75,10 +80,15 @@ public class ServiceProviderModule {
             System.out.print("Enter Name> ");
             newServiceProviderEntity.setName(scanner.nextLine().trim());
             
-            //need to figure out the biz category part
-            //Customer searches by int
-            //Admin needs to adds/removes by String
-            //System.out.println("")
+            List<CategoryEntity> allCategories = categoryEntitySessionBeanRemote.retrieveAllCategories();
+            for (CategoryEntity category : allCategories) {
+                System.out.print(category.getCategoryId() + "  " + category.getCategory() + " ");
+                if (allCategories.indexOf(category) != allCategories.size() - 1) {
+                    System.out.print("| ");
+                }
+            }
+            
+            System.out.println();
             
             System.out.print("Enter Business Category> ");
             newServiceProviderEntity.setBizCategory(scanner.nextInt()); 
@@ -104,7 +114,7 @@ public class ServiceProviderModule {
             
             newServiceProviderEntity.setAvgRating(0);
             newServiceProviderEntity.setStatus("PENDING");
-            serviceProviderEntitySessionBeanRemote.createNewServiceProvider(newServiceProviderEntity);
+            serviceProviderEntitySessionBeanRemote.addNewServiceProvider(newServiceProviderEntity);
             
         } catch (InputMismatchException ex) {
             System.out.println("Input is invalid! Please try again.\n");

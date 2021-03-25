@@ -12,7 +12,7 @@ import util.exception.ServiceProviderNotFoundException;
 
 public interface ServiceProviderEntitySessionBeanLocal {
     
-    public Long createNewServiceProvider(ServiceProviderEntity newServiceProviderEntity) throws EntityAttributeNullException;
+    public Long addNewServiceProvider(ServiceProviderEntity newServiceProviderEntity) throws EntityAttributeNullException;
     public ServiceProviderEntity retrieveServiceProviderByServiceProviderId(Long serviceProviderId) throws ServiceProviderNotFoundException;
     public void updateServiceProviderEntity(ServiceProviderEntity updatedServiceProviderEntity);
     public void deleteServiceProviderEntity(Long serviceProviderId) throws ServiceProviderNotFoundException;

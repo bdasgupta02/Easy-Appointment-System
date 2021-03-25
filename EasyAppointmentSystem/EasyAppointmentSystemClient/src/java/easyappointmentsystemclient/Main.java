@@ -6,6 +6,7 @@
 package easyappointmentsystemclient;
 
 import ejb.session.stateless.AdminEntitySessionBeanRemote;
+import ejb.session.stateless.CategoryEntitySessionBeanRemote;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import entity.AdminEntity;
@@ -21,6 +22,8 @@ public class Main {
     private static CustomerEntitySessionBeanRemote custEtyRmt;
     @EJB
     private static ServiceProviderEntitySessionBeanRemote servProviderEtyRmt;
+    @EJB
+    private static CategoryEntitySessionBeanRemote catEtyRmt;
  
     /**
      * @param args the command line arguments
@@ -29,7 +32,7 @@ public class Main {
     public static void main(String[] args) {
     
        
-            MainApp mainApp = new MainApp(admEtyBnRmt, custEtyRmt, servProviderEtyRmt);
+            MainApp mainApp = new MainApp(admEtyBnRmt, custEtyRmt, servProviderEtyRmt, catEtyRmt);
             mainApp.runApp();
         
     }
