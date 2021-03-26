@@ -1,11 +1,16 @@
 package ejb.session.stateless;
 
+import entity.AppointmentEntity;
 import entity.CustomerEntity;
+import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import util.exception.CustomerNotFoundException;
 import util.exception.EntityAttributeNullException;
 
@@ -19,6 +24,7 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
     private EntityManager em;
 
     // CRUD
+    @Override
     public Long createCustomerEntity(CustomerEntity newCustomerEntity) throws EntityAttributeNullException {
 
         if (newCustomerEntity.getLastName() != null && newCustomerEntity.getLastName() != null
@@ -34,6 +40,7 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
         }
     }
 
+    @Override
     public CustomerEntity retrieveCustomerEntityById(Long customerId) throws CustomerNotFoundException {
         CustomerEntity customerEntity = em.find(CustomerEntity.class, customerId);
 
@@ -44,6 +51,7 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
         }
     }
 
+    @Override
     public void updateCustomerEntity(CustomerEntity customerEntity) throws EntityAttributeNullException {
         if (customerEntity.getLastName() != null && customerEntity.getLastName() != null
                 && customerEntity.getIdentityNo() != null && customerEntity.getAddress() != null
@@ -56,12 +64,33 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
         }
     }
     
-    public void deleteCustomerEntity(Long customerId) {
+    @Override
+    public void deleteCustomerEntity(Long customerId) throws CustomerNotFoundException {
+        
+        // code chunk automatically throws exception if entity not found
+        CustomerEntity customerEntity = retrieveCustomerEntityById(customerId);
+        em.remove(customerEntity);
+    }
+    
+    @Override
+    public List<AppointmentEntity> findAppointmentsByCustomerId(Long customerId) throws CustomerNotFoundException {
+        
+        // try if namedqueries work for all session bean queries
+        Query query = em.createQuery("SELECT c.appointments FROM CustomerEntity c WHERE c.id=:customerId");
+        query.setParameter("customerId", customerId);
+        
         try {
-            CustomerEntity customerEntity = retrieveCustomerEntityById(customerId);
-            em.remove(customerEntity);
-        } catch (CustomerNotFoundException ex) {
-            ex.printStackTrace();
+            return (List<AppointmentEntity>) query.getSingleResult();
+        } catch(NoResultException | NonUniqueResultException ex) {
+            throw new CustomerNotFoundException();
         }
+    }
+    
+    @Override
+    public void cancelAppointment(Long customerId, Long appointmentId) {
+        
+        // check if we delete appointments asap or should we add a cancelled indicator
+        // to prevent orphan issues, delete from appointments first then customer/service provider
+        
     }
 }
