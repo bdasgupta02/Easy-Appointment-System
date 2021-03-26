@@ -159,6 +159,7 @@ public class ServiceProviderModule {
                     System.out.print("> ");
 
                     response = scanner.nextInt();
+                    System.out.println();
                     if(response == 1) {
                         viewProfile();
                     } else if (response == 2) {
@@ -185,12 +186,66 @@ public class ServiceProviderModule {
     
     // to edit
     public void viewProfile() {
-        System.out.println("Not supported yet.");
+        System.out.println("*** Service Provider Terminal :: Your Profile ***\n");
+        System.out.print("-----------------------------------------------------------------------------");
+        System.out.printf("\n%22s%40s", "Name: ", currentServiceProvider.getName());
+        System.out.printf("\n%22s%40s", "Average Rating: ", currentServiceProvider.getAvgRating());
+        System.out.printf("\n%22s%40s", "Registration Number: ", currentServiceProvider.getBizRegNum());
+        System.out.printf("\n%22s%40s", "Business Address: ", currentServiceProvider.getBizAddress());
+        System.out.printf("\n%22s%40s", "City: ", currentServiceProvider.getCity());
+        System.out.printf("\n%22s%40s", "Email: ", currentServiceProvider.getEmail());
+        System.out.printf("\n%22s%40s", "Contact Number: ", currentServiceProvider.getPhoneNum());
+        System.out.printf("\n%22s%40s", "Status: ", currentServiceProvider.getStatus());
+        System.out.println();
+        System.out.println("-----------------------------------------------------------------------------");
+        System.out.println();
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Press any key to go back to the main menu");
+        scanner.nextLine();
     }
     
     //to edit
     public void editProfile() {
-        System.out.println("Not supported yet.");
+        System.out.println("*** Service Provider Terminal :: Edit Profile ***\n");
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.print("Enter city (blank if no change)> ");
+        String city = scanner.nextLine().trim();
+        if (!city.isEmpty()) {
+            currentServiceProvider.setCity(city);
+        }
+        
+        System.out.print("Enter business address (blank if no change)> ");
+        String businessAdd = scanner.nextLine().trim();
+        if (!businessAdd.isEmpty()) {
+            currentServiceProvider.setBizAddress(businessAdd);
+        }
+        
+        System.out.print("Enter emaill address (blank if no change> ");
+        String email = scanner.nextLine().trim();
+        if (!email.isEmpty()) {
+            currentServiceProvider.setEmail(email);
+        }
+        
+        System.out.print("Enter phone number (blank if no change> ");
+        String phoneNum = scanner.nextLine().trim();
+        if (!phoneNum.isEmpty()) {
+            currentServiceProvider.setPhoneNum(phoneNum);
+        }
+        
+        System.out.print("Enter password (blank if no change> ");
+        String password = scanner.nextLine().trim();
+        if (!password.isEmpty()) {
+            currentServiceProvider.setPassword(password);
+        }
+        
+        if (city.isEmpty() && businessAdd.isEmpty() && email.isEmpty() && phoneNum.isEmpty() && password.isEmpty()) {
+            System.out.println("No changes detected. Profile has not been updated!\n");
+        } else {
+            serviceProviderEntitySessionBeanRemote.updateServiceProviderEntity(currentServiceProvider);
+            System.out.println("Profile has been updated successfully!\n");
+        }
     }
     
     //to edit
