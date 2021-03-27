@@ -5,6 +5,7 @@
  */
 package ejb.session.singleton;
 
+import ejb.session.stateless.AdminEntitySessionBeanLocal;
 import ejb.session.stateless.AdminEntitySessionBeanRemote;
 import ejb.session.stateless.CategoryEntitySessionBeanLocal;
 import ejb.session.stateless.ServiceProviderEntitySessionBeanLocal;
@@ -33,6 +34,8 @@ public class DataInitializationBean {
     private ServiceProviderEntitySessionBeanLocal serviceProviderEntitySessionBeanLocal;
     @EJB
     private CategoryEntitySessionBeanLocal categoryEntitySessionBeanLocal;
+    @EJB
+    private AdminEntitySessionBeanLocal adminEntitySessionBeanLocal;
 
 
     public DataInitializationBean(){}
@@ -56,6 +59,7 @@ public class DataInitializationBean {
             categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Health"));
             categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Fashion"));
             categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Education"));
+            adminEntitySessionBeanLocal.createNewAdminEntity(new AdminEntity("admin01@easyappointment.com", "001001", "Admin01",""));
         } catch (EntityAttributeNullException ex) {
         }
     }

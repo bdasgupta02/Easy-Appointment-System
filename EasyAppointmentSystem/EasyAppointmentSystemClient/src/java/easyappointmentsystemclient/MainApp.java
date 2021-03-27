@@ -48,7 +48,7 @@ public class MainApp {
             response = scanner.nextInt();
             if(response == 1){
                 AdminModule adminModule = new AdminModule(adminEntitySessionBeanRemote, customerEntitySessionBeanRemote);
-                adminModule.createAdminStaff();
+                adminModule.adminStartMenu();
             }
             if(response == 2){
                 ServiceProviderModule serviceProviderModule = new ServiceProviderModule(serviceProviderEntitySessionBeanRemote, categoryEntitySessionBeanRemote);
