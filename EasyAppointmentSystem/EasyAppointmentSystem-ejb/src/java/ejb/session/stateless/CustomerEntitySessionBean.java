@@ -3,6 +3,7 @@ package ejb.session.stateless;
 import entity.AppointmentEntity;
 import entity.CustomerEntity;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -11,6 +12,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.AppointmentCancellationException;
 import util.exception.CustomerNotFoundException;
 import util.exception.EntityAttributeNullException;
 
@@ -22,6 +24,8 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
 
     @PersistenceContext(unitName = "EasyAppointmentSystem-ejbPU")
     private EntityManager em;
+    @EJB
+    private AppointmentEntitySessionBeanLocal appointmentEntitySessionBeanLocal;
 
     // CRUD
     @Override
@@ -74,23 +78,18 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
     
     @Override
     public List<AppointmentEntity> findAppointmentsByCustomerId(Long customerId) throws CustomerNotFoundException {
-        
-        // try if namedqueries work for all session bean queries
-        Query query = em.createQuery("SELECT c.appointments FROM CustomerEntity c WHERE c.id=:customerId");
-        query.setParameter("customerId", customerId);
-        
-        try {
-            return (List<AppointmentEntity>) query.getSingleResult();
-        } catch(NoResultException | NonUniqueResultException ex) {
-            throw new CustomerNotFoundException();
-        }
+        CustomerEntity customerEntity = retrieveCustomerEntityById(customerId);
+        return customerEntity.getAppointments();
     }
     
     @Override
-    public void cancelAppointment(Long customerId, Long appointmentId) {
+    public void cancelAppointment(Long appointmentId) throws AppointmentCancellationException {
         
-        // check if we delete appointments asap or should we add a cancelled indicator
-        // to prevent orphan issues, delete from appointments first then customer/service provider
+        // added cancelled indicator in appointment entity for this
+        // but check if you change cancelled to true in list<> attribute of customer entity,
+        // does it change it automatically in apt entity?
+        // this method should only be called after displaying a list by the prev method        
+        appointmentEntitySessionBeanLocal.cancelAppointment(appointmentId);
         
     }
 }

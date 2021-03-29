@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import entity.AppointmentEntity;
 import java.util.List;
+import util.exception.AppointmentCancellationException;
 import util.exception.AppointmentNotFoundException;
 import util.exception.EntityAttributeNullException;
 
@@ -16,10 +17,12 @@ public interface AppointmentEntitySessionBeanRemote {
 
     public AppointmentEntity retrieveAppointmentEntityById(Long appointmentId) throws AppointmentNotFoundException;
     
-      public List<AppointmentEntity> retrieveAppointmentEntityByCustomerId(Long customerId) throws AppointmentNotFoundException;
-
     public void updateAppointmentEntity(AppointmentEntity appointmentEntity) throws EntityAttributeNullException;
 
     public void deleteAppointmentEntity(Long appointmentId) throws AppointmentNotFoundException;
+    
+    public void cancelAppointment(Long appointmentId) throws AppointmentCancellationException;
+    
+    public List<AppointmentEntity>  retrieveAppointmentEntityByCustomerId(Long customerId) throws AppointmentNotFoundException;
     
 }

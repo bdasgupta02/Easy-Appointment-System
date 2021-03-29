@@ -15,6 +15,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.AppointmentCancellationException;
 import util.exception.AppointmentNotFoundException;
 import util.exception.EntityAttributeNullException;
 
@@ -42,7 +43,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
             em.flush();
             return newAppointmentEntity.getAppointmentId();
         } else {
-            throw new EntityAttributeNullException("Some values are null! Creation of Appointment aborted.");
+            throw new EntityAttributeNullException("Error: Some values are null, creation of Appointment aborted.");
         }
     }
     
@@ -53,7 +54,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         if (appointmentEntity != null) {
             return appointmentEntity;
         } else {
-            throw new AppointmentNotFoundException("Appointment ID: " + appointmentId + " does not exist!");
+            throw new AppointmentNotFoundException("Error: Appointment ID: " + appointmentId + " does not exist!");
         }
     }
     
@@ -65,7 +66,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
                 appointmentEntity.getServiceProviderEntity() != null) {
             em.merge(appointmentEntity);
         } else {
-            throw new EntityAttributeNullException("Some values are null! Creation of Appointment aborted.");
+            throw new EntityAttributeNullException("Error: Some values are null, update of Appointment aborted.");
         }
     }
     
@@ -76,7 +77,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         AppointmentEntity appointmentEntity = retrieveAppointmentEntityById(appointmentId);
         em.remove(appointmentEntity);
     }
-
+    
     @Override
     public List<AppointmentEntity>  retrieveAppointmentEntityByCustomerId(Long customerId) throws AppointmentNotFoundException {
         Query q = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.customerEntity.customerId = :inCustomerId");
@@ -85,6 +86,26 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
             return (List<AppointmentEntity>)q.getResultList();
         }catch( NoResultException ex){
             throw new AppointmentNotFoundException();
+        }
+    }
+    
+    @Override
+    public void cancelAppointment(Long appointmentId) throws AppointmentCancellationException {
+        AppointmentEntity appointmentEntity;
+        try {
+            appointmentEntity = retrieveAppointmentEntityById(appointmentId);
+        } catch (AppointmentNotFoundException ex) {
+            throw new AppointmentCancellationException(ex.getMessage());
+        }
+        if (appointmentEntity.getCancelled()) {
+            throw new AppointmentCancellationException("Error: Appointment ID: " + appointmentId + " is already cancelled!");
+        }
+        
+        appointmentEntity.setCancelled(true);
+        try {
+            updateAppointmentEntity(appointmentEntity);
+        } catch (EntityAttributeNullException ex) {
+            throw new AppointmentCancellationException(ex.getMessage());
         }
     }
 }

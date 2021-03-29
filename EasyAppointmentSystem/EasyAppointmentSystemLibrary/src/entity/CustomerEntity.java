@@ -41,6 +41,14 @@ public class CustomerEntity implements Serializable {
     private Long phone;
     @Column(nullable=false)
     private String password;
+
+    public List<AppointmentEntity> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<AppointmentEntity> appointments) {
+        this.appointments = appointments;
+    }
     
     @OneToMany(mappedBy = "customerEntity")
     private List<AppointmentEntity> appointments;

@@ -38,6 +38,8 @@ public class AppointmentEntity implements Serializable {
     @Column(nullable=false)
     @Temporal(TemporalType.TIME)
     private Date endTime;
+    @Column(nullable=false)
+    private Boolean cancelled;
     
     @Column(nullable=false, unique=true)
     private String appointmentNum;
@@ -53,6 +55,15 @@ public class AppointmentEntity implements Serializable {
         this.startTime = startTime;
         this.endTime = endTime;
         this.appointmentNum = appointmentNum;
+        this.cancelled = false;
+    }
+
+    public Boolean getCancelled() {
+        return cancelled;
+    }
+
+    public void setCancelled(Boolean cancelled) {
+        this.cancelled = cancelled;
     }
 
 
