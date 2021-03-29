@@ -36,9 +36,7 @@ public class AdminModule {
     private CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote;
     private AdminEntity loggedAdmin;
     private  AppointmentEntitySessionBeanRemote apptEtySessionBeanRemote;
-     @EJB 
-     private static ServiceProviderEntitySessionBeanRemote spEtySessionBeanRemote;
-
+    
     public AdminModule() {
     }
 
@@ -171,7 +169,7 @@ public class AdminModule {
     
               ls = apptEtySessionBeanRemote.retrieveAppointmentEntityByCustomerId(customerId);
              System.out.printf("\n%15s%15s%15s%15s%15s\n","Name", "| Business Category", "| Date", "| Time", "| Appointment No." );
-             
+             //FORMATTING ISSUES
              for(AppointmentEntity a : ls){
                 System.out.printf("\n%15s%15s%15s%15s%15s\n",a.getCustomerEntity().getFirstName()+" "+a.getCustomerEntity().getLastName(), 
                         a.getServiceProviderEntity().getBizCategory(), 
