@@ -10,7 +10,10 @@ import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import util.exception.AdminNotFoundException;
 import util.exception.InvalidLoginException;
 
@@ -38,17 +41,38 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
 
     @Override
     public AdminEntity retrieveAdminByAdminID(Long adminId) throws AdminNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        AdminEntity admin = em.find(AdminEntity.class, adminId);
+        if(admin != null){
+            return admin;
+        } else{
+            throw new AdminNotFoundException("Admin with id: " + adminId + " not found!");
+        }
     }
 
     @Override
     public AdminEntity retrieveAdminByEmail(String email) throws AdminNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+      Query q = em.createQuery(" SELECT a FROM AdminEntity a WHERE a.email = :inEmail");
+      q.setParameter("inEmail", email);
+      try{
+          return (AdminEntity)q.getSingleResult();
+      } catch(NoResultException | NonUniqueResultException ex){
+          throw new AdminNotFoundException("Admin with email: " + email + " not found!");
+      }
     }
 
     @Override
     public AdminEntity adminLogin(String email, String password) throws InvalidLoginException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         
+        try{
+            AdminEntity admin = retrieveAdminByEmail(email);
+            if(admin.getPassword().equals(password)){
+                return admin;
+            } else{
+                throw new InvalidLoginException("Password is wrong.");
+            }
+        } catch (AdminNotFoundException ex){
+            throw new InvalidLoginException("Email or password is wrong");
+        }
     }
 
     @Override

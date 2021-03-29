@@ -6,11 +6,15 @@
 package ejb.session.stateless;
 
 import entity.AppointmentEntity;
+import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import util.exception.AppointmentNotFoundException;
 import util.exception.EntityAttributeNullException;
 
@@ -71,5 +75,16 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         // code chunk automatically throws exception if entity not found
         AppointmentEntity appointmentEntity = retrieveAppointmentEntityById(appointmentId);
         em.remove(appointmentEntity);
+    }
+
+    @Override
+    public List<AppointmentEntity>  retrieveAppointmentEntityByCustomerId(Long customerId) throws AppointmentNotFoundException {
+        Query q = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.customerEntity.customerId = :inCustomerId");
+        q.setParameter("inCustomerId", customerId);
+        try{
+            return (List<AppointmentEntity>)q.getResultList();
+        }catch( NoResultException ex){
+            throw new AppointmentNotFoundException();
+        }
     }
 }
