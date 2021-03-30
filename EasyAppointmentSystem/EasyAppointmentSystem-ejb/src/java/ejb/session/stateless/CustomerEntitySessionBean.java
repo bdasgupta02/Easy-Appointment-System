@@ -79,6 +79,7 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
     @Override
     public List<AppointmentEntity> retrieveAppointmentsByCustomerId(Long customerId) throws CustomerNotFoundException {
         CustomerEntity customerEntity = retrieveCustomerEntityById(customerId);
+        customerEntity.getAppointments().size();
         return customerEntity.getAppointments();
     }
     

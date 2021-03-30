@@ -162,7 +162,8 @@ public class AdminModule {
                         appointments = adminEntitySessionBeanRemote.retrieveAppointmentEntityByCustomerId(customerId);
                         System.out.printf("%20s%15s%15s%15s%15s\n", "Name ", "| Business Category ", "| Date ", "| Time ", "| Appointment No. ");
                         
-                        // lazy fetching issues
+                        // lazy fetching issues fixed
+                        // need to print business category in text
                         for (AppointmentEntity a : appointments) {
                             System.out.printf("%20s%15s%15s%15s%15s\n", a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(),
                                     a.getServiceProviderEntity().getBizCategory(),
