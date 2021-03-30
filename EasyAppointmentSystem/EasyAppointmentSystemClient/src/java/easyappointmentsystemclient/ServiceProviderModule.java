@@ -188,14 +188,14 @@ public class ServiceProviderModule {
     public void viewProfile() {
         System.out.println("*** Service Provider Terminal :: Your Profile ***\n");
         System.out.print("-----------------------------------------------------------------------------");
-        System.out.printf("\n%22s%40s", "Name: ", currentServiceProvider.getName());
-        System.out.printf("\n%22s%40s", "Average Rating: ", currentServiceProvider.getAvgRating());
-        System.out.printf("\n%22s%40s", "Registration Number: ", currentServiceProvider.getBizRegNum());
-        System.out.printf("\n%22s%40s", "Business Address: ", currentServiceProvider.getBizAddress());
-        System.out.printf("\n%22s%40s", "City: ", currentServiceProvider.getCity());
-        System.out.printf("\n%22s%40s", "Email: ", currentServiceProvider.getEmail());
-        System.out.printf("\n%22s%40s", "Contact Number: ", currentServiceProvider.getPhoneNum());
-        System.out.printf("\n%22s%40s", "Status: ", currentServiceProvider.getStatus());
+        System.out.printf("%22s%40s\n", "Name: ", currentServiceProvider.getName());
+        System.out.printf("%22s%40s\n", "Average Rating: ", currentServiceProvider.getAvgRating());
+        System.out.printf("%22s%40s\n", "Registration Number: ", currentServiceProvider.getBizRegNum());
+        System.out.printf("%22s%40s\n", "Business Address: ", currentServiceProvider.getBizAddress());
+        System.out.printf("%22s%40s\n", "City: ", currentServiceProvider.getCity());
+        System.out.printf("%22s%40s\n", "Email: ", currentServiceProvider.getEmail());
+        System.out.printf("%22s%40s\n", "Contact Number: ", currentServiceProvider.getPhoneNum());
+        System.out.printf("%22s%40s\n", "Status: ", currentServiceProvider.getStatus());
         System.out.println();
         System.out.println("-----------------------------------------------------------------------------");
         System.out.println();

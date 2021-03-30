@@ -1,6 +1,9 @@
 package ejb.session.stateless;
 
+import entity.AppointmentEntity;
+import entity.CustomerEntity;
 import entity.ServiceProviderEntity;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.Remote;
 import javax.ejb.Local;
@@ -31,7 +34,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
                 newServiceProviderEntity.getBizRegNum().isEmpty() || newServiceProviderEntity.getCity().isEmpty() ||
                 newServiceProviderEntity.getBizAddress().isEmpty() || newServiceProviderEntity.getEmail().isEmpty() ||
                 newServiceProviderEntity.getPhoneNum().isEmpty() || newServiceProviderEntity.getPassword().isEmpty()) {
-            throw new EntityAttributeNullException("Some values are null! Creation of Service Provider aborted.\n");
+            throw new EntityAttributeNullException("Error: Some values are null! Creation of Service Provider aborted.");
         } else {
             em.persist(newServiceProviderEntity);
             em.flush();
@@ -40,7 +43,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     }
     
     @Override
-    public ServiceProviderEntity retrieveServiceProviderByServiceProviderId(Long serviceProviderId) throws ServiceProviderNotFoundException {
+    public ServiceProviderEntity retrieveServiceProviderEntityById(Long serviceProviderId) throws ServiceProviderNotFoundException {
        
         ServiceProviderEntity serviceProvider = em.find(ServiceProviderEntity.class, serviceProviderId);
         if (serviceProvider != null) {
@@ -50,10 +53,11 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         } 
     }
     
+    // Is this the correct way to update? Shouldn't we abort even if one value is null?
     @Override
     public void updateServiceProviderEntity(ServiceProviderEntity updatedServiceProviderEntity) {
         try {
-            ServiceProviderEntity currentServiceProviderEntity = retrieveServiceProviderByServiceProviderId(updatedServiceProviderEntity.getServiceProviderId());
+            ServiceProviderEntity currentServiceProviderEntity = retrieveServiceProviderEntityById(updatedServiceProviderEntity.getServiceProviderId());
             if (updatedServiceProviderEntity.getCity() != null) {
                 currentServiceProviderEntity.setCity(updatedServiceProviderEntity.getCity());
             }
@@ -87,7 +91,8 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         if (serviceProvider != null) {
             em.remove(serviceProvider);
         } else {
-            throw new ServiceProviderNotFoundException("Service provider with id " + serviceProviderId + " does not exist!\n");
+            // don't make error messages have "\n" because we're gonna println anyway
+            throw new ServiceProviderNotFoundException("Error: Service provider with id " + serviceProviderId + " does not exist!");
         }
     }
     
@@ -111,10 +116,16 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
             if(serviceProviderEntity.getPassword().equals(password)) {                
                 return serviceProviderEntity;
             } else {
-                throw new InvalidLoginException("Username does not exist or invalid password! \n");
+                throw new InvalidLoginException("Error:Invalid password!");
             }
         } catch(ServiceProviderNotFoundException ex) {
-            throw new InvalidLoginException("Username does not exist or invalid password! \n");
+            throw new InvalidLoginException("Error: Username does not exist!");
         }
+    }
+    
+    @Override
+    public List<AppointmentEntity> retrieveAppointmentsByCustomerId(Long serviceProviderId) throws ServiceProviderNotFoundException {
+        ServiceProviderEntity serviceProviderEntity = retrieveServiceProviderEntityById(serviceProviderId);
+        return serviceProviderEntity.getAppointments();
     }
 }

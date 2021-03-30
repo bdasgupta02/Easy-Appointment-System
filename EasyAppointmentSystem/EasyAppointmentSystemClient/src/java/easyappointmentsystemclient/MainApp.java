@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package easyappointmentsystemclient;
 
 import ejb.session.stateless.AdminEntitySessionBeanRemote;
@@ -12,10 +7,6 @@ import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import java.util.Scanner;
 
-/**
- *
- * @author vanshiqa
- */
 public class MainApp {
     private AdminEntitySessionBeanRemote adminEntitySessionBeanRemote;
     private CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote;
@@ -61,8 +52,5 @@ public class MainApp {
                 break;
             }
         }
-               
-      
-    
     }
 }

@@ -6,6 +6,9 @@
 package ejb.session.stateless;
 
 import entity.AdminEntity;
+import entity.AppointmentEntity;
+import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -15,7 +18,9 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.AdminNotFoundException;
+import util.exception.CustomerNotFoundException;
 import util.exception.InvalidLoginException;
+import util.exception.ServiceProviderNotFoundException;
 
 /**
  *
@@ -30,6 +35,10 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
     @PersistenceContext(unitName = "EasyAppointmentSystem-ejbPU")
     private EntityManager em;
     
+    @EJB
+    private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
+    @EJB
+    private ServiceProviderEntitySessionBeanLocal serviceProviderEntitySessionBeanLocal;
     
         
     @Override
@@ -85,5 +94,13 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public List<AppointmentEntity> retrieveAppointmentEntityByCustomerId(Long customerId) throws CustomerNotFoundException {
+        return customerEntitySessionBeanLocal.retrieveAppointmentsByCustomerId(customerId);
+    }
     
+    @Override
+    public List<AppointmentEntity> retrieveAppointmentEntityByServiceProviderId(Long serviceProviderId) throws ServiceProviderNotFoundException {
+        return serviceProviderEntitySessionBeanLocal.retrieveAppointmentsByCustomerId(serviceProviderId);
+    }
 }

@@ -23,7 +23,7 @@ public interface CustomerEntitySessionBeanRemote {
 
     public void deleteCustomerEntity(Long customerId) throws CustomerNotFoundException;
 
-    public List<AppointmentEntity> findAppointmentsByCustomerId(Long customerId) throws CustomerNotFoundException;
+    public List<AppointmentEntity> retrieveAppointmentsByCustomerId(Long customerId) throws CustomerNotFoundException;
 
     public void cancelAppointment(Long appointmentId) throws AppointmentCancellationException;
     
