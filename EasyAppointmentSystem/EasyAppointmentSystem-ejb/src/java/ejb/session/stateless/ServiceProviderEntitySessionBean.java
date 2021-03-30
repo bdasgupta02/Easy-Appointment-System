@@ -128,4 +128,10 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         ServiceProviderEntity serviceProviderEntity = retrieveServiceProviderEntityById(serviceProviderId);
         return serviceProviderEntity.getAppointments();
     }
+    
+    @Override
+    public List<ServiceProviderEntity> retrieveAllServiceProviders() {
+        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s ORDER BY s.serviceProviderId ASC");
+        return query.getResultList();
+    }
 }

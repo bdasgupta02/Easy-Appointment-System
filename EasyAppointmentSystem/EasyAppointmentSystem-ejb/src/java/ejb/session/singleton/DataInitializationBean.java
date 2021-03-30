@@ -73,7 +73,7 @@ public class DataInitializationBean {
             categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Education"));
             adminEntitySessionBeanLocal.createNewAdminEntity(new AdminEntity("admin01@easyappointment.com", "001001", "Admin01",""));
             customerEntitySessionBeanLocal.createCustomerEntity(new CustomerEntity("id", "Liza", "Mozart", "address",new Character('F'), 30, "Singapore", "liza@gmail.com", new Long(345240), "password"));
-            AppointmentEntity aEty = new AppointmentEntity(customerEntitySessionBeanLocal.retrieveCustomerEntityById(new Long(1)), serviceProviderEntitySessionBeanLocal.retrieveServiceProviderByServiceProviderId(new Long(1)), new Date(), new Date(), new Date(), "2");
+            AppointmentEntity aEty = new AppointmentEntity(customerEntitySessionBeanLocal.retrieveCustomerEntityById(new Long(1)), serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(new Long(1)), new Date(), new Date(), new Date(), "2");
             apptEtySessionBeanLocal.createAppointmentEntity(aEty);
         } catch (EntityAttributeNullException | CustomerNotFoundException | ServiceProviderNotFoundException ex) {
         }

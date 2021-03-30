@@ -27,5 +27,7 @@ public interface ServiceProviderEntitySessionBeanLocal {
     public ServiceProviderEntity login(String emailAdd, String password) throws InvalidLoginException;
     
     public List<AppointmentEntity> retrieveAppointmentsByCustomerId(Long serviceProviderId) throws ServiceProviderNotFoundException;
+
+    public List<ServiceProviderEntity> retrieveAllServiceProviders();
     
 }

@@ -1,10 +1,10 @@
 package easyappointmentsystemclient;
 
 import ejb.session.stateless.AdminEntitySessionBeanRemote;
-import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
-import ejb.session.stateless.CustomerEntitySessionBeanRemote;
+import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import entity.AdminEntity;
 import entity.AppointmentEntity;
+import entity.ServiceProviderEntity;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -15,14 +15,16 @@ import util.exception.ServiceProviderNotFoundException;
 public class AdminModule {
 
     private AdminEntitySessionBeanRemote adminEntitySessionBeanRemote;
+    private ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote;
     private AdminEntity loggedAdmin;
 
     public AdminModule() {
     }
 
-    public AdminModule(AdminEntitySessionBeanRemote adminEntitySessionBeanRemote, CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote, 
-            AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote) {
+    public AdminModule(AdminEntitySessionBeanRemote adminEntitySessionBeanRemote, 
+            ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote) {
         this.adminEntitySessionBeanRemote = adminEntitySessionBeanRemote;
+        this.serviceProviderEntitySessionBeanRemote = serviceProviderEntitySessionBeanRemote;
     }
 
     public void adminStartMenu() {
@@ -93,13 +95,15 @@ public class AdminModule {
             System.out.println("You are login as " + loggedAdmin.getFirstName());
             System.out.println("1: View Appointments for customers\n"
                     + "2: View Appointments for service providers\n"
-                    + "3: View service providers\n"
-                    + "4: Approve service provider\n"
-                    + "5: Block service provider\n"
-                    + "6: Add Business category\n"
-                    + "7: Remove Business category\n"
-                    + "8: Send reminder email\n"
-                    + "9: Logout\n");
+                    + "3: View Appointments for service provider\n"
+                    + "4: View service providers\n"
+                    + "5: Approve service provider\n"
+                    + "6: Block service provider\n"
+                    + "7: Add Business category\n"
+                    + "8: Remove Business category\n"
+                    + "9: Send reminder email\n"
+                    + "10: Delete customer\n"
+                    + "11: Logout");
             System.out.print("> ");
 
             while (response < 1 || response > 9) {
@@ -108,22 +112,28 @@ public class AdminModule {
                     if (response == 1) {
                         viewCustomerAppointments();
                     } else if (response == 2) {
+                        viewServiceProviderAppointments();
                     } else if (response == 3) {
+                        viewServiceProviders();
                     } else if (response == 4) {
                     } else if (response == 5) {
                     } else if (response == 6) {
                     } else if (response == 7) {
                     } else if (response == 8) {
                     } else if (response == 9) {
+                    } else if (response == 10) {
+                    } else if (response == 11) {
                         break;
                     } else {
-                        System.out.println("Please enter valid integer input.");
+                        System.out.println("Error: Invalid input value! Please enter the correct input.");
                     }
                 } else {
                     System.out.println("Please enter valid integer input.");
                 }
             }
-
+            if (response == 11) {
+                break;
+            }
         }
     }
 
@@ -138,12 +148,12 @@ public class AdminModule {
             customerId = sc.nextLong();
             sc.nextLine();
             if (customerId < 0) {
-                System.out.println("Invalid input entered!");
+                System.out.println("Error: Invalid input value! Please enter the correct input.");
             }
             try {
 
                 appointments = adminEntitySessionBeanRemote.retrieveAppointmentEntityByCustomerId(customerId);
-                System.out.printf("%20s%15s%15s%15s%15s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No.");
+                System.out.printf("%20s%15s%15s%15s%15s\n", "Name ", "| Business Category ", "| Date ", "| Time ", "| Appointment No. ");
                 
                 //FORMATTING ISSUES
                 for (AppointmentEntity a : appointments) {
@@ -158,11 +168,11 @@ public class AdminModule {
                 System.out.println("Error: Customer ID: " + customerId + " not found!");
             }
         } else {
-            System.out.println("Error: Invalid input type entered!");
+            System.out.println("Error: Invalid input type entered! Please enter the correct input.");
         }
     }
     
-    public void viewServiceProviderAppointments() {
+    private void viewServiceProviderAppointments() {
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Admin terminal :: View Appointments for service providers ***\n");
         Long serviceProviderId;
@@ -173,12 +183,12 @@ public class AdminModule {
             serviceProviderId = sc.nextLong();
             sc.nextLine();
             if (serviceProviderId < 0) {
-                System.out.println("Error: Invalid input value entered!");
+                System.out.println("Error: Invalid input value! Please enter the correct input.");
             }
             try {
 
                 appointments = adminEntitySessionBeanRemote.retrieveAppointmentEntityByServiceProviderId(serviceProviderId);
-                System.out.printf("%20s%15s%15s%15s%15s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No.");
+                System.out.printf("%20s%15s%15s%15s%15s\n", "Name ", "| Business Category ", "| Date ", "| Time ", "| Appointment No. ");
                 
                 //FORMATTING ISSUES
                 for (AppointmentEntity a : appointments) {
@@ -193,7 +203,30 @@ public class AdminModule {
                 System.out.println("Error: Service Provider ID: " + serviceProviderId + " not found!");
             }
         } else {
-            System.out.println("Invalid input entered!");
+            System.out.println("Error: Invalid input type entered! Please enter the correct input.");
         }
     }
+    
+    private void viewServiceProviders() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("*** Admin terminal :: View service provider ***\n");   
+        System.out.printf("%10s%15s%15s%15s%15s%15s\n", "Id ", "| Name ", "| Business category ", "| City ", "| Overall rating ", "| Status ");
+        
+        List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviders();
+        
+        for (ServiceProviderEntity s : serviceProviders) {
+            System.out.printf("%10s%15s%15s%15s%15s%15s\n", 
+                    s.getServiceProviderId(), 
+                    s.getName(), 
+                    s.getBizCategory(), 
+                    s.getCity(), 
+                    s.getAvgRating(), 
+                    s.getStatus());
+        }
+        
+        System.out.print("Press any key to continue...> ");
+        sc.nextLine();
+    }
+    
+    private void 
 }
