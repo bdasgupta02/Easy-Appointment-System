@@ -34,5 +34,4 @@ public interface ServiceProviderEntitySessionBeanRemote {
     public List<ServiceProviderEntity> retrieveAllPendingServiceProviders();
     
     public void updateServiceProviderStatus(ServiceProviderEntity serviceProviderEntity, ServiceProviderStatusEnum status);
-    
 }

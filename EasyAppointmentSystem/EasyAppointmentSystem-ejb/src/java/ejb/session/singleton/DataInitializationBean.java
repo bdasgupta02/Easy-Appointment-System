@@ -23,6 +23,7 @@ import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
 import javax.ejb.Startup;
+import util.enumeration.ServiceProviderStatusEnum;
 import util.exception.CustomerNotFoundException;
 import util.exception.EntityAttributeNullException;
 import util.exception.ServiceProviderNotFoundException;
@@ -67,7 +68,7 @@ public class DataInitializationBean {
     private void initializeData() {
         try {
             serviceProviderEntitySessionBeanLocal.addNewServiceProvider(
-                    new ServiceProviderEntity("0012345678", 1, "Zalora", "51 Bras Basah Road #07-01/04", "Bras Basah", "test@Zalora.com", "123456", "65551234", "APPROVED", 3));
+                    new ServiceProviderEntity("0012345678", 1, "Zalora", "51 Bras Basah Road #07-01/04", "Bras Basah", "test@Zalora.com", "123456", "65551234", ServiceProviderStatusEnum.APPROVED, 3));
             categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Health"));
             categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Fashion"));
             categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Education"));

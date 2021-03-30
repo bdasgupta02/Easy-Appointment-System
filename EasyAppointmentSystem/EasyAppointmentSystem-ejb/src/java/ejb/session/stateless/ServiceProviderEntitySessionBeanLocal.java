@@ -33,6 +33,5 @@ public interface ServiceProviderEntitySessionBeanLocal {
 
     public List<ServiceProviderEntity> retrieveAllPendingServiceProviders();
 
-    public void updateServiceProviderStatus(ServiceProviderEntity serviceProviderEntity, ServiceProviderStatusEnum status);
-    
+    public void updateServiceProviderStatus(ServiceProviderEntity serviceProviderEntity, ServiceProviderStatusEnum status);   
 }
