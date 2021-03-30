@@ -8,6 +8,7 @@ import entity.ServiceProviderEntity;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+import util.enumeration.ServiceProviderStatusEnum;
 import util.exception.CustomerNotFoundException;
 import util.exception.InvalidLoginException;
 import util.exception.ServiceProviderNotFoundException;
@@ -21,7 +22,7 @@ public class AdminModule {
     public AdminModule() {
     }
 
-    public AdminModule(AdminEntitySessionBeanRemote adminEntitySessionBeanRemote, 
+    public AdminModule(AdminEntitySessionBeanRemote adminEntitySessionBeanRemote,
             ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote) {
         this.adminEntitySessionBeanRemote = adminEntitySessionBeanRemote;
         this.serviceProviderEntitySessionBeanRemote = serviceProviderEntitySessionBeanRemote;
@@ -36,26 +37,32 @@ public class AdminModule {
             System.out.println("1: Login");
             System.out.println("2: Exit");
             System.out.println();
-            System.out.print("> ");
             response = 0;
 
             while (response < 1 || response > 2) {
-                try {
-                    response = sc.nextInt();
+
+                // fixed input type check
+                System.out.print("> ");
+
+                if (!sc.hasNextInt()) {
                     sc.nextLine();
-                } catch (InputMismatchException ex) {
-                    //THIS DOESNT WORK
-                    System.out.println("Please enter valid integer input!");
-                    break;
-                }
-                if (response == 1) {
-                    adminLoginMenu();
-                } else if (response == 2) {
-                    break;
+                    System.out.println("Error: Invalid input type entered! Please enter the correct input.");
+                    System.out.println();
                 } else {
-                    System.out.println("Please enter valid integer input!");
+                    response = sc.nextInt();
+                    
+                    if (response == 1) {
+                        adminLoginMenu();
+                    } else if (response == 2) {
+                        break;
+                    } else {
+                        System.out.println("Error: Invalid input value! Please enter the correct input.");
+                        break;
+                    }
                     break;
                 }
+            }
+            if (response == 2) {
                 break;
             }
         }
@@ -79,7 +86,6 @@ public class AdminModule {
 
         } catch (NullPointerException | InvalidLoginException ex) {
             System.out.println("Login unsuccessful. Please enter valid login details.\n");
-            adminStartMenu();
         }
 
     }
@@ -116,6 +122,7 @@ public class AdminModule {
                     } else if (response == 3) {
                         viewServiceProviders();
                     } else if (response == 4) {
+                        approveServiceProvider();
                     } else if (response == 5) {
                     } else if (response == 6) {
                     } else if (response == 7) {
@@ -128,7 +135,7 @@ public class AdminModule {
                         System.out.println("Error: Invalid input value! Please enter the correct input.");
                     }
                 } else {
-                    System.out.println("Please enter valid integer input.");
+                    System.out.println("Error: Invalid input type entered! Please enter the correct input.");
                 }
             }
             if (response == 11) {
@@ -154,7 +161,7 @@ public class AdminModule {
 
                 appointments = adminEntitySessionBeanRemote.retrieveAppointmentEntityByCustomerId(customerId);
                 System.out.printf("%20s%15s%15s%15s%15s\n", "Name ", "| Business Category ", "| Date ", "| Time ", "| Appointment No. ");
-                
+
                 //FORMATTING ISSUES
                 for (AppointmentEntity a : appointments) {
                     System.out.printf("%20s%15s%15s%15s%15s\n", a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(),
@@ -165,20 +172,20 @@ public class AdminModule {
                 }
 
             } catch (CustomerNotFoundException ex) {
-                System.out.println("Error: Customer ID: " + customerId + " not found!");
+                System.out.println(ex.getMessage());
             }
         } else {
             System.out.println("Error: Invalid input type entered! Please enter the correct input.");
         }
     }
-    
+
     private void viewServiceProviderAppointments() {
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Admin terminal :: View Appointments for service providers ***\n");
         Long serviceProviderId;
         List<AppointmentEntity> appointments;
         System.out.print("Enter service provider Id> ");
-        
+
         if (sc.hasNextLong()) {
             serviceProviderId = sc.nextLong();
             sc.nextLine();
@@ -189,7 +196,7 @@ public class AdminModule {
 
                 appointments = adminEntitySessionBeanRemote.retrieveAppointmentEntityByServiceProviderId(serviceProviderId);
                 System.out.printf("%20s%15s%15s%15s%15s\n", "Name ", "| Business Category ", "| Date ", "| Time ", "| Appointment No. ");
-                
+
                 //FORMATTING ISSUES
                 for (AppointmentEntity a : appointments) {
                     System.out.printf("%20s%15s%15s%15s%15s\n", a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(),
@@ -200,33 +207,83 @@ public class AdminModule {
                 }
 
             } catch (ServiceProviderNotFoundException ex) {
-                System.out.println("Error: Service Provider ID: " + serviceProviderId + " not found!");
+                System.out.println(ex.getMessage());
             }
         } else {
             System.out.println("Error: Invalid input type entered! Please enter the correct input.");
         }
     }
-    
+
     private void viewServiceProviders() {
         Scanner sc = new Scanner(System.in);
-        System.out.println("*** Admin terminal :: View service provider ***\n");   
+        System.out.println("*** Admin terminal :: View service provider ***\n");
         System.out.printf("%10s%15s%15s%15s%15s%15s\n", "Id ", "| Name ", "| Business category ", "| City ", "| Overall rating ", "| Status ");
-        
+
         List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviders();
-        
+
         for (ServiceProviderEntity s : serviceProviders) {
-            System.out.printf("%10s%15s%15s%15s%15s%15s\n", 
-                    s.getServiceProviderId(), 
-                    s.getName(), 
-                    s.getBizCategory(), 
-                    s.getCity(), 
-                    s.getAvgRating(), 
-                    s.getStatus());
+            System.out.printf("%10s%15s%15s%15s%15s%15s\n",
+                    s.getServiceProviderId(),
+                    s.getName(),
+                    s.getBizCategory(),
+                    s.getCity(),
+                    s.getAvgRating(),
+                    statusEnumConverter(s.getStatus()));
         }
-        
+
         System.out.print("Press any key to continue...> ");
         sc.nextLine();
     }
-    
-    private void 
+
+    private String statusEnumConverter(ServiceProviderStatusEnum status) {
+        if (status == ServiceProviderStatusEnum.APPROVED) {
+            return "Approved";
+        } else if (status == ServiceProviderStatusEnum.BLOCKED) {
+            return "Blocked";
+        } else {
+            return "Pending";
+        }
+    }
+
+    private void approveServiceProvider() {
+        Scanner sc = new Scanner(System.in);
+        Long serviceProviderId;
+        System.out.println("*** Admin terminal :: Approve service provider ***\n");
+        System.out.println("List of service providers with pending approval:\n");
+        System.out.printf("%10s%15s%15s%15s%15s%20s%15s%15s\n", "Id ", "| Name ", "| Business category ", "| Business Reg. No. ", "| City ", "| Address ", "| Email ", "| Phone ");
+
+        List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveAllPendingServiceProviders();
+
+        for (ServiceProviderEntity s : serviceProviders) {
+            System.out.printf("%10s%15s%15s%15s%15s%20s%15s%15s\n",
+                    s.getServiceProviderId(),
+                    s.getName(),
+                    s.getBizCategory(),
+                    s.getBizRegNum(),
+                    s.getCity(),
+                    s.getBizAddress(),
+                    s.getEmail(),
+                    s.getPhoneNum());
+        }
+
+        System.out.println("Enter 0 to go back to the previous menu.");
+        System.out.print("Enter service provider Id> ");
+
+        if (sc.hasNextLong()) {
+            serviceProviderId = sc.nextLong();
+            sc.nextLine();
+            if (serviceProviderId < 0) {
+                System.out.println("Error: Invalid input value! Please enter the correct input.");
+            }
+            try {
+                ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
+                serviceProviderEntitySessionBeanRemote.updateServiceProviderStatus(serviceProviderEntity, ServiceProviderStatusEnum.APPROVED);
+                System.out.println(serviceProviderEntity.getName() + "'s registration is approved.");
+            } catch (ServiceProviderNotFoundException ex) {
+                System.out.println(ex.getMessage());
+            }
+        } else {
+            System.out.println("Error: Invalid input type entered! Please enter the correct input.");
+        }
+    }
 }

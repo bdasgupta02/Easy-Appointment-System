@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.AppointmentEntity;
 import entity.ServiceProviderEntity;
 import java.util.List;
+import util.enumeration.ServiceProviderStatusEnum;
 import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
 import util.exception.ServiceProviderNotFoundException;
@@ -29,5 +30,9 @@ public interface ServiceProviderEntitySessionBeanRemote {
     public List<AppointmentEntity> retrieveAppointmentsByCustomerId(Long serviceProviderId) throws ServiceProviderNotFoundException;
     
     public List<ServiceProviderEntity> retrieveAllServiceProviders();
+    
+    public List<ServiceProviderEntity> retrieveAllPendingServiceProviders();
+    
+    public void updateServiceProviderStatus(ServiceProviderEntity serviceProviderEntity, ServiceProviderStatusEnum status);
     
 }

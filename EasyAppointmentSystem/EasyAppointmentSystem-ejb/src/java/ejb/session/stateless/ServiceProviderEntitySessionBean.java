@@ -12,6 +12,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.enumeration.ServiceProviderStatusEnum;
 import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
 import util.exception.ServiceProviderNotFoundException;
@@ -133,5 +134,18 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     public List<ServiceProviderEntity> retrieveAllServiceProviders() {
         Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s ORDER BY s.serviceProviderId ASC");
         return query.getResultList();
+    }
+    
+    @Override
+    public List<ServiceProviderEntity> retrieveAllPendingServiceProviders() {
+        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.status = :inPending ORDER BY s.serviceProviderId ASC");
+        query.setParameter("inPending", ServiceProviderStatusEnum.PENDING);
+        return query.getResultList();
+    }
+    
+    @Override
+    public void updateServiceProviderStatus(ServiceProviderEntity serviceProviderEntity, ServiceProviderStatusEnum status) {
+        serviceProviderEntity.setStatus(status);
+        updateServiceProviderEntity(serviceProviderEntity);
     }
 }

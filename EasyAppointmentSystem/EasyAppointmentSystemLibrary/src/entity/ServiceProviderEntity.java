@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import util.enumeration.ServiceProviderStatusEnum;
 
 @Entity
 public class ServiceProviderEntity implements Serializable {
@@ -36,7 +37,7 @@ public class ServiceProviderEntity implements Serializable {
     @Column(nullable=false)
     private String phoneNum;
     @Column(nullable=false)
-    private String status;
+    private ServiceProviderStatusEnum status;
     @Column(nullable=false)
     private float avgRating;
     
@@ -46,7 +47,8 @@ public class ServiceProviderEntity implements Serializable {
     public ServiceProviderEntity() {
     }
 
-    public ServiceProviderEntity(String bizRegNum, int bizCategory, String name, String bizAddress, String city, String email, String password, String phoneNum, String status, float avgRating) {
+    public ServiceProviderEntity(String bizRegNum, int bizCategory, String name, String bizAddress, 
+            String city, String email, String password, String phoneNum, ServiceProviderStatusEnum status, float avgRating) {
         this();
         this.bizRegNum = bizRegNum;
         this.bizCategory = bizCategory;
@@ -159,11 +161,11 @@ public class ServiceProviderEntity implements Serializable {
         this.phoneNum = phoneNum;
     }
 
-    public String getStatus() {
+    public ServiceProviderStatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(ServiceProviderStatusEnum status) {
         this.status = status;
     }  
 
