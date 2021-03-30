@@ -30,12 +30,11 @@ public class MainApp {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
         while (true){
-            System.out.println("*** Welcome to Easy Appointment System ***");
+            System.out.println("*** Welcome to Easy Appointment System ***\n");
             System.out.println("1: Login as Administrator");
-        
             System.out.println("2: Login as Service Provider");
             System.out.println("3: Login as Customer");
-            System.out.println("4: Exit");
+            System.out.println("4: Exit\n");
             response = 0;
             System.out.print("> ");
             

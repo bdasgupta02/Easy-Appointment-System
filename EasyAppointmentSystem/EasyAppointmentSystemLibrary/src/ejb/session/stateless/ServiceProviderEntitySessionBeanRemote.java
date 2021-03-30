@@ -8,7 +8,6 @@ package ejb.session.stateless;
 import entity.AppointmentEntity;
 import entity.ServiceProviderEntity;
 import java.util.List;
-import util.enumeration.ServiceProviderStatusEnum;
 import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
 import util.exception.ServiceProviderAlreadyBlockedException;

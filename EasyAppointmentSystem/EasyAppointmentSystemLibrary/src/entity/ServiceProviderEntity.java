@@ -45,6 +45,7 @@ public class ServiceProviderEntity implements Serializable {
     private List<AppointmentEntity> appointments;
 
     public ServiceProviderEntity() {
+        this.appointments = new ArrayList<>();
     }
 
     public ServiceProviderEntity(String bizRegNum, int bizCategory, String name, String bizAddress, 

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import util.enumeration.ServiceProviderStatusEnum;
 import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
 
@@ -35,7 +36,7 @@ public class ServiceProviderModule {
                 System.out.println("*** Welcome to Service provider terminal ***\n");
                 System.out.println("1: Registration");
                 System.out.println("2: Login");
-                System.out.println("3: Exit");
+                System.out.println("3: Exit\n");
                 response = 0;
 
                 while(response < 1 || response > 3) {
@@ -113,7 +114,7 @@ public class ServiceProviderModule {
             newServiceProviderEntity.setPassword(scanner.nextLine().trim());
             
             newServiceProviderEntity.setAvgRating(0);
-            newServiceProviderEntity.setStatus("PENDING");
+            newServiceProviderEntity.setStatus(ServiceProviderStatusEnum.PENDING);
             serviceProviderEntitySessionBeanRemote.addNewServiceProvider(newServiceProviderEntity);
             
         } catch (InputMismatchException ex) {
@@ -152,7 +153,7 @@ public class ServiceProviderModule {
                 System.out.println("2: Edit Profile");
                 System.out.println("3: View Appointments");
                 System.out.println("4: Cancel Appointments");
-                System.out.println("5: Logout");
+                System.out.println("5: Logout\n");
                 response = 0;
                 
                 while(response < 1 || response > 5) {
