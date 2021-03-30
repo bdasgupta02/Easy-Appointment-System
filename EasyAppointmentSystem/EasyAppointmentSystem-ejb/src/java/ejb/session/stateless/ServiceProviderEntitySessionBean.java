@@ -15,6 +15,7 @@ import javax.persistence.Query;
 import util.enumeration.ServiceProviderStatusEnum;
 import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
+import util.exception.ServiceProviderAlreadyBlockedException;
 import util.exception.ServiceProviderNotFoundException;
 
 @Stateless
@@ -144,7 +145,12 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     }
     
     @Override
-    public void updateServiceProviderStatus(ServiceProviderEntity serviceProviderEntity, ServiceProviderStatusEnum status) {
+    public void updateServiceProviderStatus(ServiceProviderEntity serviceProviderEntity, ServiceProviderStatusEnum status) throws ServiceProviderAlreadyBlockedException {
+        
+        if (serviceProviderEntity.getStatus() == status) {
+            throw new ServiceProviderAlreadyBlockedException("Error: Service provider already blocked!");
+        }
+        
         serviceProviderEntity.setStatus(status);
         updateServiceProviderEntity(serviceProviderEntity);
     }

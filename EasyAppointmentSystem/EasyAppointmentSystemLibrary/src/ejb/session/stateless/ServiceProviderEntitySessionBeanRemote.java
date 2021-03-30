@@ -11,6 +11,7 @@ import java.util.List;
 import util.enumeration.ServiceProviderStatusEnum;
 import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
+import util.exception.ServiceProviderAlreadyBlockedException;
 import util.exception.ServiceProviderNotFoundException;
 
 public interface ServiceProviderEntitySessionBeanRemote {
@@ -33,5 +34,5 @@ public interface ServiceProviderEntitySessionBeanRemote {
     
     public List<ServiceProviderEntity> retrieveAllPendingServiceProviders();
     
-    public void updateServiceProviderStatus(ServiceProviderEntity serviceProviderEntity, ServiceProviderStatusEnum status);
+    public void updateServiceProviderStatus(ServiceProviderEntity serviceProviderEntity, ServiceProviderStatusEnum status) throws ServiceProviderAlreadyBlockedException;
 }

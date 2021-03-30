@@ -10,6 +10,7 @@ import java.util.Scanner;
 import util.enumeration.ServiceProviderStatusEnum;
 import util.exception.CustomerNotFoundException;
 import util.exception.InvalidLoginException;
+import util.exception.ServiceProviderAlreadyBlockedException;
 import util.exception.ServiceProviderNotFoundException;
 
 public class AdminModule {
@@ -276,7 +277,11 @@ public class AdminModule {
             }
             try {
                 ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
-                serviceProviderEntitySessionBeanRemote.updateServiceProviderStatus(serviceProviderEntity, ServiceProviderStatusEnum.APPROVED);
+                try {
+                    serviceProviderEntitySessionBeanRemote.updateServiceProviderStatus(serviceProviderEntity, ServiceProviderStatusEnum.APPROVED);
+                } catch (ServiceProviderAlreadyBlockedException ex) {
+                    System.out.println(ex.getMessage() + " Please try again.");
+                }
                 System.out.println(serviceProviderEntity.getName() + "'s registration is approved.");
             } catch (ServiceProviderNotFoundException ex) {
                 System.out.println(ex.getMessage());
@@ -316,10 +321,12 @@ public class AdminModule {
                 System.out.println("Error: Invalid input value! Please enter the correct input.");
             }
             try {
-                
-                // NEED TO CHECK IF THE SP IS ALREADY BLOCKED
                 ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
-                serviceProviderEntitySessionBeanRemote.updateServiceProviderStatus(serviceProviderEntity, ServiceProviderStatusEnum.BLOCKED);
+                try {
+                    serviceProviderEntitySessionBeanRemote.updateServiceProviderStatus(serviceProviderEntity, ServiceProviderStatusEnum.BLOCKED);
+                } catch (ServiceProviderAlreadyBlockedException ex) {
+                    System.out.println(ex.getMessage() + " Please try again.");
+                }
                 System.out.println(serviceProviderEntity.getName() + "'s registration is approved.");
             } catch (ServiceProviderNotFoundException ex) {
                 System.out.println(ex.getMessage());
