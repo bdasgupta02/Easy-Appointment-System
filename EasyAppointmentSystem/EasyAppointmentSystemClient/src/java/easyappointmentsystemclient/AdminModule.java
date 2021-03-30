@@ -277,11 +277,7 @@ public class AdminModule {
             }
             try {
                 ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
-                try {
-                    serviceProviderEntitySessionBeanRemote.updateServiceProviderStatus(serviceProviderEntity, ServiceProviderStatusEnum.APPROVED);
-                } catch (ServiceProviderAlreadyBlockedException ex) {
-                    System.out.println(ex.getMessage() + " Please try again.");
-                }
+                serviceProviderEntitySessionBeanRemote.approveServiceProviderStatus(serviceProviderEntity);
                 System.out.println(serviceProviderEntity.getName() + "'s registration is approved.");
             } catch (ServiceProviderNotFoundException ex) {
                 System.out.println(ex.getMessage());
@@ -323,7 +319,7 @@ public class AdminModule {
             try {
                 ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
                 try {
-                    serviceProviderEntitySessionBeanRemote.updateServiceProviderStatus(serviceProviderEntity, ServiceProviderStatusEnum.BLOCKED);
+                    serviceProviderEntitySessionBeanRemote.blockServiceProviderStatus(serviceProviderEntity);
                 } catch (ServiceProviderAlreadyBlockedException ex) {
                     System.out.println(ex.getMessage() + " Please try again.");
                 }

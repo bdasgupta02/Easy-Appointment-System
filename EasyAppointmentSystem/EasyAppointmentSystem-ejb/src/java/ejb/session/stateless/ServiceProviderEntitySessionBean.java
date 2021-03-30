@@ -145,13 +145,19 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     }
     
     @Override
-    public void updateServiceProviderStatus(ServiceProviderEntity serviceProviderEntity, ServiceProviderStatusEnum status) throws ServiceProviderAlreadyBlockedException {
+    public void approveServiceProviderStatus(ServiceProviderEntity serviceProviderEntity) {
+        serviceProviderEntity.setStatus(ServiceProviderStatusEnum.APPROVED);
+        updateServiceProviderEntity(serviceProviderEntity);
+    }
+    
+    @Override
+    public void blockServiceProviderStatus(ServiceProviderEntity serviceProviderEntity) throws ServiceProviderAlreadyBlockedException {
         
-        if (serviceProviderEntity.getStatus() == status) {
+        if (serviceProviderEntity.getStatus() == ServiceProviderStatusEnum.BLOCKED) {
             throw new ServiceProviderAlreadyBlockedException("Error: Service provider already blocked!");
         }
         
-        serviceProviderEntity.setStatus(status);
+        serviceProviderEntity.setStatus(ServiceProviderStatusEnum.BLOCKED);
         updateServiceProviderEntity(serviceProviderEntity);
     }
 }

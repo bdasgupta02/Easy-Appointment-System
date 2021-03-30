@@ -32,7 +32,9 @@ public interface ServiceProviderEntitySessionBeanLocal {
 
     public List<ServiceProviderEntity> retrieveAllServiceProviders();
 
-    public List<ServiceProviderEntity> retrieveAllPendingServiceProviders();
+    public List<ServiceProviderEntity> retrieveAllPendingServiceProviders();   
 
-    public void updateServiceProviderStatus(ServiceProviderEntity serviceProviderEntity, ServiceProviderStatusEnum status) throws ServiceProviderAlreadyBlockedException;   
+    public void approveServiceProviderStatus(ServiceProviderEntity serviceProviderEntity);
+
+    public void blockServiceProviderStatus(ServiceProviderEntity serviceProviderEntity) throws ServiceProviderAlreadyBlockedException;
 }
