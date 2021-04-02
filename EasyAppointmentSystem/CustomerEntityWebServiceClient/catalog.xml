@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="http://localhost:8080/CustomerEntityWebService/CustomerEntityWebService?wsdl" uri="xml-resources/web-service-references/CustomerEntityWebService/wsdl/localhost_8080/CustomerEntityWebService/CustomerEntityWebService.wsdl"/>
+    <system systemId="http://localhost:8080/CustomerEntityWebService/CustomerEntityWebService?xsd=1" uri="xml-resources/web-service-references/CustomerEntityWebService/wsdl/localhost_8080/CustomerEntityWebService/CustomerEntityWebService.xsd_1.xsd"/>
+</catalog>

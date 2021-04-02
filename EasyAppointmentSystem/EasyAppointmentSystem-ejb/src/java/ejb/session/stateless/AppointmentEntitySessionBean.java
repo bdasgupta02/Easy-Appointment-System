@@ -35,10 +35,10 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     @Override
     public Long createAppointmentEntity(AppointmentEntity newAppointmentEntity) throws EntityAttributeNullException {
         
-        // doesn't check end time
         if (newAppointmentEntity.getAppointmentNum() != null && newAppointmentEntity.getCustomerEntity() != null &&
-                newAppointmentEntity.getDate() != null && newAppointmentEntity.getStartTime() != null &&
-                newAppointmentEntity.getServiceProviderEntity() != null) {
+                newAppointmentEntity.getStartTimestamp() != null &&
+                newAppointmentEntity.getServiceProviderEntity() != null &&
+                newAppointmentEntity.getEndTimestamp() != null) {
             em.persist(newAppointmentEntity);
             em.flush();
             return newAppointmentEntity.getAppointmentId();
@@ -60,10 +60,10 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     
     @Override
     public void updateAppointmentEntity(AppointmentEntity appointmentEntity) throws EntityAttributeNullException {
-        // doesn't check end time
         if (appointmentEntity.getAppointmentNum() != null && appointmentEntity.getCustomerEntity() != null &&
-                appointmentEntity.getDate() != null && appointmentEntity.getStartTime() != null &&
-                appointmentEntity.getServiceProviderEntity() != null) {
+                appointmentEntity.getStartTimestamp() != null &&
+                appointmentEntity.getServiceProviderEntity() != null &&
+                appointmentEntity.getEndTimestamp() != null) {
             em.merge(appointmentEntity);
         } else {
             throw new EntityAttributeNullException("Error: Some values are null, update of Appointment aborted.");

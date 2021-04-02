@@ -1,0 +1,259 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI (http://jax-ws.java.net). RI's version is Metro/2.4.3 (RELEASE-2.4.3-ad3323c; 2019-01-21T17:46:06+0000) JAXWS-RI/2.3.2 JAXWS-API/2.3.2 JAXB-RI/2.3.2 JAXB-API/2.3.2 git-revision#unknown. --><xs:schema xmlns:tns="http://ws.session.ejb/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://ws.session.ejb/">
+
+<xs:element name="AppointmentCancellationException" type="tns:AppointmentCancellationException"/>
+
+<xs:element name="CustomerNotFoundException" type="tns:CustomerNotFoundException"/>
+
+<xs:element name="DateProcessingException" type="tns:DateProcessingException"/>
+
+<xs:element name="EntityAttributeNullException" type="tns:EntityAttributeNullException"/>
+
+<xs:element name="RatingWithoutAppointmentException" type="tns:RatingWithoutAppointmentException"/>
+
+<xs:element name="ServiceProviderNotFoundException" type="tns:ServiceProviderNotFoundException"/>
+
+<xs:element name="cancelAppointment" type="tns:cancelAppointment"/>
+
+<xs:element name="cancelAppointmentResponse" type="tns:cancelAppointmentResponse"/>
+
+<xs:element name="createAppointmentEntity" type="tns:createAppointmentEntity"/>
+
+<xs:element name="createAppointmentEntityResponse" type="tns:createAppointmentEntityResponse"/>
+
+<xs:element name="createCustomerEntity" type="tns:createCustomerEntity"/>
+
+<xs:element name="createCustomerEntityResponse" type="tns:createCustomerEntityResponse"/>
+
+<xs:element name="freeSlotsPerServiceProviderAndDate" type="tns:freeSlotsPerServiceProviderAndDate"/>
+
+<xs:element name="freeSlotsPerServiceProviderAndDateResponse" type="tns:freeSlotsPerServiceProviderAndDateResponse"/>
+
+<xs:element name="login" type="tns:login"/>
+
+<xs:element name="loginResponse" type="tns:loginResponse"/>
+
+<xs:element name="rateServiceProvider" type="tns:rateServiceProvider"/>
+
+<xs:element name="rateServiceProviderResponse" type="tns:rateServiceProviderResponse"/>
+
+<xs:element name="retrieveAppointmentsByCustomerId" type="tns:retrieveAppointmentsByCustomerId"/>
+
+<xs:element name="retrieveAppointmentsByCustomerIdResponse" type="tns:retrieveAppointmentsByCustomerIdResponse"/>
+
+<xs:element name="searchApprovedServiceProviders" type="tns:searchApprovedServiceProviders"/>
+
+<xs:element name="searchApprovedServiceProvidersResponse" type="tns:searchApprovedServiceProvidersResponse"/>
+
+<xs:element name="searchServiceProvidersByCategoryCityDate" type="tns:searchServiceProvidersByCategoryCityDate"/>
+
+<xs:element name="searchServiceProvidersByCategoryCityDateResponse" type="tns:searchServiceProvidersByCategoryCityDateResponse"/>
+
+<xs:complexType name="searchApprovedServiceProviders">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="searchApprovedServiceProvidersResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:serviceProviderEntity" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="serviceProviderEntity">
+<xs:sequence>
+<xs:element name="avgRating" type="xs:float"/>
+<xs:element name="bizAddress" type="xs:string" minOccurs="0"/>
+<xs:element name="bizRegNum" type="xs:string" minOccurs="0"/>
+<xs:element name="city" type="xs:string" minOccurs="0"/>
+<xs:element name="email" type="xs:string" minOccurs="0"/>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
+<xs:element name="password" type="xs:string" minOccurs="0"/>
+<xs:element name="phoneNum" type="xs:string" minOccurs="0"/>
+<xs:element name="serviceProviderId" type="xs:long" minOccurs="0"/>
+<xs:element name="status" type="tns:serviceProviderStatusEnum" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveAppointmentsByCustomerId">
+<xs:sequence>
+<xs:element name="arg0" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveAppointmentsByCustomerIdResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:appointmentEntity" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="appointmentEntity">
+<xs:sequence>
+<xs:element name="appointmentId" type="xs:long" minOccurs="0"/>
+<xs:element name="appointmentNum" type="xs:string" minOccurs="0"/>
+<xs:element name="cancelled" type="xs:boolean" minOccurs="0"/>
+<xs:element name="customerEntity" type="tns:customerEntity" minOccurs="0"/>
+<xs:element name="endTimestamp" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="serviceProviderEntity" type="tns:serviceProviderEntity" minOccurs="0"/>
+<xs:element name="startTimestamp" type="xs:dateTime" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="customerEntity">
+<xs:sequence>
+<xs:element name="address" type="xs:string" minOccurs="0"/>
+<xs:element name="age" type="xs:int" minOccurs="0"/>
+<xs:element name="appointments" type="tns:appointmentEntity" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="city" type="xs:string" minOccurs="0"/>
+<xs:element name="customerId" type="xs:long" minOccurs="0"/>
+<xs:element name="email" type="xs:string" minOccurs="0"/>
+<xs:element name="firstName" type="xs:string" minOccurs="0"/>
+<xs:element name="gender" type="xs:unsignedShort" minOccurs="0"/>
+<xs:element name="identityNo" type="xs:string" minOccurs="0"/>
+<xs:element name="lastName" type="xs:string" minOccurs="0"/>
+<xs:element name="password" type="xs:string" minOccurs="0"/>
+<xs:element name="phone" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="CustomerNotFoundException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="cancelAppointment">
+<xs:sequence>
+<xs:element name="arg0" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="cancelAppointmentResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="AppointmentCancellationException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createAppointmentEntity">
+<xs:sequence>
+<xs:element name="arg0" type="xs:long" minOccurs="0"/>
+<xs:element name="arg1" type="xs:long" minOccurs="0"/>
+<xs:element name="arg2" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="arg3" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="arg4" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createAppointmentEntityResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="ServiceProviderNotFoundException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="rateServiceProvider">
+<xs:sequence>
+<xs:element name="arg0" type="xs:long" minOccurs="0"/>
+<xs:element name="arg1" type="xs:long" minOccurs="0"/>
+<xs:element name="arg2" type="xs:int" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="rateServiceProviderResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="RatingWithoutAppointmentException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="EntityAttributeNullException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="freeSlotsPerServiceProviderAndDate">
+<xs:sequence>
+<xs:element name="arg0" type="xs:long" minOccurs="0"/>
+<xs:element name="arg1" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="freeSlotsPerServiceProviderAndDateResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:dateTime" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="DateProcessingException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="login">
+<xs:sequence>
+<xs:element name="arg0" type="xs:string" minOccurs="0"/>
+<xs:element name="arg1" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="loginResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:customerEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="searchServiceProvidersByCategoryCityDate">
+<xs:sequence>
+<xs:element name="arg0" type="xs:long" minOccurs="0"/>
+<xs:element name="arg1" type="xs:string" minOccurs="0"/>
+<xs:element name="arg2" type="xs:dateTime" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="searchServiceProvidersByCategoryCityDateResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:serviceProviderEntity" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createCustomerEntity">
+<xs:sequence>
+<xs:element name="arg0" type="xs:string" minOccurs="0"/>
+<xs:element name="arg1" type="xs:string" minOccurs="0"/>
+<xs:element name="arg2" type="xs:string" minOccurs="0"/>
+<xs:element name="arg3" type="xs:string" minOccurs="0"/>
+<xs:element name="arg4" type="xs:unsignedShort" minOccurs="0"/>
+<xs:element name="arg5" type="xs:int" minOccurs="0"/>
+<xs:element name="arg6" type="xs:string" minOccurs="0"/>
+<xs:element name="arg7" type="xs:string" minOccurs="0"/>
+<xs:element name="arg8" type="xs:long" minOccurs="0"/>
+<xs:element name="arg9" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createCustomerEntityResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:simpleType name="serviceProviderStatusEnum">
+<xs:restriction base="xs:string">
+<xs:enumeration value="PENDING"/>
+<xs:enumeration value="APPROVED"/>
+<xs:enumeration value="BLOCKED"/>
+</xs:restriction>
+</xs:simpleType>
+</xs:schema>

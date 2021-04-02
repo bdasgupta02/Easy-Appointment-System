@@ -244,7 +244,11 @@ public class ServiceProviderModule {
         if (city.isEmpty() && businessAdd.isEmpty() && email.isEmpty() && phoneNum.isEmpty() && password.isEmpty()) {
             System.out.println("No changes detected. Profile has not been updated!\n");
         } else {
-            serviceProviderEntitySessionBeanRemote.updateServiceProviderEntity(currentServiceProvider);
+            try {
+                serviceProviderEntitySessionBeanRemote.updateServiceProviderEntity(currentServiceProvider);
+            } catch (EntityAttributeNullException ex) {
+                System.out.println(ex.getMessage());
+            }
             System.out.println("Profile has been updated successfully!\n");
         }
     }

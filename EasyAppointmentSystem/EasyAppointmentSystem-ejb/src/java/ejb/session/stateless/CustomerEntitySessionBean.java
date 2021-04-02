@@ -2,6 +2,7 @@ package ejb.session.stateless;
 
 import entity.AppointmentEntity;
 import entity.CustomerEntity;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Local;
@@ -63,6 +64,7 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
                 && customerEntity.getEmail() != null && customerEntity.getCity() != null
                 && customerEntity.getPassword() != null && customerEntity.getPhone() != null) {
             em.merge(customerEntity);
+            em.flush();
         } else {
             throw new EntityAttributeNullException("Some values are null! Update aborted.");
         }
@@ -92,5 +94,31 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
         // this method should only be called after displaying a list by the prev method        
         appointmentEntitySessionBeanLocal.cancelAppointment(appointmentId);
         
+    }
+    
+    @Override
+    public CustomerEntity retrieveCustomerEntityByEmail(String email) throws CustomerNotFoundException {
+        Query query = em.createQuery("SELECT c FROM CustomerEntity c WHERE c.email = :inEmail");
+        query.setParameter("inEmail", email);
+        
+        try {
+            return (CustomerEntity) query.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            throw new CustomerNotFoundException("Error: Customer with email: " + email + " does not exist!");
+        }
+    }
+    
+    @Override
+    public Boolean checkForAppointmentWithServiceProvider(Long serviceProviderId, Long customerId) throws CustomerNotFoundException {
+        List<AppointmentEntity> appointments = retrieveAppointmentsByCustomerId(customerId);
+        appointments.size();
+        for (AppointmentEntity a:appointments) {
+            
+            // checking if the appointment with service provider exists and has already happened
+            if (a.getServiceProviderEntity().getServiceProviderId() == serviceProviderId && a.getEndTimestamp().before(new Date(System.currentTimeMillis()))) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -1,14 +1,15 @@
 package entity;
 
 import java.io.Serializable;
-import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import util.enumeration.ServiceProviderStatusEnum;
 
@@ -42,6 +43,7 @@ public class ServiceProviderEntity implements Serializable {
     private float avgRating;
     
     @OneToMany(mappedBy = "serviceProviderEntity")
+    @JoinColumn(nullable = false)
     private List<AppointmentEntity> appointments;
 
     public ServiceProviderEntity() {
@@ -185,5 +187,4 @@ public class ServiceProviderEntity implements Serializable {
     public void addAppointment(AppointmentEntity newAppointment) {
         this.appointments.add(newAppointment);
     }
-    
 }

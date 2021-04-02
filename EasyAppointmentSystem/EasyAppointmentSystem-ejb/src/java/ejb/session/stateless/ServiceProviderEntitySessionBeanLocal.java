@@ -7,7 +7,9 @@ package ejb.session.stateless;
 
 import entity.AppointmentEntity;
 import entity.ServiceProviderEntity;
+import java.util.Date;
 import java.util.List;
+import util.exception.DateProcessingException;
 import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
 import util.exception.ServiceProviderAlreadyBlockedException;
@@ -19,7 +21,7 @@ public interface ServiceProviderEntitySessionBeanLocal {
     
     public ServiceProviderEntity retrieveServiceProviderEntityById(Long serviceProviderId) throws ServiceProviderNotFoundException;
     
-    public void updateServiceProviderEntity(ServiceProviderEntity updatedServiceProviderEntity);
+    public void updateServiceProviderEntity(ServiceProviderEntity serviceProviderEntity) throws EntityAttributeNullException;
     
     public void deleteServiceProviderEntity(Long serviceProviderId) throws ServiceProviderNotFoundException;
     
@@ -33,7 +35,13 @@ public interface ServiceProviderEntitySessionBeanLocal {
 
     public List<ServiceProviderEntity> retrieveAllPendingServiceProviders();   
 
-    public void approveServiceProviderStatus(ServiceProviderEntity serviceProviderEntity);
+    public void approveServiceProviderStatus(ServiceProviderEntity serviceProviderEntity) throws EntityAttributeNullException;
 
-    public void blockServiceProviderStatus(ServiceProviderEntity serviceProviderEntity) throws ServiceProviderAlreadyBlockedException;
+    public void blockServiceProviderStatus(ServiceProviderEntity serviceProviderEntity) throws ServiceProviderAlreadyBlockedException, EntityAttributeNullException;
+
+    public List<ServiceProviderEntity> retrieveAllApprovedServiceProviders();
+
+    public List<ServiceProviderEntity> retrieveSearchResult(Long categoryId, String city, Date date);
+
+    public List<Date> nextSlotFreePerDate(Long serviceProviderId, String date) throws DateProcessingException, ServiceProviderNotFoundException;
 }

@@ -5,10 +5,13 @@ import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import entity.AdminEntity;
 import entity.AppointmentEntity;
 import entity.ServiceProviderEntity;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Scanner;
 import util.enumeration.ServiceProviderStatusEnum;
 import util.exception.CustomerNotFoundException;
+import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
 import util.exception.ServiceProviderAlreadyBlockedException;
 import util.exception.ServiceProviderNotFoundException;
@@ -147,6 +150,12 @@ public class AdminModule {
         boolean viewed = false;
         List<AppointmentEntity> appointments;
 
+        // date and time formatting
+        String datePattern = "yyyy-MM-dd";
+        String timePattern = "HH:mm";
+        DateFormat dateFormat = new SimpleDateFormat(datePattern);
+        DateFormat timeFormat = new SimpleDateFormat(timePattern);
+        
         while (true) {
             System.out.print("Enter customer Id> ");
 
@@ -167,8 +176,8 @@ public class AdminModule {
                         for (AppointmentEntity a : appointments) {
                             System.out.printf("%20s%15s%15s%15s%15s\n", a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(),
                                     a.getServiceProviderEntity().getBizCategory(),
-                                    a.getDate(),
-                                    a.getStartTime(),
+                                    dateFormat.format(a.getStartTimestamp()),
+                                    timeFormat.format(a.getStartTimestamp()),
                                     a.getAppointmentNum());
                         }
 
@@ -190,6 +199,12 @@ public class AdminModule {
         long serviceProviderId = 0;
         boolean viewed = false;
         List<AppointmentEntity> appointments;
+        
+        // date and time formatting
+        String datePattern = "yyyy-MM-dd";
+        String timePattern = "HH:mm";
+        DateFormat dateFormat = new SimpleDateFormat(datePattern);
+        DateFormat timeFormat = new SimpleDateFormat(timePattern);
 
         while (true) {
             System.out.print("Enter service provider Id> ");
@@ -210,8 +225,8 @@ public class AdminModule {
                         for (AppointmentEntity a : appointments) {
                             System.out.printf("%20s%15s%15s%15s%15s\n", a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(),
                                     a.getServiceProviderEntity().getBizCategory(),
-                                    a.getDate(),
-                                    a.getStartTime(),
+                                    dateFormat.format(a.getStartTimestamp()),
+                                    timeFormat.format(a.getStartTimestamp()),
                                     a.getAppointmentNum());
                         }
                         System.out.println("Enter 0 to go back to the previous menu.\n");
@@ -294,7 +309,7 @@ public class AdminModule {
                         ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
                         serviceProviderEntitySessionBeanRemote.approveServiceProviderStatus(serviceProviderEntity);
                         System.out.println(serviceProviderEntity.getName() + "'s registration is approved.");
-                    } catch (ServiceProviderNotFoundException ex) {
+                    } catch (EntityAttributeNullException | ServiceProviderNotFoundException ex) {
                         System.out.println(ex.getMessage());
                     }
                 }
@@ -341,8 +356,8 @@ public class AdminModule {
                         ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
                         try {
                             serviceProviderEntitySessionBeanRemote.blockServiceProviderStatus(serviceProviderEntity);
-                        } catch (ServiceProviderAlreadyBlockedException ex) {
-                            System.out.println(ex.getMessage() + " Please try again.");
+                        } catch (EntityAttributeNullException | ServiceProviderAlreadyBlockedException ex) {
+                            System.out.println(ex.getMessage());
                         }
                         System.out.println(serviceProviderEntity.getName() + "'s registration is approved.");
                     } catch (ServiceProviderNotFoundException ex) {

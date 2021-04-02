@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -29,15 +30,19 @@ public class AppointmentEntity implements Serializable {
     @JoinColumn(nullable = false)
     private ServiceProviderEntity serviceProviderEntity;
     
-    @Column(nullable=false)
+    // it's much easier to process and more logical if start and ends are
+    // timestamps instead of time, with an extra date field.
+    
+    /*@Column(nullable=false)
     @Temporal(TemporalType.DATE)
-    private Date date;
+    private Date date;*/
+    
     @Column(nullable=false)
-    @Temporal(TemporalType.TIME)
-    private Date startTime;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date startTimestamp;
     @Column(nullable=false)
-    @Temporal(TemporalType.TIME)
-    private Date endTime;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date endTimestamp;
     @Column(nullable=false)
     private Boolean cancelled;
     
@@ -47,13 +52,12 @@ public class AppointmentEntity implements Serializable {
     public AppointmentEntity() {
     }
 
-    public AppointmentEntity(CustomerEntity customerEntity, ServiceProviderEntity serviceProviderEntity, Date date, Date startTime, Date endTime, String appointmentNum) {
+    public AppointmentEntity(CustomerEntity customerEntity, ServiceProviderEntity serviceProviderEntity, Date startTime, Date endTime, String appointmentNum) {
         this();
         this.customerEntity = customerEntity;
         this.serviceProviderEntity = serviceProviderEntity;
-        this.date = date;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.startTimestamp = startTime;
+        this.endTimestamp = endTime;
         this.appointmentNum = appointmentNum;
         this.cancelled = false;
     }
@@ -117,28 +121,20 @@ public class AppointmentEntity implements Serializable {
         this.serviceProviderEntity = serviceProviderEntity;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getStartTimestamp() {
+        return startTimestamp;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setStartTimestamp(Date startTimestamp) {
+        this.startTimestamp = startTimestamp;
     }
 
-    public Date getStartTime() {
-        return startTime;
+    public Date getEndTimestamp() {
+        return endTimestamp;
     }
 
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
-
-    public Date getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
+    public void setEndTimestamp(Date endTimestamp) {
+        this.endTimestamp = endTimestamp;
     }
 
     public String getAppointmentNum() {

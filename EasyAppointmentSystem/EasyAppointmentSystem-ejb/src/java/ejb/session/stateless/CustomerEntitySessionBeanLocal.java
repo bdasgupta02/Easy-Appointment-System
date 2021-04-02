@@ -25,5 +25,9 @@ public interface CustomerEntitySessionBeanLocal {
     public List<AppointmentEntity> retrieveAppointmentsByCustomerId(Long customerId) throws CustomerNotFoundException;
 
     public void cancelAppointment(Long appointmentId) throws AppointmentCancellationException;
+
+    public CustomerEntity retrieveCustomerEntityByEmail(String email) throws CustomerNotFoundException;
+
+    public Boolean checkForAppointmentWithServiceProvider(Long serviceProviderId, Long customerId) throws CustomerNotFoundException;
     
 }

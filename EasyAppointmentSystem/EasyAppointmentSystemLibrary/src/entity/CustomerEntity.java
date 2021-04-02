@@ -13,6 +13,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -42,6 +43,15 @@ public class CustomerEntity implements Serializable {
     private Long phone;
     @Column(nullable=false)
     private String password;
+    
+    @OneToMany(mappedBy = "customerEntity")
+    @JoinColumn(nullable = false)
+    private List<RatingEntity> ratings;
+    
+    @OneToMany(mappedBy = "customerEntity")
+    @JoinColumn(nullable = false)
+    private List<AppointmentEntity> appointments;
+    
 
     public List<AppointmentEntity> getAppointments() {
         return appointments;
@@ -51,8 +61,7 @@ public class CustomerEntity implements Serializable {
         this.appointments = appointments;
     }
     
-    @OneToMany(mappedBy = "customerEntity")
-    private List<AppointmentEntity> appointments;
+    
 
     public CustomerEntity(String identityNo, String firstName, String lastName, String address, Character gender, Integer age, String city, String email, Long phone, String password) {
         this();
