@@ -214,20 +214,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="searchServiceProvidersByCategoryCityDate">
-<xs:sequence>
-<xs:element name="arg0" type="xs:long" minOccurs="0"/>
-<xs:element name="arg1" type="xs:string" minOccurs="0"/>
-<xs:element name="arg2" type="xs:dateTime" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="searchServiceProvidersByCategoryCityDateResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:serviceProviderEntity" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="createCustomerEntity">
 <xs:sequence>
 <xs:element name="arg0" type="xs:string" minOccurs="0"/>
@@ -246,6 +232,20 @@
 <xs:complexType name="createCustomerEntityResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="searchServiceProvidersByCategoryCityDate">
+<xs:sequence>
+<xs:element name="arg0" type="xs:long" minOccurs="0"/>
+<xs:element name="arg1" type="xs:string" minOccurs="0"/>
+<xs:element name="arg2" type="xs:dateTime" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="searchServiceProvidersByCategoryCityDateResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:serviceProviderEntity" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 

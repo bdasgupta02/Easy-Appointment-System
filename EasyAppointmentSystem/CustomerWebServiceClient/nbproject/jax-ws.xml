@@ -5,7 +5,7 @@
     <client name="CustomerEntityWebService">
       <wsdl-url>http://localhost:8080/CustomerEntityWebService/CustomerEntityWebService?wsdl</wsdl-url>
       <local-wsdl-file>localhost_8080/CustomerEntityWebService/CustomerEntityWebService.wsdl</local-wsdl-file>
-      <package-name>ejb.session.ws</package-name>
+      <package-name forceReplace="true">ws.client</package-name>
       <catalog-file>catalog.xml</catalog-file>
       <wsimport-options>
         <wsimport-option>
@@ -31,6 +31,10 @@
         <wsimport-option>
           <wsimport-option-name>xendorsed</wsimport-option-name>
           <wsimport-option-value>true</wsimport-option-value>
+        </wsimport-option>
+        <wsimport-option>
+          <wsimport-option-name>package</wsimport-option-name>
+          <wsimport-option-value>ws.client</wsimport-option-value>
         </wsimport-option>
       </wsimport-options>
     </client>

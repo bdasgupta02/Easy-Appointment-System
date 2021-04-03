@@ -13,24 +13,6 @@
 <message name="CustomerNotFoundException">
 <part name="fault" element="tns:CustomerNotFoundException"/>
 </message>
-<message name="freeSlotsPerServiceProviderAndDate">
-<part name="parameters" element="tns:freeSlotsPerServiceProviderAndDate"/>
-</message>
-<message name="freeSlotsPerServiceProviderAndDateResponse">
-<part name="parameters" element="tns:freeSlotsPerServiceProviderAndDateResponse"/>
-</message>
-<message name="DateProcessingException">
-<part name="fault" element="tns:DateProcessingException"/>
-</message>
-<message name="ServiceProviderNotFoundException">
-<part name="fault" element="tns:ServiceProviderNotFoundException"/>
-</message>
-<message name="searchServiceProvidersByCategoryCityDate">
-<part name="parameters" element="tns:searchServiceProvidersByCategoryCityDate"/>
-</message>
-<message name="searchServiceProvidersByCategoryCityDateResponse">
-<part name="parameters" element="tns:searchServiceProvidersByCategoryCityDateResponse"/>
-</message>
 <message name="cancelAppointment">
 <part name="parameters" element="tns:cancelAppointment"/>
 </message>
@@ -40,11 +22,26 @@
 <message name="AppointmentCancellationException">
 <part name="fault" element="tns:AppointmentCancellationException"/>
 </message>
-<message name="createAppointmentEntity">
-<part name="parameters" element="tns:createAppointmentEntity"/>
+<message name="searchApprovedServiceProviders">
+<part name="parameters" element="tns:searchApprovedServiceProviders"/>
 </message>
-<message name="createAppointmentEntityResponse">
-<part name="parameters" element="tns:createAppointmentEntityResponse"/>
+<message name="searchApprovedServiceProvidersResponse">
+<part name="parameters" element="tns:searchApprovedServiceProvidersResponse"/>
+</message>
+<message name="createCustomerEntity">
+<part name="parameters" element="tns:createCustomerEntity"/>
+</message>
+<message name="createCustomerEntityResponse">
+<part name="parameters" element="tns:createCustomerEntityResponse"/>
+</message>
+<message name="EntityAttributeNullException">
+<part name="fault" element="tns:EntityAttributeNullException"/>
+</message>
+<message name="retrieveAppointmentsByCustomerId">
+<part name="parameters" element="tns:retrieveAppointmentsByCustomerId"/>
+</message>
+<message name="retrieveAppointmentsByCustomerIdResponse">
+<part name="parameters" element="tns:retrieveAppointmentsByCustomerIdResponse"/>
 </message>
 <message name="rateServiceProvider">
 <part name="parameters" element="tns:rateServiceProvider"/>
@@ -55,26 +52,29 @@
 <message name="RatingWithoutAppointmentException">
 <part name="fault" element="tns:RatingWithoutAppointmentException"/>
 </message>
-<message name="EntityAttributeNullException">
-<part name="fault" element="tns:EntityAttributeNullException"/>
+<message name="ServiceProviderNotFoundException">
+<part name="fault" element="tns:ServiceProviderNotFoundException"/>
 </message>
-<message name="createCustomerEntity">
-<part name="parameters" element="tns:createCustomerEntity"/>
+<message name="createAppointmentEntity">
+<part name="parameters" element="tns:createAppointmentEntity"/>
 </message>
-<message name="createCustomerEntityResponse">
-<part name="parameters" element="tns:createCustomerEntityResponse"/>
+<message name="createAppointmentEntityResponse">
+<part name="parameters" element="tns:createAppointmentEntityResponse"/>
 </message>
-<message name="retrieveAppointmentsByCustomerId">
-<part name="parameters" element="tns:retrieveAppointmentsByCustomerId"/>
+<message name="searchServiceProvidersByCategoryCityDate">
+<part name="parameters" element="tns:searchServiceProvidersByCategoryCityDate"/>
 </message>
-<message name="retrieveAppointmentsByCustomerIdResponse">
-<part name="parameters" element="tns:retrieveAppointmentsByCustomerIdResponse"/>
+<message name="searchServiceProvidersByCategoryCityDateResponse">
+<part name="parameters" element="tns:searchServiceProvidersByCategoryCityDateResponse"/>
 </message>
-<message name="searchApprovedServiceProviders">
-<part name="parameters" element="tns:searchApprovedServiceProviders"/>
+<message name="freeSlotsPerServiceProviderAndDate">
+<part name="parameters" element="tns:freeSlotsPerServiceProviderAndDate"/>
 </message>
-<message name="searchApprovedServiceProvidersResponse">
-<part name="parameters" element="tns:searchApprovedServiceProvidersResponse"/>
+<message name="freeSlotsPerServiceProviderAndDateResponse">
+<part name="parameters" element="tns:freeSlotsPerServiceProviderAndDateResponse"/>
+</message>
+<message name="DateProcessingException">
+<part name="fault" element="tns:DateProcessingException"/>
 </message>
 <portType name="CustomerEntityWebService">
 <operation name="login">
@@ -82,34 +82,14 @@
 <output wsam:Action="http://ws.session.ejb/CustomerEntityWebService/loginResponse" message="tns:loginResponse"/>
 <fault message="tns:CustomerNotFoundException" name="CustomerNotFoundException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/login/Fault/CustomerNotFoundException"/>
 </operation>
-<operation name="freeSlotsPerServiceProviderAndDate">
-<input wsam:Action="http://ws.session.ejb/CustomerEntityWebService/freeSlotsPerServiceProviderAndDateRequest" message="tns:freeSlotsPerServiceProviderAndDate"/>
-<output wsam:Action="http://ws.session.ejb/CustomerEntityWebService/freeSlotsPerServiceProviderAndDateResponse" message="tns:freeSlotsPerServiceProviderAndDateResponse"/>
-<fault message="tns:DateProcessingException" name="DateProcessingException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/freeSlotsPerServiceProviderAndDate/Fault/DateProcessingException"/>
-<fault message="tns:ServiceProviderNotFoundException" name="ServiceProviderNotFoundException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/freeSlotsPerServiceProviderAndDate/Fault/ServiceProviderNotFoundException"/>
-</operation>
-<operation name="searchServiceProvidersByCategoryCityDate">
-<input wsam:Action="http://ws.session.ejb/CustomerEntityWebService/searchServiceProvidersByCategoryCityDateRequest" message="tns:searchServiceProvidersByCategoryCityDate"/>
-<output wsam:Action="http://ws.session.ejb/CustomerEntityWebService/searchServiceProvidersByCategoryCityDateResponse" message="tns:searchServiceProvidersByCategoryCityDateResponse"/>
-</operation>
 <operation name="cancelAppointment">
 <input wsam:Action="http://ws.session.ejb/CustomerEntityWebService/cancelAppointmentRequest" message="tns:cancelAppointment"/>
 <output wsam:Action="http://ws.session.ejb/CustomerEntityWebService/cancelAppointmentResponse" message="tns:cancelAppointmentResponse"/>
 <fault message="tns:AppointmentCancellationException" name="AppointmentCancellationException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/cancelAppointment/Fault/AppointmentCancellationException"/>
 </operation>
-<operation name="createAppointmentEntity">
-<input wsam:Action="http://ws.session.ejb/CustomerEntityWebService/createAppointmentEntityRequest" message="tns:createAppointmentEntity"/>
-<output wsam:Action="http://ws.session.ejb/CustomerEntityWebService/createAppointmentEntityResponse" message="tns:createAppointmentEntityResponse"/>
-<fault message="tns:CustomerNotFoundException" name="CustomerNotFoundException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/createAppointmentEntity/Fault/CustomerNotFoundException"/>
-<fault message="tns:ServiceProviderNotFoundException" name="ServiceProviderNotFoundException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/createAppointmentEntity/Fault/ServiceProviderNotFoundException"/>
-</operation>
-<operation name="rateServiceProvider">
-<input wsam:Action="http://ws.session.ejb/CustomerEntityWebService/rateServiceProviderRequest" message="tns:rateServiceProvider"/>
-<output wsam:Action="http://ws.session.ejb/CustomerEntityWebService/rateServiceProviderResponse" message="tns:rateServiceProviderResponse"/>
-<fault message="tns:RatingWithoutAppointmentException" name="RatingWithoutAppointmentException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/rateServiceProvider/Fault/RatingWithoutAppointmentException"/>
-<fault message="tns:ServiceProviderNotFoundException" name="ServiceProviderNotFoundException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/rateServiceProvider/Fault/ServiceProviderNotFoundException"/>
-<fault message="tns:CustomerNotFoundException" name="CustomerNotFoundException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/rateServiceProvider/Fault/CustomerNotFoundException"/>
-<fault message="tns:EntityAttributeNullException" name="EntityAttributeNullException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/rateServiceProvider/Fault/EntityAttributeNullException"/>
+<operation name="searchApprovedServiceProviders">
+<input wsam:Action="http://ws.session.ejb/CustomerEntityWebService/searchApprovedServiceProvidersRequest" message="tns:searchApprovedServiceProviders"/>
+<output wsam:Action="http://ws.session.ejb/CustomerEntityWebService/searchApprovedServiceProvidersResponse" message="tns:searchApprovedServiceProvidersResponse"/>
 </operation>
 <operation name="createCustomerEntity">
 <input wsam:Action="http://ws.session.ejb/CustomerEntityWebService/createCustomerEntityRequest" message="tns:createCustomerEntity"/>
@@ -121,9 +101,29 @@
 <output wsam:Action="http://ws.session.ejb/CustomerEntityWebService/retrieveAppointmentsByCustomerIdResponse" message="tns:retrieveAppointmentsByCustomerIdResponse"/>
 <fault message="tns:CustomerNotFoundException" name="CustomerNotFoundException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/retrieveAppointmentsByCustomerId/Fault/CustomerNotFoundException"/>
 </operation>
-<operation name="searchApprovedServiceProviders">
-<input wsam:Action="http://ws.session.ejb/CustomerEntityWebService/searchApprovedServiceProvidersRequest" message="tns:searchApprovedServiceProviders"/>
-<output wsam:Action="http://ws.session.ejb/CustomerEntityWebService/searchApprovedServiceProvidersResponse" message="tns:searchApprovedServiceProvidersResponse"/>
+<operation name="rateServiceProvider">
+<input wsam:Action="http://ws.session.ejb/CustomerEntityWebService/rateServiceProviderRequest" message="tns:rateServiceProvider"/>
+<output wsam:Action="http://ws.session.ejb/CustomerEntityWebService/rateServiceProviderResponse" message="tns:rateServiceProviderResponse"/>
+<fault message="tns:RatingWithoutAppointmentException" name="RatingWithoutAppointmentException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/rateServiceProvider/Fault/RatingWithoutAppointmentException"/>
+<fault message="tns:ServiceProviderNotFoundException" name="ServiceProviderNotFoundException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/rateServiceProvider/Fault/ServiceProviderNotFoundException"/>
+<fault message="tns:CustomerNotFoundException" name="CustomerNotFoundException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/rateServiceProvider/Fault/CustomerNotFoundException"/>
+<fault message="tns:EntityAttributeNullException" name="EntityAttributeNullException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/rateServiceProvider/Fault/EntityAttributeNullException"/>
+</operation>
+<operation name="createAppointmentEntity">
+<input wsam:Action="http://ws.session.ejb/CustomerEntityWebService/createAppointmentEntityRequest" message="tns:createAppointmentEntity"/>
+<output wsam:Action="http://ws.session.ejb/CustomerEntityWebService/createAppointmentEntityResponse" message="tns:createAppointmentEntityResponse"/>
+<fault message="tns:CustomerNotFoundException" name="CustomerNotFoundException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/createAppointmentEntity/Fault/CustomerNotFoundException"/>
+<fault message="tns:ServiceProviderNotFoundException" name="ServiceProviderNotFoundException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/createAppointmentEntity/Fault/ServiceProviderNotFoundException"/>
+</operation>
+<operation name="searchServiceProvidersByCategoryCityDate">
+<input wsam:Action="http://ws.session.ejb/CustomerEntityWebService/searchServiceProvidersByCategoryCityDateRequest" message="tns:searchServiceProvidersByCategoryCityDate"/>
+<output wsam:Action="http://ws.session.ejb/CustomerEntityWebService/searchServiceProvidersByCategoryCityDateResponse" message="tns:searchServiceProvidersByCategoryCityDateResponse"/>
+</operation>
+<operation name="freeSlotsPerServiceProviderAndDate">
+<input wsam:Action="http://ws.session.ejb/CustomerEntityWebService/freeSlotsPerServiceProviderAndDateRequest" message="tns:freeSlotsPerServiceProviderAndDate"/>
+<output wsam:Action="http://ws.session.ejb/CustomerEntityWebService/freeSlotsPerServiceProviderAndDateResponse" message="tns:freeSlotsPerServiceProviderAndDateResponse"/>
+<fault message="tns:DateProcessingException" name="DateProcessingException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/freeSlotsPerServiceProviderAndDate/Fault/DateProcessingException"/>
+<fault message="tns:ServiceProviderNotFoundException" name="ServiceProviderNotFoundException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/freeSlotsPerServiceProviderAndDate/Fault/ServiceProviderNotFoundException"/>
 </operation>
 </portType>
 <binding name="CustomerEntityWebServicePortBinding" type="tns:CustomerEntityWebService">
@@ -140,30 +140,6 @@
 <soap:fault name="CustomerNotFoundException" use="literal"/>
 </fault>
 </operation>
-<operation name="freeSlotsPerServiceProviderAndDate">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="DateProcessingException">
-<soap:fault name="DateProcessingException" use="literal"/>
-</fault>
-<fault name="ServiceProviderNotFoundException">
-<soap:fault name="ServiceProviderNotFoundException" use="literal"/>
-</fault>
-</operation>
-<operation name="searchServiceProvidersByCategoryCityDate">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
 <operation name="cancelAppointment">
 <soap:operation soapAction=""/>
 <input>
@@ -176,7 +152,28 @@
 <soap:fault name="AppointmentCancellationException" use="literal"/>
 </fault>
 </operation>
-<operation name="createAppointmentEntity">
+<operation name="searchApprovedServiceProviders">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="createCustomerEntity">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="EntityAttributeNullException">
+<soap:fault name="EntityAttributeNullException" use="literal"/>
+</fault>
+</operation>
+<operation name="retrieveAppointmentsByCustomerId">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -186,9 +183,6 @@
 </output>
 <fault name="CustomerNotFoundException">
 <soap:fault name="CustomerNotFoundException" use="literal"/>
-</fault>
-<fault name="ServiceProviderNotFoundException">
-<soap:fault name="ServiceProviderNotFoundException" use="literal"/>
 </fault>
 </operation>
 <operation name="rateServiceProvider">
@@ -212,19 +206,7 @@
 <soap:fault name="EntityAttributeNullException" use="literal"/>
 </fault>
 </operation>
-<operation name="createCustomerEntity">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="EntityAttributeNullException">
-<soap:fault name="EntityAttributeNullException" use="literal"/>
-</fault>
-</operation>
-<operation name="retrieveAppointmentsByCustomerId">
+<operation name="createAppointmentEntity">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -235,8 +217,11 @@
 <fault name="CustomerNotFoundException">
 <soap:fault name="CustomerNotFoundException" use="literal"/>
 </fault>
+<fault name="ServiceProviderNotFoundException">
+<soap:fault name="ServiceProviderNotFoundException" use="literal"/>
+</fault>
 </operation>
-<operation name="searchApprovedServiceProviders">
+<operation name="searchServiceProvidersByCategoryCityDate">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -244,6 +229,21 @@
 <output>
 <soap:body use="literal"/>
 </output>
+</operation>
+<operation name="freeSlotsPerServiceProviderAndDate">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="DateProcessingException">
+<soap:fault name="DateProcessingException" use="literal"/>
+</fault>
+<fault name="ServiceProviderNotFoundException">
+<soap:fault name="ServiceProviderNotFoundException" use="literal"/>
+</fault>
 </operation>
 </binding>
 <service name="CustomerEntityWebService">

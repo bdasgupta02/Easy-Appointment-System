@@ -19,7 +19,7 @@
     <target name="wsimport-client-CustomerEntityWebService" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/CustomerEntityWebService"/>
         <property name="wsdl-CustomerEntityWebService" location="xml-resources/web-service-references/CustomerEntityWebService/wsdl/localhost_8080/CustomerEntityWebService/CustomerEntityWebService.wsdl"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/CustomerEntityWebService" destdir="${build.generated.dir}/jax-wsCache/CustomerEntityWebService" wsdl="${wsdl-CustomerEntityWebService}" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://localhost:8080/CustomerEntityWebService/CustomerEntityWebService?wsdl" xnocompile="true" xendorsed="true">
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/CustomerEntityWebService" destdir="${build.generated.dir}/jax-wsCache/CustomerEntityWebService" wsdl="${wsdl-CustomerEntityWebService}" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://localhost:8080/CustomerEntityWebService/CustomerEntityWebService?wsdl" xnocompile="true" xendorsed="true" package="ws.client">
             <depends file="${wsdl-CustomerEntityWebService}"/>
             <produces dir="${build.generated.dir}/jax-wsCache/CustomerEntityWebService"/>
         </wsimport>
@@ -31,7 +31,7 @@
     </target>
     <target name="wsimport-client-clean-CustomerEntityWebService" depends="-init-project">
         <delete dir="${build.generated.dir}/jax-wsCache/CustomerEntityWebService"/>
-        <delete dir="${build.generated.sources.dir}/jax-ws/ejb/session/ws"/>
+        <delete dir="${build.generated.sources.dir}/jax-ws/ws/client"/>
     </target>
     <target name="wsimport-client-generate" depends="wsimport-client-CustomerEntityWebService"/>
 </project>
