@@ -38,5 +38,13 @@ CustomerEntityWebServiceClient/nbproject/private/
 CustomerEntityWebServiceClient/build/
 CustomerEntityWebServiceClient/dist/
 
+EasyAppointmentSystemAdminClient/nbproject/private/
+EasyAppointmentSystemAdminClient/build/
+EasyAppointmentSystemAdminClient/dist/
+
+EasyAppointmentSystemServiceProviderClient/nbproject/private/
+EasyAppointmentSystemServiceProviderClient/build/
+EasyAppointmentSystemServiceProviderClient/dist/
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
