@@ -39,8 +39,13 @@ public class ServiceProviderEntity implements Serializable {
     private String phoneNum;
     @Column(nullable=false)
     private ServiceProviderStatusEnum status;
+    // probably shouldn't have this field
     @Column(nullable=false)
     private float avgRating;
+    
+    @OneToMany(mappedBy = "serviceProviderEntity")
+    @JoinColumn(nullable = false)
+    private List<RatingEntity> ratings;
     
     @OneToMany(mappedBy = "serviceProviderEntity")
     @JoinColumn(nullable = false)
