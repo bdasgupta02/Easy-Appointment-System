@@ -56,7 +56,7 @@ public class ServiceProviderEntity implements Serializable {
     }
 
     public ServiceProviderEntity(String bizRegNum, int bizCategory, String name, String bizAddress, 
-            String city, String email, String password, String phoneNum, ServiceProviderStatusEnum status, float avgRating) {
+            String city, String email, String password, String phoneNum, ServiceProviderStatusEnum status, ArrayList<RatingEntity> ratings, ArrayList<AppointmentEntity> appointments) {
         this();
         this.bizRegNum = bizRegNum;
         this.bizCategory = bizCategory;
@@ -67,7 +67,8 @@ public class ServiceProviderEntity implements Serializable {
         this.password = password;
         this.phoneNum = phoneNum;
         this.status = status;
-        this.avgRating = avgRating;
+        this.ratings = ratings;
+        this.appointments = appointments;
     }
 
 
@@ -177,19 +178,31 @@ public class ServiceProviderEntity implements Serializable {
         this.status = status;
     }  
 
-    public float getAvgRating() {
-        return avgRating;
-    }
-
-    public void setAvgRating(float aAvgRating) {
-        avgRating = aAvgRating;
-    }
-
     public List<AppointmentEntity> getAppointments() {
         return appointments;
     }
 
     public void addAppointment(AppointmentEntity newAppointment) {
-        this.appointments.add(newAppointment);
+        this.getAppointments().add(newAppointment);
+    }
+
+    public List<RatingEntity> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(List<RatingEntity> ratings) {
+        this.ratings = ratings;
+    }
+
+    public void setAppointments(List<AppointmentEntity> appointments) {
+        this.appointments = appointments;
+    }
+
+    public float getAvgRating() {
+        return avgRating;
+    }
+
+    public void setAvgRating(float avgRating) {
+        this.avgRating = avgRating;
     }
 }

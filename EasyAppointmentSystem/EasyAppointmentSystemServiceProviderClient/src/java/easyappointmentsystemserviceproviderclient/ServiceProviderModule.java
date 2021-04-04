@@ -5,29 +5,40 @@
  */
 package easyappointmentsystemserviceproviderclient;
 
+import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
 import ejb.session.stateless.CategoryEntitySessionBeanRemote;
 import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
+import entity.AppointmentEntity;
 import entity.CategoryEntity;
+import entity.RatingEntity;
 import entity.ServiceProviderEntity;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import util.enumeration.ServiceProviderStatusEnum;
+import util.exception.AppointmentCancellationException;
+import util.exception.AppointmentNotFoundException;
 import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
+import util.exception.ServiceProviderNotFoundException;
 
 public class ServiceProviderModule {
     
     private ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote;
     private CategoryEntitySessionBeanRemote categoryEntitySessionBeanRemote;
+    private AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote;
     private ServiceProviderEntity currentServiceProvider;
     
     public ServiceProviderModule(){
     }
     
-    public ServiceProviderModule(ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, CategoryEntitySessionBeanRemote categoryEntitySessionBeanRemote){
+    public ServiceProviderModule(ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, CategoryEntitySessionBeanRemote categoryEntitySessionBeanRemote, AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote){
         this.serviceProviderEntitySessionBeanRemote = serviceProviderEntitySessionBeanRemote;
         this.categoryEntitySessionBeanRemote = categoryEntitySessionBeanRemote;
+        this.appointmentEntitySessionBeanRemote = appointmentEntitySessionBeanRemote;
     }
     
     public void menuServiceProviderOperation() {
@@ -116,7 +127,8 @@ public class ServiceProviderModule {
             System.out.print("Enter Password> ");
             newServiceProviderEntity.setPassword(scanner.nextLine().trim());
             
-            newServiceProviderEntity.setAvgRating(0);
+            newServiceProviderEntity.setRatings(new ArrayList<RatingEntity>());
+            newServiceProviderEntity.setAppointments(new ArrayList<AppointmentEntity>());
             newServiceProviderEntity.setStatus(ServiceProviderStatusEnum.PENDING);
             serviceProviderEntitySessionBeanRemote.addNewServiceProvider(newServiceProviderEntity);
             
@@ -166,10 +178,16 @@ public class ServiceProviderModule {
                     System.out.println();
                     if(response == 1) {
                         viewProfile();
+                        System.out.println("Press any key to go back to the main menu");
+                        scanner.nextLine();
                     } else if (response == 2) {
                         editProfile();
                     } else if (response == 3) {
                         viewAppointments();
+                        System.out.println();
+                        System.out.println("Press any key to go back to the main menu");
+                        scanner.nextLine();
+                        System.out.println();
                     } else if (response == 4) {
                         cancelAppointments();
                     } else if (response == 5) {
@@ -191,7 +209,7 @@ public class ServiceProviderModule {
     // to edit
     public void viewProfile() {
         System.out.println("*** Service Provider Terminal :: Your Profile ***\n");
-        System.out.print("-----------------------------------------------------------------------------");
+        System.out.println("-----------------------------------------------------------------------------");
         System.out.printf("%22s%40s\n", "Name: ", currentServiceProvider.getName());
         System.out.printf("%22s%40s\n", "Average Rating: ", currentServiceProvider.getAvgRating());
         System.out.printf("%22s%40s\n", "Registration Number: ", currentServiceProvider.getBizRegNum());
@@ -203,13 +221,8 @@ public class ServiceProviderModule {
         System.out.println();
         System.out.println("-----------------------------------------------------------------------------");
         System.out.println();
-
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Press any key to go back to the main menu");
-        scanner.nextLine();
     }
     
-    //to edit
     public void editProfile() {
         System.out.println("*** Service Provider Terminal :: Edit Profile ***\n");
         Scanner scanner = new Scanner(System.in);
@@ -256,13 +269,80 @@ public class ServiceProviderModule {
         }
     }
     
-    //to edit
     public void viewAppointments() {
-        System.out.println("Not supported yet.");
+        System.out.println("*** Service Provider Terminal :: View Appointments ***");
+        System.out.println();
+        System.out.println("Appointments\n");
+        List<AppointmentEntity> appointments = new ArrayList<AppointmentEntity>();
+        System.out.printf("%-20s%-14s%-10s%-15s\n", "Name", "Date", "Time", "Appoint No.");
+        try {
+            appointments = serviceProviderEntitySessionBeanRemote.retrieveAppointmentsByServiceProviderId(currentServiceProvider.getServiceProviderId());
+        } catch (ServiceProviderNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        if (appointments.isEmpty()) {
+            System.out.println("You do not have any appointments at the moment.");
+        } else {
+            String datePattern = "yyyy-MM-dd";
+            String timePattern = "HH:mm";
+            DateFormat dateFormat = new SimpleDateFormat(datePattern);
+            DateFormat timeFormat = new SimpleDateFormat(timePattern);
+            
+            for (AppointmentEntity a : appointments) {
+                System.out.printf("%-20s%-14s%-10s%-15s\n", 
+                        a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(),
+                        dateFormat.format(a.getStartTimestamp()),
+                        timeFormat.format(a.getStartTimestamp()),
+                        a.getAppointmentNum());
+            }
+        }
     }
     
-    //to edit
+    
     public void cancelAppointments() {
-        System.out.println("Not supported yet.");
+        System.out.println("*** Service Provider Terminal :: Cancel Appointment ***\n");
+        System.out.println();
+        System.out.println("Appointments\n");
+        List<AppointmentEntity> appointments = new ArrayList<AppointmentEntity>();
+        System.out.printf("%-20s%-14s%-10s%-15s\n", "Name", "Date", "Time", "Appoint No.");
+        try {
+            appointments = serviceProviderEntitySessionBeanRemote.retrieveAppointmentsByServiceProviderId(currentServiceProvider.getServiceProviderId());
+        } catch (ServiceProviderNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        if (appointments.isEmpty()) {
+            System.out.println("You do not have any appointments at the moment.");
+        } else {
+            String datePattern = "yyyy-MM-dd";
+            String timePattern = "HH:mm";
+            DateFormat dateFormat = new SimpleDateFormat(datePattern);
+            DateFormat timeFormat = new SimpleDateFormat(timePattern);
+            
+            for (AppointmentEntity a : appointments) {
+                System.out.printf("%-20s%-14s%-10s%-15s\n", 
+                        a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(),
+                        dateFormat.format(a.getStartTimestamp()),
+                        timeFormat.format(a.getStartTimestamp()),
+                        a.getAppointmentNum());
+            }
+            
+            System.out.print("Enter appointment ID> ");
+            Scanner scanner = new Scanner(System.in);
+            String appointmentNum = scanner.nextLine().trim();
+            try {
+                AppointmentEntity appointment = appointmentEntitySessionBeanRemote.retrieveAppointmentEntityByAppointmentNumber(appointmentNum);
+                appointmentEntitySessionBeanRemote.cancelAppointment(appointment.getAppointmentId());
+                System.out.println("Appoint " + appointmentNum + " has been cancelled successfully.");
+                System.out.println("Press any key to go back to the main menu.");
+                scanner.nextLine();
+            } catch (AppointmentNotFoundException ex) {
+                System.out.println(ex.getMessage());
+            } catch (AppointmentCancellationException ex) {
+                System.out.println(ex.getMessage());
+            }
+            System.out.println();
+        }
     }
 }

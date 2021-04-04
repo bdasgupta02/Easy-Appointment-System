@@ -111,7 +111,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     }
     
     @Override
-    public List<AppointmentEntity> retrieveAppointmentsByCustomerId(Long serviceProviderId) throws ServiceProviderNotFoundException {
+    public List<AppointmentEntity> retrieveAppointmentsByServiceProviderId(Long serviceProviderId) throws ServiceProviderNotFoundException {
         ServiceProviderEntity serviceProviderEntity = retrieveServiceProviderEntityById(serviceProviderId);
         serviceProviderEntity.getAppointments().size();
         return serviceProviderEntity.getAppointments();

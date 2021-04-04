@@ -101,6 +101,6 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
     
     @Override
     public List<AppointmentEntity> retrieveAppointmentEntityByServiceProviderId(Long serviceProviderId) throws ServiceProviderNotFoundException {
-        return serviceProviderEntitySessionBeanLocal.retrieveAppointmentsByCustomerId(serviceProviderId);
+        return serviceProviderEntitySessionBeanLocal.retrieveAppointmentsByServiceProviderId(serviceProviderId);
     }
 }

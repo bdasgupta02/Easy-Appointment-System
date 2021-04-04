@@ -6,6 +6,8 @@
 package ejb.session.stateless;
 
 import entity.AppointmentEntity;
+import java.time.Period;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -90,6 +92,17 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     }
     
     @Override
+    public AppointmentEntity retrieveAppointmentEntityByAppointmentNumber(String appointmentNum) throws AppointmentNotFoundException {
+        Query q = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.appointmentNum = :inAppointNum");
+        q.setParameter("inAppointNum", appointmentNum);
+        try{
+            return (AppointmentEntity) q.getSingleResult();
+        }catch(NoResultException ex){
+            throw new AppointmentNotFoundException("Error: Appointment Number: " + appointmentNum + " does not exist!");
+        }
+    }
+    
+    @Override
     public void cancelAppointment(Long appointmentId) throws AppointmentCancellationException {
         AppointmentEntity appointmentEntity;
         try {
@@ -99,6 +112,14 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         }
         if (appointmentEntity.getCancelled()) {
             throw new AppointmentCancellationException("Error: Appointment ID: " + appointmentId + " is already cancelled!");
+        }
+        
+        
+        Date today = new Date();
+        Date appointmentDate = appointmentEntity.getStartTimestamp();
+        double hours = (appointmentDate.getTime() - today.getTime()) / (1000 * 3600);
+        if (hours < 24) {
+            throw new AppointmentCancellationException("Error: Less than 24H to appointment. Appointment cannot be cancelled.");
         }
         
         appointmentEntity.setCancelled(true);

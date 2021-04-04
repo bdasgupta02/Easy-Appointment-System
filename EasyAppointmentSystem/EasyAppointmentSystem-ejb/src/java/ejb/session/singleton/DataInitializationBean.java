@@ -14,7 +14,9 @@ import entity.AdminEntity;
 import entity.AppointmentEntity;
 import entity.CategoryEntity;
 import entity.CustomerEntity;
+import entity.RatingEntity;
 import entity.ServiceProviderEntity;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -67,13 +69,14 @@ public class DataInitializationBean {
     
     private void initializeData() {
         try {
-            serviceProviderEntitySessionBeanLocal.addNewServiceProvider(
-                    new ServiceProviderEntity("0012345678", 1, "Zalora", "51 Bras Basah Road #07-01/04", "Bras Basah", "test@Zalora.com", "123456", "65551234", ServiceProviderStatusEnum.APPROVED, 3));
             categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Health"));
             categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Fashion"));
             categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Education"));
             adminEntitySessionBeanLocal.createNewAdminEntity(new AdminEntity("admin01@easyappointment.com", "001001", "Admin01",""));
-            customerEntitySessionBeanLocal.createCustomerEntity(new CustomerEntity("id", "Liza", "Mozart", "address",new Character('F'), 30, "Singapore", "liza@gmail.com", new Long(345240), "password"));
+            customerEntitySessionBeanLocal.createCustomerEntity(new CustomerEntity("id", "Liza", "Mozart", "address", new Character('F'), 30, "Singapore", "liza@gmail.com", new Long(345240), "password"));
+            serviceProviderEntitySessionBeanLocal.addNewServiceProvider(
+                    new ServiceProviderEntity("0012345678", 1, "Zalora", "51 Bras Basah Road #07-01/04", "Bras Basah", "test@Zalora.com", "123456", "65551234", ServiceProviderStatusEnum.APPROVED, 
+                            new ArrayList<RatingEntity>(), new ArrayList<AppointmentEntity>()));
             
             // why are we creating an appointment at the start?
             // end time is incorrect in the line below too
