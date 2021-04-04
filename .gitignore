@@ -42,3 +42,5 @@ EasyAppointmentSystem/CustomerEntityWebServiceClient/dist/
 hs_err_pid*
 /EasyAppointmentSystem/CustomerEntityWebServiceClient/nbproject/private/
 /EasyAppointmentSystem/CustomerWebServiceClient/nbproject/private/
+/EasyAppointmentSystem/EasyAppointmentSystemAdminClient/nbproject/private/
+/EasyAppointmentSystem/EasyAppointmentSystemServiceProviderClient/nbproject/private/

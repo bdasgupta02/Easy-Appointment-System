@@ -1,4 +1,4 @@
-package easyappointmentsystemclient;
+package easyappointmentsystemadminclient;
 
 import ejb.session.stateless.AdminEntitySessionBeanRemote;
 import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
@@ -108,7 +108,7 @@ public class AdminModule {
                     + "6: Add Business category\n"
                     + "7: Remove Business category\n"
                     + "8: Send reminder email\n"
-                    + "10: Logout\n");
+                    + "9: Logout\n");
             System.out.print("> ");
 
             while (response < 1 || response > 9) {
@@ -137,7 +137,7 @@ public class AdminModule {
                     System.out.println("Error: Invalid input type entered! Please enter the correct input.");
                 }
             }
-            if (response == 11) {
+            if (response == 9) {
                 break;
             }
         }
@@ -370,3 +370,4 @@ public class AdminModule {
         }
     }
 }
+
