@@ -44,4 +44,6 @@ public interface ServiceProviderEntitySessionBeanRemote {
     public List<ServiceProviderEntity> retrieveSearchResult(Long categoryId, String city, Date date);
     
     public List<Date> nextSlotFreePerDate(Long serviceProviderId, String date) throws DateProcessingException, ServiceProviderNotFoundException;
+    
+    public Double getAverageRating(ServiceProviderEntity serviceProviderEntity);
 }

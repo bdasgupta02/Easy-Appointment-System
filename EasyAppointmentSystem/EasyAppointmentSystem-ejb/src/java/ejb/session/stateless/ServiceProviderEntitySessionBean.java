@@ -2,6 +2,7 @@ package ejb.session.stateless;
 
 import entity.AppointmentEntity;
 import entity.CustomerEntity;
+import entity.RatingEntity;
 import entity.ServiceProviderEntity;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -199,5 +200,14 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
             }
         }
         return emptySlots;
+    }
+    
+    @Override
+    public Double getAverageRating(ServiceProviderEntity serviceProviderEntity) {
+        List<RatingEntity> ratingEntities = serviceProviderEntity.getRatings();
+        double size = (double) ratingEntities.size();
+        double totalRating = 0.0;
+        totalRating = ratingEntities.stream().map(r -> (double) r.getRating()).reduce(totalRating, (accumulator, _item) -> accumulator + _item);
+        return size == 0 ? -1.0 : totalRating / size;
     }
 }

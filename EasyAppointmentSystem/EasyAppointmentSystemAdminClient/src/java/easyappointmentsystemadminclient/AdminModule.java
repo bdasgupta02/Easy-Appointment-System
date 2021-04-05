@@ -249,12 +249,14 @@ public class AdminModule {
         List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviders();
 
         for (ServiceProviderEntity s : serviceProviders) {
+            double averageRating = serviceProviderEntitySessionBeanRemote.getAverageRating(s);
+            String doubleFormat = String.format("%.2f", averageRating);
             System.out.printf("%10s%15s%15s%15s%15s%15s\n",
                     s.getServiceProviderId(),
                     s.getName(),
                     s.getBizCategory(),
                     s.getCity(),
-                    s.getAvgRating(),
+                    averageRating == -1.0 ? "Not rated yet!": doubleFormat,
                     statusEnumConverter(s.getStatus()));
         }
 

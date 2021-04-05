@@ -122,4 +122,5 @@ public class CustomerEntityWebService {
     public List<AppointmentEntity> retrieveAppointmentsByCustomerId(@WebParam Long customerId) throws CustomerNotFoundException {
         return customerEntitySessionBeanLocal.retrieveAppointmentsByCustomerId(customerId);
     }
+    
 }

@@ -39,9 +39,6 @@ public class ServiceProviderEntity implements Serializable {
     private String phoneNum;
     @Column(nullable=false)
     private ServiceProviderStatusEnum status;
-    // probably shouldn't have this field
-    @Column(nullable=false)
-    private float avgRating;
     
     @OneToMany(mappedBy = "serviceProviderEntity")
     @JoinColumn(nullable = false)
@@ -196,13 +193,5 @@ public class ServiceProviderEntity implements Serializable {
 
     public void setAppointments(List<AppointmentEntity> appointments) {
         this.appointments = appointments;
-    }
-
-    public float getAvgRating() {
-        return avgRating;
-    }
-
-    public void setAvgRating(float avgRating) {
-        this.avgRating = avgRating;
     }
 }
