@@ -211,7 +211,7 @@ public class ServiceProviderModule {
         System.out.println("*** Service Provider Terminal :: Your Profile ***\n");
         System.out.println("-----------------------------------------------------------------------------");
         System.out.printf("%22s%40s\n", "Name: ", currentServiceProvider.getName());
-        System.out.printf("%22s%40s\n", "Average Rating: ", currentServiceProvider.getAvgRating());
+        System.out.printf("%22s%40s\n", "Average Rating: ", serviceProviderEntitySessionBeanRemote.getAverageRating(currentServiceProvider));
         System.out.printf("%22s%40s\n", "Registration Number: ", currentServiceProvider.getBizRegNum());
         System.out.printf("%22s%40s\n", "Business Address: ", currentServiceProvider.getBizAddress());
         System.out.printf("%22s%40s\n", "City: ", currentServiceProvider.getCity());
