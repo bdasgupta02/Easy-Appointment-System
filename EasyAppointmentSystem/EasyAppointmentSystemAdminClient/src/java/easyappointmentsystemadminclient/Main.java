@@ -2,6 +2,7 @@ package easyappointmentsystemadminclient;
 
 import ejb.session.stateless.AdminEntitySessionBeanRemote;
 import ejb.session.stateless.CategoryEntitySessionBeanRemote;
+import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import javax.ejb.EJB;
 
@@ -14,10 +15,17 @@ public class Main {
     private static ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote;
     @EJB
     private static CategoryEntitySessionBeanRemote categorySessionBeanRemote;
+    @EJB
+    private static CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote;
     
     
     public static void main(String[] args) {
-        AdminModule adminModule = new AdminModule(adminEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, categorySessionBeanRemote);
+        AdminModule adminModule = new AdminModule(
+                adminEntitySessionBeanRemote, 
+                serviceProviderEntitySessionBeanRemote, 
+                categorySessionBeanRemote,
+                customerEntitySessionBeanRemote
+        );
         adminModule.adminStartMenu();
     }   
 }

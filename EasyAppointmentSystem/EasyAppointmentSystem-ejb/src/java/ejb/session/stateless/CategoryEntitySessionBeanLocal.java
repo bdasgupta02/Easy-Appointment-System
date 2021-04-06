@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.CategoryEntity;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.CategoryInUseException;
 import util.exception.CategoryNotFoundException;
 import util.exception.EntityAttributeNullException;
 
@@ -23,5 +24,5 @@ public interface CategoryEntitySessionBeanLocal {
     public CategoryEntity retrieveCategoryByCategoryName(String categoeryName) throws CategoryNotFoundException;
     public List<CategoryEntity> retrieveAllCategories();
     public void updateCategory(CategoryEntity updatedCategoryEntity);
-    public void deleteCategory(String categoryName) throws CategoryNotFoundException;
+    public void deleteCategory(String categoryName) throws CategoryNotFoundException, CategoryInUseException;
 }

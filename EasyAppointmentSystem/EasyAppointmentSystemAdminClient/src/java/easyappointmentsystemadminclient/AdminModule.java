@@ -2,6 +2,7 @@ package easyappointmentsystemadminclient;
 
 import ejb.session.stateless.AdminEntitySessionBeanRemote;
 import ejb.session.stateless.CategoryEntitySessionBeanRemote;
+import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import entity.AdminEntity;
 import entity.AppointmentEntity;
@@ -11,7 +12,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.enumeration.ServiceProviderStatusEnum;
+import util.exception.CategoryInUseException;
+import util.exception.CategoryNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
@@ -23,6 +28,7 @@ public class AdminModule {
     private AdminEntitySessionBeanRemote adminEntitySessionBeanRemote;
     private ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote;
     private CategoryEntitySessionBeanRemote categorySessionBeanRemote;
+    private CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote ;
     private AdminEntity loggedAdmin;
 
     public AdminModule() {
@@ -30,11 +36,13 @@ public class AdminModule {
 
     public AdminModule(AdminEntitySessionBeanRemote adminEntitySessionBeanRemote,
                        ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, 
-                       CategoryEntitySessionBeanRemote categorySessionBeanRemote)
+                       CategoryEntitySessionBeanRemote categorySessionBeanRemote,
+                       CustomerEntitySessionBeanRemote customerSessionBeanRemote)
     {
         this.adminEntitySessionBeanRemote = adminEntitySessionBeanRemote;
         this.serviceProviderEntitySessionBeanRemote = serviceProviderEntitySessionBeanRemote;
         this.categorySessionBeanRemote = categorySessionBeanRemote;
+        this.customerEntitySessionBeanRemote = customerSessionBeanRemote;
     }
 
     public void adminStartMenu() {
@@ -114,10 +122,11 @@ public class AdminModule {
                     + "6: Add Business category\n"
                     + "7: Remove Business category\n"
                     + "8: Send reminder email\n"
-                    + "9: Logout\n");
+                    + "9: Delete Customer\n"
+                    + "10: Logout\n");
             System.out.print("> ");
 
-            while (response < 1 || response > 9) {
+            while (response < 1 || response > 10) {
                 if (sc.hasNextInt()) {
                     response = sc.nextInt();
                     if (response == 1) {
@@ -136,7 +145,9 @@ public class AdminModule {
                         removeBusinessCategory();
                     } else if (response == 8) {
                         sendReminderEmail();
-                    } else if (response == 9) {
+                    } else if (response == 9){
+                        deleteCustomer();
+                    } else if (response == 10) {
                         break;
                     } else {
                         System.out.println("Error: Invalid input value! Please enter the correct input.");
@@ -413,7 +424,7 @@ public class AdminModule {
 
     private void removeBusinessCategory() {
           Scanner sc = new Scanner(System.in);
-          Long idToDelete = null;
+          int idToDelete = -1;
           System.out.println("*** Admin terminal :: Remove a Business category ***\n");
         
           while(true){
@@ -428,26 +439,59 @@ public class AdminModule {
             System.out.println();  
             System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print("Enter Business Category> ");
-             if (sc.hasNextLong()) {
-                 idToDelete = sc.nextLong();
+             if (sc.hasNextInt()) {
+                 idToDelete = sc.nextInt();
                  sc.nextLine();
               if (idToDelete < 0) {
                   System.out.println("Error: Invalid input value! Please enter the correct input.");
               } else if (idToDelete == 0) {
                   break;
               } else {
-                  //DELETE HERE
+                     try {
+                         categorySessionBeanRemote.deleteCategory(allCategories.get(idToDelete).getCategory());
+                     } catch (CategoryNotFoundException | CategoryInUseException ex) {
+                         System.out.println("Category could not be deleted because " + ex.getMessage());
+                     }
               }
             } else {
                 System.out.println("Error: Invalid input type entered! Please enter the correct input.");
             }
           }
-          
-         
     }
 
     private void sendReminderEmail() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void deleteCustomer() {
+       Scanner sc = new Scanner(System.in);
+        Long customerId;
+        System.out.println("*** Admin terminal :: Delete Customer ***\n");
+       
+
+        while (true) {
+            System.out.println("Enter 0 to go back to the previous menu.");
+            System.out.print("Enter customer Id> ");
+
+            if (sc.hasNextLong()) {
+                customerId = sc.nextLong();
+                sc.nextLine();
+                if (customerId < 0) {
+                    System.out.println("Error: Invalid input value! Please enter the correct input.");
+                } else if (customerId == 0) {
+                    break;
+                } else {
+                    try {
+                        customerEntitySessionBeanRemote.deleteCustomerEntity(customerId);
+                        System.out.println("Customer with id: " + customerId + " deleted successfully!");
+                    } catch (CustomerNotFoundException ex) {
+                        System.out.println("Could not delete customer: " + ex.getMessage());
+                    }
+                }
+            } else {
+                System.out.println("Error: Invalid input type entered! Please enter the correct input.");
+            }
+        }
     }
 }
 

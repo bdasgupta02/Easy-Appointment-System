@@ -11,6 +11,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.CategoryInUseException;
 import util.exception.CategoryNotFoundException;
 import util.exception.EntityAttributeNullException;
 import util.exception.ServiceProviderNotFoundException;
@@ -75,11 +76,20 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanRemot
     }
     
     @Override
-    public void deleteCategory(String categoryName) throws CategoryNotFoundException {
+    public void deleteCategory(String categoryName) throws CategoryNotFoundException, CategoryInUseException {
         CategoryEntity categoryEntity = retrieveCategoryByCategoryName(categoryName);
         //CHECK IF A SERVICE PROVIDER HAS THIS CATEGORY
         if (categoryEntity != null) {
-            em.remove(categoryEntity);
+            Long categoryId = categoryEntity.getCategoryId();
+            Query query = em.createQuery("SELECT sp FROM ServiceProviderEntity sp WHERE sp.bizCategory = :inCategoryId");
+            query.setParameter("inCategoryId", categoryId);
+            List<ServiceProviderEntity> result = query.getResultList();
+            
+            if(result != null){
+                throw new CategoryInUseException("Category with name " + categoryName + "used by service providers!");
+            } else {
+                em.remove(categoryEntity);
+            }
         } else {
             throw new CategoryNotFoundException("Category with name " + categoryName + " does not exist!\n");
         }

@@ -72,10 +72,13 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
     
     @Override
     public void deleteCustomerEntity(Long customerId) throws CustomerNotFoundException {
-        
-        // code chunk automatically throws exception if entity not found
         CustomerEntity customerEntity = retrieveCustomerEntityById(customerId);
-        em.remove(customerEntity);
+        //CHECK IF A SERVICE PROVIDER HAS THIS CATEGORY
+        if (customerEntity != null) {
+           em.remove(customerEntity);
+        } else {
+            throw new CustomerNotFoundException("Customer with id " + customerId + " does not exist!\n");
+        }
     }
     
     @Override

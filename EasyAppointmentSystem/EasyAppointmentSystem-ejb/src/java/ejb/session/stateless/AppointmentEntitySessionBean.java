@@ -6,7 +6,6 @@
 package ejb.session.stateless;
 
 import entity.AppointmentEntity;
-import java.time.Period;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
@@ -14,7 +13,6 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.AppointmentCancellationException;
