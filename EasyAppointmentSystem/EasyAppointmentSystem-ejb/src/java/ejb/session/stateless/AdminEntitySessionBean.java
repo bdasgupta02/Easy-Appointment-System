@@ -19,6 +19,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.AdminNotFoundException;
 import util.exception.CustomerNotFoundException;
+import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
 import util.exception.ServiceProviderNotFoundException;
 
@@ -42,10 +43,18 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
     
         
     @Override
-    public Long createNewAdminEntity(AdminEntity adminEty) {
-        em.persist(adminEty);
-        em.flush();
-                return adminEty.getId();
+    public Long createNewAdminEntity(AdminEntity adminEty) throws EntityAttributeNullException {
+        
+         if (adminEty.getId() != null && adminEty.getEmail() != null 
+                 && adminEty.getPassword() != null && adminEty.getFirstName() != null 
+                 && adminEty.getLastName()  != null){
+           em.persist(adminEty);
+           em.flush();
+           return adminEty.getId();
+        } else {
+            throw new EntityAttributeNullException("Some values are null! Update aborted.");
+        }
+      
     }
 
     @Override
@@ -85,8 +94,15 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
     }
 
     @Override
-    public void updateAdmin(AdminEntity adminEty) throws AdminNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void updateAdmin(AdminEntity adminEty) throws AdminNotFoundException, EntityAttributeNullException {
+         if (adminEty.getId() != null && adminEty.getEmail() != null 
+                 && adminEty.getPassword() != null && adminEty.getFirstName() != null 
+                 && adminEty.getLastName()  != null){
+             em.merge(adminEty);
+            em.flush();
+        } else {
+            throw new EntityAttributeNullException("Some values are null! Update aborted.");
+        }
     }
 
     @Override

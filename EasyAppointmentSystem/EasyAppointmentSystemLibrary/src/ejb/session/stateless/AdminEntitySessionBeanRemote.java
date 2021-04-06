@@ -11,6 +11,7 @@ import java.util.List;
 import javax.ejb.Remote;
 import util.exception.AdminNotFoundException;
 import util.exception.CustomerNotFoundException;
+import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
 import util.exception.ServiceProviderNotFoundException;
 
@@ -21,7 +22,7 @@ import util.exception.ServiceProviderNotFoundException;
 
 public interface AdminEntitySessionBeanRemote {
     
-    Long createNewAdminEntity(AdminEntity adminEty);
+    Long createNewAdminEntity(AdminEntity adminEty) throws EntityAttributeNullException ;
     
     AdminEntity retrieveAdminByAdminID(Long adminId) throws AdminNotFoundException;
     
@@ -29,7 +30,7 @@ public interface AdminEntitySessionBeanRemote {
     
     AdminEntity adminLogin(String email, String password) throws InvalidLoginException;
     
-    void updateAdmin(AdminEntity adminEty) throws AdminNotFoundException;
+    void updateAdmin(AdminEntity adminEty) throws AdminNotFoundException, EntityAttributeNullException ;
     
     void deleteAdmin(Long adminId) throws AdminNotFoundException;
 

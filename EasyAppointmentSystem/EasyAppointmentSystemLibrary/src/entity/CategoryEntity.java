@@ -16,6 +16,11 @@ public class CategoryEntity implements Serializable {
     private Long categoryId;
     @Column(nullable=false, unique=true)
     private String category;
+    
+
+
+    public CategoryEntity() {
+    }
 
     public CategoryEntity(String category) {
         this();
@@ -28,9 +33,6 @@ public class CategoryEntity implements Serializable {
 
     public void setCategory(String category) {
         this.category = category;
-    }
-
-    public CategoryEntity() {
     }
 
     public Long getCategoryId() {

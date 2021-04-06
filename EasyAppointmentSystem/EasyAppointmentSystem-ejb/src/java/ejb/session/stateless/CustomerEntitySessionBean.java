@@ -32,7 +32,7 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
     @Override
     public Long createCustomerEntity(CustomerEntity newCustomerEntity) throws EntityAttributeNullException {
 
-        if (newCustomerEntity.getLastName() != null && newCustomerEntity.getLastName() != null
+        if (newCustomerEntity.getFirstName() != null && newCustomerEntity.getLastName() != null
                 && newCustomerEntity.getIdentityNo() != null && newCustomerEntity.getAddress() != null
                 && newCustomerEntity.getGender() != null && newCustomerEntity.getAge() != null
                 && newCustomerEntity.getEmail() != null && newCustomerEntity.getCity() != null
@@ -58,7 +58,7 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
 
     @Override
     public void updateCustomerEntity(CustomerEntity customerEntity) throws EntityAttributeNullException {
-        if (customerEntity.getLastName() != null && customerEntity.getLastName() != null
+        if (customerEntity.getFirstName() != null && customerEntity.getLastName() != null
                 && customerEntity.getIdentityNo() != null && customerEntity.getAddress() != null
                 && customerEntity.getGender() != null && customerEntity.getAge() != null
                 && customerEntity.getEmail() != null && customerEntity.getCity() != null

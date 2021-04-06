@@ -10,6 +10,7 @@ import entity.AppointmentEntity;
 import java.util.List;
 import util.exception.AdminNotFoundException;
 import util.exception.CustomerNotFoundException;
+import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
 import util.exception.ServiceProviderNotFoundException;
 
@@ -20,7 +21,7 @@ import util.exception.ServiceProviderNotFoundException;
 
 public interface AdminEntitySessionBeanLocal {
     
-    Long createNewAdminEntity(AdminEntity adminEty);
+    Long createNewAdminEntity(AdminEntity adminEty) throws EntityAttributeNullException ;
     
     AdminEntity retrieveAdminByAdminID(Long adminId) throws AdminNotFoundException;
     
@@ -28,12 +29,13 @@ public interface AdminEntitySessionBeanLocal {
     
     AdminEntity adminLogin(String email, String password) throws InvalidLoginException;
     
-    void updateAdmin(AdminEntity adminEty) throws AdminNotFoundException;
+    void updateAdmin(AdminEntity adminEty) throws AdminNotFoundException, EntityAttributeNullException ;
     
     void deleteAdmin(Long adminId) throws AdminNotFoundException;
 
     public List<AppointmentEntity> retrieveAppointmentEntityByCustomerId(Long customerId) throws CustomerNotFoundException;
     
     public List<AppointmentEntity> retrieveAppointmentEntityByServiceProviderId(Long serviceProviderId) throws ServiceProviderNotFoundException;
+    
     
 }

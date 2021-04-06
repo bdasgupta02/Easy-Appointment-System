@@ -1,9 +1,11 @@
 package easyappointmentsystemadminclient;
 
 import ejb.session.stateless.AdminEntitySessionBeanRemote;
+import ejb.session.stateless.CategoryEntitySessionBeanRemote;
 import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import entity.AdminEntity;
 import entity.AppointmentEntity;
+import entity.CategoryEntity;
 import entity.ServiceProviderEntity;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -20,15 +22,19 @@ public class AdminModule {
 
     private AdminEntitySessionBeanRemote adminEntitySessionBeanRemote;
     private ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote;
+    private CategoryEntitySessionBeanRemote categorySessionBeanRemote;
     private AdminEntity loggedAdmin;
 
     public AdminModule() {
     }
 
     public AdminModule(AdminEntitySessionBeanRemote adminEntitySessionBeanRemote,
-            ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote) {
+                       ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, 
+                       CategoryEntitySessionBeanRemote categorySessionBeanRemote)
+    {
         this.adminEntitySessionBeanRemote = adminEntitySessionBeanRemote;
         this.serviceProviderEntitySessionBeanRemote = serviceProviderEntitySessionBeanRemote;
+        this.categorySessionBeanRemote = categorySessionBeanRemote;
     }
 
     public void adminStartMenu() {
@@ -86,7 +92,7 @@ public class AdminModule {
             adminMainMenu();
 
         } catch (NullPointerException | InvalidLoginException ex) {
-            System.out.println("Login unsuccessful. Please enter valid login details.\n");
+            System.out.println("Login unsuccessful. Please enter valid login details ." + ex.getMessage() + "\n");
         }
 
     }
@@ -125,9 +131,11 @@ public class AdminModule {
                     } else if (response == 5) {
                         blockServiceProvider();
                     } else if (response == 6) {
-
+                       addBusinessCategory();
                     } else if (response == 7) {
+                        removeBusinessCategory();
                     } else if (response == 8) {
+                        sendReminderEmail();
                     } else if (response == 9) {
                         break;
                     } else {
@@ -182,7 +190,7 @@ public class AdminModule {
                         }
 
                         System.out.println("Enter 0 to go back to the previous menu.\n");
-                        viewed = true;
+                        //viewed = true; If this is set to true, this loop never entered again. 
                     } catch (CustomerNotFoundException ex) {
                         System.out.println(ex.getMessage());
                     }
@@ -219,18 +227,18 @@ public class AdminModule {
                 } else if (!viewed) {
                     try {
                         appointments = adminEntitySessionBeanRemote.retrieveAppointmentEntityByServiceProviderId(serviceProviderId);
-                        System.out.printf("%20s%15s%15s%15s%15s\n", "Name ", "| Business Category ", "| Date ", "| Time ", "| Appointment No. ");
-
+                        System.out.printf("%4s%27s%16s%16s%27s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No. ");
+                        System.out.println();
                         //FORMATTING ISSUES
                         for (AppointmentEntity a : appointments) {
-                            System.out.printf("%20s%15s%15s%15s%15s\n", a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(),
+                            System.out.printf("%4s%27s%16s%16s%27s\n", a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(),
                                     a.getServiceProviderEntity().getBizCategory(),
                                     dateFormat.format(a.getStartTimestamp()),
                                     timeFormat.format(a.getStartTimestamp()),
                                     a.getAppointmentNum());
                         }
                         System.out.println("Enter 0 to go back to the previous menu.\n");
-                        viewed = true;
+                       // viewed = true; --> If this is set to true, then this loop will not be added. 
                     } catch (ServiceProviderNotFoundException ex) {
                         System.out.println(ex.getMessage());
                     }
@@ -370,6 +378,86 @@ public class AdminModule {
                 System.out.println("Error: Invalid input type entered! Please enter the correct input.");
             }
         }
+    }
+
+    private void addBusinessCategory() {
+        Scanner sc = new Scanner(System.in);
+        String name = null;
+        System.out.println("*** Admin terminal :: Add a Business category ***\n");
+        
+        while (true) {
+            System.out.print("\nEnter 0 to go back to the previous menu.\n" +
+                                "Enter a new business category> ");
+            name = sc.nextLine().trim();
+            System.out.println("Name is: " + name);
+            if(name != null)
+            {
+               if(name.equals("0"))
+               {
+                   break;
+               } else 
+               {
+                   try {
+                       CategoryEntity newCat = new CategoryEntity(name); 
+                        categorySessionBeanRemote.addNewCategory(newCat); //THROWING NULL POINTER
+                      System.out.println("The business category “"+ name +"” is added.");
+                   } catch (EntityAttributeNullException | NullPointerException ex) {
+                       System.out.println("Unable to create category. Please enter a valid input!");
+                   }
+               }
+            } else {
+                System.out.println("Please enter a valid input!");
+            }
+        }
+    }
+
+    private void removeBusinessCategory() {
+          Scanner sc = new Scanner(System.in);
+          Long idToDelete = null;
+          System.out.println("*** Admin terminal :: Remove a Business category ***\n");
+        
+          while(true){
+              System.out.println("Categories: ");
+               List<CategoryEntity> allCategories = categorySessionBeanRemote.retrieveAllCategories();
+              for (CategoryEntity category : allCategories) {
+                System.out.print(category.getCategoryId() + "  " + category.getCategory() + " ");
+                if (allCategories.indexOf(category) != allCategories.size() - 1) {
+                    System.out.print("| ");
+                }
+            }
+            System.out.println();  
+            System.out.println9"Enter 0 to go back to the previous menu.";
+            System.out.print("Enter Business Category> ");
+             if (sc.hasNextLong()) {
+                 idToDelete = sc.nextLong();
+                 sc.nextLine();
+              if (idToDelete < 0) {
+                  System.out.println("Error: Invalid input value! Please enter the correct input.");
+              } else if (idToDelete == 0) {
+                  break;
+              } else {
+                  try {
+                      ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
+                      try {
+                          serviceProviderEntitySessionBeanRemote.blockServiceProviderStatus(serviceProviderEntity);
+                      } catch (EntityAttributeNullException | ServiceProviderAlreadyBlockedException ex) {
+                          System.out.println(ex.getMessage());
+                      }
+                      System.out.println(serviceProviderEntity.getName() + "'s registration is approved.");
+                  } catch (ServiceProviderNotFoundException ex) {
+                      System.out.println(ex.getMessage());
+                  }
+              }
+            } else {
+                System.out.println("Error: Invalid input type entered! Please enter the correct input.");
+            }
+          }
+          
+         
+    }
+
+    private void sendReminderEmail() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
 

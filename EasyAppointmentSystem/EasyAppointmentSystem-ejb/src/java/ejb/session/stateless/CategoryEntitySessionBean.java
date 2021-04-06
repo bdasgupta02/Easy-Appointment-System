@@ -24,9 +24,6 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanRemot
     @PersistenceContext(unitName = "EasyAppointmentSystem-ejbPU")
     private EntityManager em;
 
-    public CategoryEntitySessionBean() {
-    }
-    
     @Override
     public Long addNewCategory(CategoryEntity newCategoryEntity) throws EntityAttributeNullException {
         if (newCategoryEntity.getCategory().isEmpty()) {
@@ -80,6 +77,7 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanRemot
     @Override
     public void deleteCategory(String categoryName) throws CategoryNotFoundException {
         CategoryEntity categoryEntity = retrieveCategoryByCategoryName(categoryName);
+        //CHECK IF A SERVICE PROVIDER HAS THIS CATEGORY
         if (categoryEntity != null) {
             em.remove(categoryEntity);
         } else {

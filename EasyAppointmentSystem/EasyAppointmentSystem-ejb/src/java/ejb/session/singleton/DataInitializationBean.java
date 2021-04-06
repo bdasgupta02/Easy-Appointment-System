@@ -78,10 +78,16 @@ public class DataInitializationBean {
                     new ServiceProviderEntity("0012345678", 1, "Zalora", "51 Bras Basah Road #07-01/04", "Bras Basah", "test@Zalora.com", "123456", "65551234", ServiceProviderStatusEnum.APPROVED, 
                             new ArrayList<RatingEntity>(), new ArrayList<AppointmentEntity>()));
             
-            // why are we creating an appointment at the start?
-            // end time is incorrect in the line below too
-            //AppointmentEntity aEty = new AppointmentEntity(customerEntitySessionBeanLocal.retrieveCustomerEntityById(new Long(1)), serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(new Long(1)), new Date(), new Date(), new Date(), "2");
-            //apptEtySessionBeanLocal.createAppointmentEntity(aEty);
+            // Creating a dummy appointment for testing
+            AppointmentEntity aEty = null;
+            try {
+                aEty = new AppointmentEntity(customerEntitySessionBeanLocal.retrieveCustomerEntityById(new Long(1)), serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(new Long(1)), new Date(), new Date(), "2");
+            } catch (CustomerNotFoundException ex) {
+                System.out.println("Tried initialising appointment with Customer id: 1. Customer not found!");
+            } catch (ServiceProviderNotFoundException ex) {
+                System.out.println("Tried initialising appointment with Service providder id: 1. Service provider not found!");
+            }
+            apptEtySessionBeanLocal.createAppointmentEntity(aEty);
         } catch (EntityAttributeNullException ex) {
         }
     }
