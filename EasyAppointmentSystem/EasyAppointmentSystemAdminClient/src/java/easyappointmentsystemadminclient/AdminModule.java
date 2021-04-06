@@ -12,8 +12,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.enumeration.ServiceProviderStatusEnum;
 import util.exception.CategoryInUseException;
 import util.exception.CategoryNotFoundException;
