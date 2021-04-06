@@ -426,7 +426,7 @@ public class AdminModule {
                 }
             }
             System.out.println();  
-            System.out.println9"Enter 0 to go back to the previous menu.";
+            System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print("Enter Business Category> ");
              if (sc.hasNextLong()) {
                  idToDelete = sc.nextLong();
@@ -436,17 +436,7 @@ public class AdminModule {
               } else if (idToDelete == 0) {
                   break;
               } else {
-                  try {
-                      ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
-                      try {
-                          serviceProviderEntitySessionBeanRemote.blockServiceProviderStatus(serviceProviderEntity);
-                      } catch (EntityAttributeNullException | ServiceProviderAlreadyBlockedException ex) {
-                          System.out.println(ex.getMessage());
-                      }
-                      System.out.println(serviceProviderEntity.getName() + "'s registration is approved.");
-                  } catch (ServiceProviderNotFoundException ex) {
-                      System.out.println(ex.getMessage());
-                  }
+                  //DELETE HERE
               }
             } else {
                 System.out.println("Error: Invalid input type entered! Please enter the correct input.");
