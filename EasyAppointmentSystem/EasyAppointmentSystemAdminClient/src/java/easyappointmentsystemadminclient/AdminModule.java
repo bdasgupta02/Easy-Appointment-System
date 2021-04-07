@@ -13,6 +13,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.enumeration.ServiceProviderStatusEnum;
 import util.exception.CategoryInUseException;
 import util.exception.CategoryNotFoundException;
@@ -187,13 +189,14 @@ public class AdminModule {
                 } else if (!viewed) {
                     try {
                         appointments = adminEntitySessionBeanRemote.retrieveAppointmentEntityByCustomerId(customerId);
-                        System.out.printf("%4s%27s%16s%16s%27s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No. ");
+                        System.out.printf("%4s%27s%16s%16s%27s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No. \n");
                         
                         // lazy fetching issues fixed
                         // need to print business category in text
                         for (AppointmentEntity a : appointments) {
-                            System.out.printf("%4s%27s%16s%16s%27s\n", a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(),
-                                    a.getServiceProviderEntity().getBizCategory(),
+                            CategoryEntity cat = categorySessionBeanRemote.retrieveCategoryByCategoryId(new Long(a.getServiceProviderEntity().getBizCategory()));
+                            String catName = cat.getCategory();
+                            System.out.printf("%4s%27s%16s%16s%27s\n", a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(), catName,
                                     dateFormat.format(a.getStartTimestamp()),
                                     timeFormat.format(a.getStartTimestamp()),
                                     a.getAppointmentNum());
@@ -201,9 +204,9 @@ public class AdminModule {
 
                         System.out.println("Enter 0 to go back to the previous menu.\n");
                         //viewed = true; If this is set to true, this loop never entered again. 
-                    } catch (CustomerNotFoundException ex) {
+                    } catch (CustomerNotFoundException | CategoryNotFoundException ex) {
                         System.out.println(ex.getMessage());
-                    }
+                    } 
                 }
             } else {
                 System.out.println("Error: Invalid input type entered! Please enter the correct input.");
@@ -241,15 +244,17 @@ public class AdminModule {
                         System.out.println();
                         //FORMATTING ISSUES
                         for (AppointmentEntity a : appointments) {
+                            CategoryEntity cat = categorySessionBeanRemote.retrieveCategoryByCategoryId(new Long(a.getServiceProviderEntity().getBizCategory()));
+                            String catName = cat.getCategory();
                             System.out.printf("%4s%27s%16s%16s%27s\n", a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(),
-                                    a.getServiceProviderEntity().getBizCategory(),
+                                    catName,
                                     dateFormat.format(a.getStartTimestamp()),
                                     timeFormat.format(a.getStartTimestamp()),
                                     a.getAppointmentNum());
                         }
                         System.out.println("Enter 0 to go back to the previous menu.\n");
                        // viewed = true; --> If this is set to true, then this loop will not be added. 
-                    } catch (ServiceProviderNotFoundException ex) {
+                    } catch (ServiceProviderNotFoundException | CategoryNotFoundException ex) {
                         System.out.println(ex.getMessage());
                     }
                 }
@@ -447,7 +452,7 @@ public class AdminModule {
                   break;
               } else {
                      try {
-                         categorySessionBeanRemote.deleteCategory(allCategories.get(idToDelete).getCategory());
+                         categorySessionBeanRemote.deleteCategory(allCategories.get(idToDelete - 1).getCategory());
                      } catch (CategoryNotFoundException | CategoryInUseException ex) {
                          System.out.println("Category could not be deleted because " + ex.getMessage());
                      }
@@ -484,10 +489,12 @@ public class AdminModule {
                       if (resultList==null){
                           System.out.println("Customer has no appointments.");
                       } else {
-                        System.out.println("An email is sent to " + resultList.get(0) + "for the appointment " + resultList.get(1));
+                        System.out.println("An email is sent to " + resultList.get(0) + " for the appointment " + resultList.get(1));
+                        System.out.println();
                       }
                     } catch (Exception ex) {
                         System.out.println("Could not send reminder email: " + ex.getMessage());
+                        System.out.println();
                     }
                 }
             } else {

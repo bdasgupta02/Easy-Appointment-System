@@ -82,8 +82,8 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanRemot
             query.setParameter("inCategoryId", categoryId);
             List<ServiceProviderEntity> result = query.getResultList();
             
-            if(result != null){
-                throw new CategoryInUseException("Category with name " + categoryName + "used by service providers!");
+            if(result.isEmpty()){
+                throw new CategoryInUseException("Category with name " + categoryName + " is being used by service providers!");
             } else {
                 em.remove(categoryEntity);
             }

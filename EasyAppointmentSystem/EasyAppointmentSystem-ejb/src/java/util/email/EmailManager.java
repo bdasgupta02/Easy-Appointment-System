@@ -1,7 +1,9 @@
 package util.email;
 
 import entity.AppointmentEntity;
+import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 import javax.mail.Message;
@@ -12,12 +14,17 @@ import javax.mail.internet.MimeMessage;
 
 
 
+
 public class EmailManager 
 {
     private final String emailServerName = "smtp.gmail.com";     
     private final String mailer = "JavaMailer";
     private String smtpAuthUser;
     private String smtpAuthPassword;
+    String datePattern = "yyyy-MM-dd";
+    String timePattern = "HH:mm";
+    DateFormat dateFormat = new SimpleDateFormat(datePattern);
+    DateFormat timeFormat = new SimpleDateFormat(timePattern);
     
     
     
@@ -39,7 +46,12 @@ public class EmailManager
     {
         String emailBody = "";
       
-        emailBody += "Dear Customer, you have to following appointment soon!\n" ;
+        emailBody += "Dear " + appointmentEntity.getCustomerEntity().getFirstName() + ", you have to following appointment soon!\n" +   
+                "Appointment Num: " + appointmentEntity.getAppointmentNum() + "\n" +
+                "Time: " + dateFormat.format(appointmentEntity.getStartTimestamp()) + ", " + timeFormat.format(appointmentEntity.getStartTimestamp()) + "\n";
+        emailBody += "Please be there at least 15 minutes before your time slot!\n";
+        emailBody += "We hope to see you there and have a great day ahead!\n";
+        emailBody += "Sincerely, \n The EasyAppointment Team";
            
         
         try 
@@ -60,7 +72,7 @@ public class EmailManager
             {
                 msg.setFrom(InternetAddress.parse(fromEmailAddress, false)[0]);
                 msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmailAddress, false));
-                msg.setSubject("Checkout Completed Successfully!");
+                msg.setSubject("Appointment reminder from EasyAppointment!");
                 msg.setText(emailBody);
                 msg.setHeader("X-Mailer", mailer);
                 
