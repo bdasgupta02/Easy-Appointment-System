@@ -11,3 +11,7 @@
 - Bikramjit Dasgupta: bdasgupta02, Bikram
 - Sheethal Sridhar Shanbhogue: sheethal1404
 - Vanshiqa Agrawal: vanshiqa
+
+## For emailing function:
+- email: is2103group10@gmail.com
+- password: Pa55word!
