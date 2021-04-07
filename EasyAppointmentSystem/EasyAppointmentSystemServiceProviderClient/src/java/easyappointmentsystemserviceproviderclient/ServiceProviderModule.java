@@ -85,25 +85,25 @@ public class ServiceProviderModule {
         Scanner scanner = new Scanner(System.in);
         ServiceProviderEntity newServiceProviderEntity = new ServiceProviderEntity();
         
+        // NEED INPUT VALIDATION
         try{
             System.out.println("*** Service Provider Terminal :: Registration Operation ***\n");
            
             System.out.print("Enter Name> ");
             newServiceProviderEntity.setName(scanner.nextLine().trim());
             
-            List<CategoryEntity> allCategories = categoryEntitySessionBeanRemote.retrieveAllCategories();
-            for (CategoryEntity category : allCategories) {
-                System.out.print(category.getCategoryId() + "  " + category.getCategory() + " ");
-                if (allCategories.indexOf(category) != allCategories.size() - 1) {
+            List<CategoryEntity> allCategories = categoryEntitySessionBeanRemote.retrieveAllCategories();      
+            for (int i = 1; i <= allCategories.size(); i++) {
+                System.out.print(i + " " + allCategories.get(i-1).getCategory() + " ");
+                if (i != allCategories.size()) {
                     System.out.print("| ");
                 }
             }
             
             System.out.println();
             
-            //need to check that the number exists
             System.out.print("Enter Business Category> ");
-            newServiceProviderEntity.setBizCategory(scanner.nextInt()); 
+            newServiceProviderEntity.setBizCategory(allCategories.get(scanner.nextInt())); 
             scanner.nextLine();
             
             System.out.print("Enter Business Registration Number> ");
@@ -148,8 +148,6 @@ public class ServiceProviderModule {
                 }
             }
             
-            newServiceProviderEntity.setRatings(new ArrayList<RatingEntity>());
-            newServiceProviderEntity.setAppointments(new ArrayList<AppointmentEntity>());
             newServiceProviderEntity.setStatus(ServiceProviderStatusEnum.PENDING);
             serviceProviderEntitySessionBeanRemote.addNewServiceProvider(newServiceProviderEntity);
             System.out.println("You have successfully registered as service provider! Please proceed to login.");
