@@ -187,12 +187,12 @@ public class AdminModule {
                 } else if (!viewed) {
                     try {
                         appointments = adminEntitySessionBeanRemote.retrieveAppointmentEntityByCustomerId(customerId);
-                        System.out.printf("%20s%15s%15s%15s%15s\n", "Name ", "| Business Category ", "| Date ", "| Time ", "| Appointment No. ");
+                        System.out.printf("%4s%27s%16s%16s%27s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No. ");
                         
                         // lazy fetching issues fixed
                         // need to print business category in text
                         for (AppointmentEntity a : appointments) {
-                            System.out.printf("%20s%15s%15s%15s%15s\n", a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(),
+                            System.out.printf("%4s%27s%16s%16s%27s\n", a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(),
                                     a.getServiceProviderEntity().getBizCategory(),
                                     dateFormat.format(a.getStartTimestamp()),
                                     timeFormat.format(a.getStartTimestamp()),

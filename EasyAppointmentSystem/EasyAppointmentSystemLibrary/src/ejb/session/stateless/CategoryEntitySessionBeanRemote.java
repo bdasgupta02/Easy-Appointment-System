@@ -12,11 +12,7 @@ import util.exception.CategoryInUseException;
 import util.exception.CategoryNotFoundException;
 import util.exception.EntityAttributeNullException;
 
-/**
- *
- * @author Sheethal14
- */
-@Remote
+
 public interface CategoryEntitySessionBeanRemote {
     
     public Long addNewCategory(CategoryEntity newCategoryEntity) throws EntityAttributeNullException;

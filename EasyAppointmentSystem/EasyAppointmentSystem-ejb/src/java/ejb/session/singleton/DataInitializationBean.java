@@ -69,9 +69,9 @@ public class DataInitializationBean {
     
     private void initializeData() {
         try {
-//            categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Health"));
-//            categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Fashion"));
-//            categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Education"));
+            categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Health"));
+            categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Fashion"));
+            categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Education"));
             adminEntitySessionBeanLocal.createNewAdminEntity(new AdminEntity("admin01@easyappointment.com", "001001", "Admin01",""));
             customerEntitySessionBeanLocal.createCustomerEntity(new CustomerEntity("id", "Liza", "Mozart", "address", new Character('F'), 30, "Singapore", "liza@gmail.com", new Long(345240), "password"));
             serviceProviderEntitySessionBeanLocal.addNewServiceProvider(

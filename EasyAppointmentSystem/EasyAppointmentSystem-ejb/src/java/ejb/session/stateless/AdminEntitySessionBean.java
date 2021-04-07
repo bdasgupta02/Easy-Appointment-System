@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.AdminEntity;
 import entity.AppointmentEntity;
 import entity.CustomerEntity;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
@@ -52,7 +53,7 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
     @Override
     public Long createNewAdminEntity(AdminEntity adminEty) throws EntityAttributeNullException {
         
-         if (adminEty.getId() != null && adminEty.getEmail() != null 
+         if (adminEty.getEmail() != null 
                  && adminEty.getPassword() != null && adminEty.getFirstName() != null 
                  && adminEty.getLastName()  != null){
            em.persist(adminEty);
@@ -102,7 +103,7 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
 
     @Override
     public void updateAdmin(AdminEntity adminEty) throws AdminNotFoundException, EntityAttributeNullException {
-         if (adminEty.getId() != null && adminEty.getEmail() != null 
+         if (adminEty.getEmail() != null 
                  && adminEty.getPassword() != null && adminEty.getFirstName() != null 
                  && adminEty.getLastName()  != null){
              em.merge(adminEty);
@@ -140,7 +141,7 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
             appointments.sort((AppointmentEntity a, AppointmentEntity b) -> a.getStartTimestamp().compareTo(b.getStartTimestamp()));
             AppointmentEntity firstAppt = appointments.get(0);
             asyncResult = emailControllerLocal.emailCheckoutNotificationAsync(firstAppt, "is2103group10@gmail.com", toEmail );
-            List resultList = null;
+            List resultList = new ArrayList();
             resultList.add(fullName);
             resultList.add(firstAppt.getAppointmentNum()); 
             return resultList;
