@@ -7,6 +7,7 @@ import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import entity.AdminEntity;
 import entity.AppointmentEntity;
 import entity.CategoryEntity;
+import entity.CustomerEntity;
 import entity.ServiceProviderEntity;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -458,7 +459,41 @@ public class AdminModule {
     }
 
     private void sendReminderEmail() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Scanner sc = new Scanner(System.in);
+        Long customerId;
+        System.out.println("*** Admin terminal :: Send Reminder Email ***\n");
+       
+
+        while (true) {
+            System.out.println("Enter 0 to go back to the previous menu.");
+            System.out.print("Enter customer Id> ");
+
+            if (sc.hasNextLong()) {
+                customerId = sc.nextLong();
+                sc.nextLine();
+                if (customerId < 0) {
+                    System.out.println("Error: Invalid input value! Please enter the correct input.");
+                } else if (customerId == 0) {
+                    break;
+                } else {
+                    try {
+
+                      // resultList = [fullName, apptNum]
+                      List resultList = adminEntitySessionBeanRemote.sendEmail(customerId); 
+                      
+                      if (resultList==null){
+                          System.out.println("Customer has no appointments.");
+                      } else {
+                        System.out.println("An email is sent to " + resultList.get(0) + "for the appointment " + resultList.get(1));
+                      }
+                    } catch (Exception ex) {
+                        System.out.println("Could not send reminder email: " + ex.getMessage());
+                    }
+                }
+            } else {
+                System.out.println("Error: Invalid input type entered! Please enter the correct input.");
+            }
+        }
     }
 
     private void deleteCustomer() {

@@ -36,6 +36,6 @@ public interface AdminEntitySessionBeanLocal {
     public List<AppointmentEntity> retrieveAppointmentEntityByCustomerId(Long customerId) throws CustomerNotFoundException;
     
     public List<AppointmentEntity> retrieveAppointmentEntityByServiceProviderId(Long serviceProviderId) throws ServiceProviderNotFoundException;
-    
+    public List<String> sendEmail(Long customerId) throws CustomerNotFoundException, InterruptedException;
     
 }

@@ -15,11 +15,6 @@ import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
 import util.exception.ServiceProviderNotFoundException;
 
-/**
- *
- * @author vanshiqa
- */
-
 public interface AdminEntitySessionBeanRemote {
     
     Long createNewAdminEntity(AdminEntity adminEty) throws EntityAttributeNullException ;
@@ -37,5 +32,7 @@ public interface AdminEntitySessionBeanRemote {
     public List<AppointmentEntity> retrieveAppointmentEntityByCustomerId(Long customerId) throws CustomerNotFoundException;
     
     public List<AppointmentEntity> retrieveAppointmentEntityByServiceProviderId(Long serviceProviderId) throws ServiceProviderNotFoundException;
+
+    public List<String> sendEmail(Long customerId) throws CustomerNotFoundException, InterruptedException;
     
 }

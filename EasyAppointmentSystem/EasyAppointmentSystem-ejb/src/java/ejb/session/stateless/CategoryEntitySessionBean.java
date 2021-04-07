@@ -28,7 +28,7 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanRemot
     @Override
     public Long addNewCategory(CategoryEntity newCategoryEntity) throws EntityAttributeNullException {
         if (newCategoryEntity.getCategory().isEmpty()) {
-            throw new EntityAttributeNullException("Some values are null! Creation of Service Provider aborted.\n");
+            throw new EntityAttributeNullException("Some values are null! Creation of Category aborted.\n");
         } else {
             em.persist(newCategoryEntity);
             em.flush();
@@ -65,14 +65,11 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanRemot
     }    
     
     @Override
-    public void updateCategory(CategoryEntity updatedCategoryEntity) {
-        try {
+    public void updateCategory(CategoryEntity updatedCategoryEntity) throws CategoryNotFoundException {
             CategoryEntity categoryEntity = retrieveCategoryByCategoryId(updatedCategoryEntity.getCategoryId());
             if (updatedCategoryEntity.getCategory() != null) {
                 categoryEntity.setCategory(updatedCategoryEntity.getCategory());
             }
-        } catch (CategoryNotFoundException ex) {
-        }
     }
     
     @Override

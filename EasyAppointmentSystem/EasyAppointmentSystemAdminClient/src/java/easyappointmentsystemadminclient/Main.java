@@ -14,7 +14,7 @@ public class Main {
     @EJB
     private static ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote;
     @EJB
-    private static CategoryEntitySessionBeanRemote categorySessionBeanRemote;
+    private static CategoryEntitySessionBeanRemote categoryEntitySessionBeanRemote;
     @EJB
     private static CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote;
     
@@ -23,7 +23,7 @@ public class Main {
         AdminModule adminModule = new AdminModule(
                 adminEntitySessionBeanRemote, 
                 serviceProviderEntitySessionBeanRemote, 
-                categorySessionBeanRemote,
+                categoryEntitySessionBeanRemote,
                 customerEntitySessionBeanRemote
         );
         adminModule.adminStartMenu();

@@ -7,7 +7,11 @@ package ejb.session.stateless;
 
 import entity.AdminEntity;
 import entity.AppointmentEntity;
+import entity.CustomerEntity;
 import java.util.List;
+import java.util.concurrent.Future;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -40,6 +44,9 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
     private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
     @EJB
     private ServiceProviderEntitySessionBeanLocal serviceProviderEntitySessionBeanLocal;
+    @EJB 
+    private EmailControllerLocal emailControllerLocal;
+    private Future<Boolean> asyncResult;
     
         
     @Override
@@ -118,5 +125,26 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
     @Override
     public List<AppointmentEntity> retrieveAppointmentEntityByServiceProviderId(Long serviceProviderId) throws ServiceProviderNotFoundException {
         return serviceProviderEntitySessionBeanLocal.retrieveAppointmentsByServiceProviderId(serviceProviderId);
+    }
+    
+    @Override
+    public List<String> sendEmail(Long customerId) throws CustomerNotFoundException, InterruptedException {
+        List<AppointmentEntity> appointments;
+        appointments = retrieveAppointmentEntityByCustomerId(customerId);
+        if(appointments == null){
+            return null;
+        } else {
+            CustomerEntity c  = customerEntitySessionBeanLocal.retrieveCustomerEntityById(customerId);
+            String fullName = c.getFirstName() + "  " + c.getLastName();
+            String toEmail = c.getEmail();
+            appointments.sort((AppointmentEntity a, AppointmentEntity b) -> a.getStartTimestamp().compareTo(b.getStartTimestamp()));
+            AppointmentEntity firstAppt = appointments.get(0);
+            asyncResult = emailControllerLocal.emailCheckoutNotificationAsync(firstAppt, "is2103group10@gmail.com", toEmail );
+            List resultList = null;
+            resultList.add(fullName);
+            resultList.add(firstAppt.getAppointmentNum()); 
+            return resultList;
+
+        }
     }
 }
