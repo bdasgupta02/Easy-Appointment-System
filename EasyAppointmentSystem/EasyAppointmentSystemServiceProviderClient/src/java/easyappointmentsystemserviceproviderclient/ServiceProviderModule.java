@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package easyappointmentsystemserviceproviderclient;
 
 import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
@@ -18,6 +13,7 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 import util.enumeration.ServiceProviderStatusEnum;
 import util.exception.AppointmentCancellationException;
 import util.exception.AppointmentNotFoundException;
@@ -72,7 +68,7 @@ public class ServiceProviderModule {
                     } else if(response == 3) {
                         break;
                     } else {
-                        System.out.println("Invalid option, please try again!\n");
+                        System.out.println("Error: Invalid input value! Please enter a value between 1 and 3.");
                     }
                 }
                 if(response == 3) {
@@ -80,7 +76,7 @@ public class ServiceProviderModule {
                 }
             }
         } catch (InputMismatchException ex) {
-            System.out.println("Invalid option, please try again!\n");
+            System.out.println("Error: Invalid input type entered! Please enter the correct input.");
             menuServiceProviderOperation();
         }
     }
@@ -105,6 +101,7 @@ public class ServiceProviderModule {
             
             System.out.println();
             
+            //need to check that the number exists
             System.out.print("Enter Business Category> ");
             newServiceProviderEntity.setBizCategory(scanner.nextInt()); 
             scanner.nextLine();
@@ -115,27 +112,66 @@ public class ServiceProviderModule {
             System.out.print("Enter City> ");
             newServiceProviderEntity.setCity(scanner.nextLine().trim());
             
-            System.out.print("Enter Phone> ");
-            newServiceProviderEntity.setPhoneNum(scanner.nextLine().trim());
+            while (true) {
+                System.out.print("Enter Phone> ");
+                String phoneNum = scanner.nextLine().trim();
+                if (checkNoLetters(phoneNum) && phoneNum.length() == 8) {
+                    newServiceProviderEntity.setPhoneNum(phoneNum);
+                    break;
+                } else {
+                    System.out.println("Error: Invalid phone number! PLease enter a valid phone number with 8 digits.");
+                }
+            }
             
             System.out.print("Enter Business Address> ");
             newServiceProviderEntity.setBizAddress(scanner.nextLine().trim());
             
-            System.out.print("Enter Email> ");
-            newServiceProviderEntity.setEmail(scanner.nextLine().trim());
+            while (true) {
+                System.out.print("Enter Email> ");
+                String input = scanner.nextLine().trim();
+                if (checkEmailIsValid(input)) {
+                    newServiceProviderEntity.setEmail(input);
+                    break;
+                } else {
+                    System.out.println("Error: Invalid email! Please enter a valid email.");
+                }
+            }
             
-            System.out.print("Enter Password> ");
-            newServiceProviderEntity.setPassword(scanner.nextLine().trim());
+            while (true) {
+                System.out.print("Enter Password> ");
+                String password = scanner.nextLine().trim();
+                if (checkNoLetters(password) && password.length() == 6) {
+                    newServiceProviderEntity.setPassword(password);
+                    break;
+                } else {
+                    System.out.println("Error: Invalid password! Please enter 6-digit numeric password.");
+                }
+            }
             
             newServiceProviderEntity.setRatings(new ArrayList<RatingEntity>());
             newServiceProviderEntity.setAppointments(new ArrayList<AppointmentEntity>());
             newServiceProviderEntity.setStatus(ServiceProviderStatusEnum.PENDING);
             serviceProviderEntitySessionBeanRemote.addNewServiceProvider(newServiceProviderEntity);
+            System.out.println("You have successfully registered as service provider! Please proceed to login.");
             
         } catch (InputMismatchException ex) {
-            System.out.println("Input is invalid! Please try again.\n");
+            System.out.println("Input is invalid! Please try again.");
         } catch (EntityAttributeNullException ex) {
             System.out.println(ex.getMessage());
+        }
+    }
+    
+    public boolean checkNoLetters(String input) {
+        return (input.matches("[0-9]+")); 
+    }
+    
+    public boolean checkEmailIsValid(String email) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\." + "[a-zA-Z0-9_+&*-]+)*@" + "(?:[a-zA-Z0-9-]+\\.)+[a-z" + "A-Z]{2,7}$";
+        if (email.isEmpty()) {
+            return false;
+        } else {
+            Pattern pattern = Pattern.compile(emailRegex);
+            return pattern.matches(emailRegex, email);
         }
     }
     
@@ -150,11 +186,15 @@ public class ServiceProviderModule {
         System.out.print("Enter password> ");
         password = scanner.nextLine().trim();
         
-        if(emailAdd.length() > 0 && password.length() > 0) {
-            currentServiceProvider = serviceProviderEntitySessionBeanRemote.login(emailAdd, password);      
-        } else {
-            throw new InvalidLoginException("Missing login credential!");
-        } 
+        try {
+            if(emailAdd.length() > 0 && password.length() > 0) {
+                currentServiceProvider = serviceProviderEntitySessionBeanRemote.login(emailAdd, password);      
+            } else {
+                throw new InvalidLoginException("Missing login credential!");
+            } 
+        } catch (InvalidLoginException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
     
     public void loginMenuServiceProviderOperation() {
@@ -206,7 +246,6 @@ public class ServiceProviderModule {
         }
     }
     
-    // to edit
     public void viewProfile() {
         System.out.println("*** Service Provider Terminal :: Your Profile ***\n");
         System.out.println("-----------------------------------------------------------------------------");
@@ -334,7 +373,7 @@ public class ServiceProviderModule {
             try {
                 AppointmentEntity appointment = appointmentEntitySessionBeanRemote.retrieveAppointmentEntityByAppointmentNumber(appointmentNum);
                 appointmentEntitySessionBeanRemote.cancelAppointment(appointment.getAppointmentId());
-                System.out.println("Appoint " + appointmentNum + " has been cancelled successfully.");
+                System.out.println("Appointment " + appointmentNum + " has been cancelled successfully.");
                 System.out.println("Press any key to go back to the main menu.");
                 scanner.nextLine();
             } catch (AppointmentNotFoundException ex) {
