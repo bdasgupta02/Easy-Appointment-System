@@ -7,14 +7,11 @@ import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import entity.AdminEntity;
 import entity.AppointmentEntity;
 import entity.CategoryEntity;
-import entity.CustomerEntity;
 import entity.ServiceProviderEntity;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.enumeration.ServiceProviderStatusEnum;
 import util.exception.CategoryInUseException;
 import util.exception.CategoryNotFoundException;
@@ -194,9 +191,8 @@ public class AdminModule {
                         // lazy fetching issues fixed
                         // need to print business category in text
                         for (AppointmentEntity a : appointments) {
-                            CategoryEntity cat = categorySessionBeanRemote.retrieveCategoryByCategoryId(new Long(a.getServiceProviderEntity().getBizCategory()));
-                            String catName = cat.getCategory();
-                            System.out.printf("%4s%27s%16s%16s%27s\n", a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(), catName,
+                            System.out.printf("%4s%27s%16s%16s%27s\n", a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(), 
+                                    a.getServiceProviderEntity().getBizCategory().getCategory(),
                                     dateFormat.format(a.getStartTimestamp()),
                                     timeFormat.format(a.getStartTimestamp()),
                                     a.getAppointmentNum());
@@ -204,7 +200,7 @@ public class AdminModule {
 
                         System.out.println("Enter 0 to go back to the previous menu.\n");
                         //viewed = true; If this is set to true, this loop never entered again. 
-                    } catch (CustomerNotFoundException | CategoryNotFoundException ex) {
+                    } catch (CustomerNotFoundException ex) {
                         System.out.println(ex.getMessage());
                     } 
                 }
@@ -244,17 +240,15 @@ public class AdminModule {
                         System.out.println();
                         //FORMATTING ISSUES
                         for (AppointmentEntity a : appointments) {
-                            CategoryEntity cat = categorySessionBeanRemote.retrieveCategoryByCategoryId(new Long(a.getServiceProviderEntity().getBizCategory()));
-                            String catName = cat.getCategory();
                             System.out.printf("%4s%27s%16s%16s%27s\n", a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(),
-                                    catName,
+                                    a.getServiceProviderEntity().getBizCategory().getCategory(),
                                     dateFormat.format(a.getStartTimestamp()),
                                     timeFormat.format(a.getStartTimestamp()),
                                     a.getAppointmentNum());
                         }
                         System.out.println("Enter 0 to go back to the previous menu.\n");
                        // viewed = true; --> If this is set to true, then this loop will not be added. 
-                    } catch (ServiceProviderNotFoundException | CategoryNotFoundException ex) {
+                    } catch (ServiceProviderNotFoundException ex) {
                         System.out.println(ex.getMessage());
                     }
                 }
@@ -415,7 +409,7 @@ public class AdminModule {
                    try {
                        CategoryEntity newCat = new CategoryEntity(name); 
                         categorySessionBeanRemote.addNewCategory(newCat); //THROWING NULL POINTER
-                      System.out.println("The business category “"+ name +"” is added.");
+                      System.out.println("The business category “"+ name +"�? is added.");
                    } catch (EntityAttributeNullException | NullPointerException ex) {
                        System.out.println("Unable to create category. Please enter a valid input!");
                    }

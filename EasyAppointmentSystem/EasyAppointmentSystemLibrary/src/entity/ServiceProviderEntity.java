@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import util.enumeration.ServiceProviderStatusEnum;
 
@@ -23,8 +24,6 @@ public class ServiceProviderEntity implements Serializable {
     
     @Column(nullable=false, unique=true)
     private String bizRegNum;
-    @Column(nullable=false)
-    private int bizCategory;
     @Column(nullable=false)
     private String name;
     @Column(nullable=false)
@@ -47,13 +46,18 @@ public class ServiceProviderEntity implements Serializable {
     @OneToMany(mappedBy = "serviceProviderEntity")
     @JoinColumn(nullable = false)
     private List<AppointmentEntity> appointments;
+    
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private CategoryEntity bizCategory;
 
     public ServiceProviderEntity() {
         this.appointments = new ArrayList<>();
+        this.ratings = new ArrayList<>();
     }
 
-    public ServiceProviderEntity(String bizRegNum, int bizCategory, String name, String bizAddress, 
-            String city, String email, String password, String phoneNum, ServiceProviderStatusEnum status, ArrayList<RatingEntity> ratings, ArrayList<AppointmentEntity> appointments) {
+    public ServiceProviderEntity(String bizRegNum, CategoryEntity bizCategory, String name, String bizAddress, 
+            String city, String email, String password, String phoneNum, ServiceProviderStatusEnum status, List<RatingEntity> ratings, List<AppointmentEntity> appointments) {
         this();
         this.bizRegNum = bizRegNum;
         this.bizCategory = bizCategory;
@@ -111,11 +115,11 @@ public class ServiceProviderEntity implements Serializable {
     }
 
    
-    public Integer getBizCategory() {
+    public CategoryEntity getBizCategory() {
         return bizCategory;
     }
 
-    public void setBizCategory(int bizCategory) {
+    public void setBizCategory(CategoryEntity bizCategory) {
         this.bizCategory = bizCategory;
     }
 
@@ -187,7 +191,11 @@ public class ServiceProviderEntity implements Serializable {
         return ratings;
     }
 
-    public void setRatings(List<RatingEntity> ratings) {
+    public void addRating(RatingEntity rating) {
+        this.ratings.add(rating);
+    }
+    
+    public void setRating(List<RatingEntity> ratings) {
         this.ratings = ratings;
     }
 

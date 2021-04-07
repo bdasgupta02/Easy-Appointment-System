@@ -26,6 +26,7 @@ import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
 import javax.ejb.Startup;
 import util.enumeration.ServiceProviderStatusEnum;
+import util.exception.CategoryNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.EntityAttributeNullException;
 import util.exception.ServiceProviderNotFoundException;
@@ -39,49 +40,49 @@ import util.exception.ServiceProviderNotFoundException;
 @Startup
 
 public class DataInitializationBean {
-    
+
     @EJB
     private ServiceProviderEntitySessionBeanLocal serviceProviderEntitySessionBeanLocal;
     @EJB
     private CategoryEntitySessionBeanLocal categoryEntitySessionBeanLocal;
     @EJB
     private AdminEntitySessionBeanLocal adminEntitySessionBeanLocal;
-    @EJB 
+    @EJB
     private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
-    @EJB 
-    private  AppointmentEntitySessionBeanLocal apptEtySessionBeanLocal;
+    @EJB
+    private AppointmentEntitySessionBeanLocal apptEtySessionBeanLocal;
 
-
-    public DataInitializationBean(){}
-    
-    @PostConstruct
-    public void postConstruct()
-    {
-          try {
-                serviceProviderEntitySessionBeanLocal.retrieveServiceProviderByEmail("test@zalora.com");
-            } catch(ServiceProviderNotFoundException ex) {
-                initializeData();
-            }
-        
+    public DataInitializationBean() {
     }
-    
-    
-    
+
+    @PostConstruct
+    public void postConstruct() {
+        try {
+            serviceProviderEntitySessionBeanLocal.retrieveServiceProviderByEmail("test@zalora.com");
+        } catch (ServiceProviderNotFoundException ex) {
+            initializeData();
+        }
+
+    }
+
     private void initializeData() {
         try {
             categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Health"));
             categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Fashion"));
             categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Education"));
-            adminEntitySessionBeanLocal.createNewAdminEntity(new AdminEntity("admin01@easyappointment.com", "001001", "Admin01",""));
+            adminEntitySessionBeanLocal.createNewAdminEntity(new AdminEntity("admin01@easyappointment.com", "001001", "Admin01", ""));
             customerEntitySessionBeanLocal.createCustomerEntity(new CustomerEntity("id", "Liza", "Mozart", "address", new Character('F'), 30, "Singapore", "liza@gmail.com", new Long(345240), "password"));
+            try {
             serviceProviderEntitySessionBeanLocal.addNewServiceProvider(
-                    new ServiceProviderEntity("0012345678", 1, "Zalora", "51 Bras Basah Road #07-01/04", "Bras Basah", "test@Zalora.com", "123456", "65551234", ServiceProviderStatusEnum.APPROVED, 
+                    new ServiceProviderEntity("0012345678", categoryEntitySessionBeanLocal.retrieveCategoryByCategoryId(1L), "Zalora", "51 Bras Basah Road #07-01/04", "Bras Basah", "test@Zalora.com", "123456", "65551234", ServiceProviderStatusEnum.APPROVED,
                             new ArrayList<RatingEntity>(), new ArrayList<AppointmentEntity>()));
-            
+            } catch (CategoryNotFoundException ex) {
+                System.out.println("Category not found while initializing a service provider!");
+            }
             // Creating a dummy appointment for testing
             AppointmentEntity aEty = null;
             try {
-                aEty = new AppointmentEntity(customerEntitySessionBeanLocal.retrieveCustomerEntityById(new Long(1)), serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(new Long(1)), new Date(), new Date(), "2");
+                aEty = new AppointmentEntity(customerEntitySessionBeanLocal.retrieveCustomerEntityById(1L), serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(new Long(1)), new Date(), new Date(), "2");
             } catch (CustomerNotFoundException ex) {
                 System.out.println("Tried initialising appointment with Customer id: 1. Customer not found!");
             } catch (ServiceProviderNotFoundException ex) {
@@ -89,7 +90,8 @@ public class DataInitializationBean {
             }
             apptEtySessionBeanLocal.createAppointmentEntity(aEty);
         } catch (EntityAttributeNullException ex) {
+            System.out.println("Some values are null. Data initialization has not been completed!");
         }
     }
-    
+
 }

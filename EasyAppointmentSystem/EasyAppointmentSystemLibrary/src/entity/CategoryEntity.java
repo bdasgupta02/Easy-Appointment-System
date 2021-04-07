@@ -1,11 +1,15 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 
 @Entity
 public class CategoryEntity implements Serializable {
@@ -17,14 +21,34 @@ public class CategoryEntity implements Serializable {
     @Column(nullable=false, unique=true)
     private String category;
     
-
+    @OneToMany(mappedBy = "bizCategory")
+    private List<ServiceProviderEntity> serviceProviders;
 
     public CategoryEntity() {
+        this.serviceProviders = new ArrayList<>();
     }
 
     public CategoryEntity(String category) {
         this();
         this.category = category;
+    }
+    
+    public CategoryEntity(String category, List<ServiceProviderEntity> serviceProviders) {
+        this();
+        this.category = category;
+        this.serviceProviders = serviceProviders;
+    }
+
+    public List<ServiceProviderEntity> getServiceProviders() {
+        return serviceProviders;
+    }
+
+    public void addServiceProvider(ServiceProviderEntity serviceProvider) {
+        this.serviceProviders.add(serviceProvider);
+    }
+    
+    public void setServiceProvider(List<ServiceProviderEntity> serviceProviders) {
+        this.serviceProviders = serviceProviders;
     }
 
     public String getCategory() {
