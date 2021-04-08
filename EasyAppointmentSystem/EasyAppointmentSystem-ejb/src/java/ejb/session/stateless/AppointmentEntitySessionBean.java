@@ -6,6 +6,8 @@
 package ejb.session.stateless;
 
 import entity.AppointmentEntity;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
@@ -19,10 +21,7 @@ import util.exception.AppointmentCancellationException;
 import util.exception.AppointmentNotFoundException;
 import util.exception.EntityAttributeNullException;
 
-/**
- *
- * @author Bikram
- */
+
 @Stateless
 @Local(AppointmentEntitySessionBeanLocal.class)
 @Remote(AppointmentEntitySessionBeanRemote.class)
@@ -35,10 +34,17 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     @Override
     public Long createAppointmentEntity(AppointmentEntity newAppointmentEntity) throws EntityAttributeNullException {
         
-        if (newAppointmentEntity.getAppointmentNum() != null && newAppointmentEntity.getCustomerEntity() != null &&
+        if (newAppointmentEntity.getCustomerEntity() != null &&
                 newAppointmentEntity.getStartTimestamp() != null &&
                 newAppointmentEntity.getServiceProviderEntity() != null &&
                 newAppointmentEntity.getEndTimestamp() != null) {
+            
+            Long serviceProviderId = newAppointmentEntity.getServiceProviderEntity().getServiceProviderId();
+            String date = (new SimpleDateFormat("MMdd")).format(newAppointmentEntity.getStartTimestamp());
+            String time = (new SimpleDateFormat("HHmm")).format(newAppointmentEntity.getStartTimestamp());
+            String appointmentNum = serviceProviderId + date + time;
+            newAppointmentEntity.setAppointmentNum(appointmentNum);
+            
             em.persist(newAppointmentEntity);
             em.flush();
             return newAppointmentEntity.getAppointmentId();

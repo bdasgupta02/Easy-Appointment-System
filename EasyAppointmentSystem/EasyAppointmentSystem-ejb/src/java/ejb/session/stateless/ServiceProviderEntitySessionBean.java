@@ -16,13 +16,16 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import util.enumeration.ServiceProviderStatusEnum;
 import util.exception.DateProcessingException;
 import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
 import util.exception.ServiceProviderAlreadyBlockedException;
+import util.exception.ServiceProviderAlreadyExistsException;
 import util.exception.ServiceProviderNotFoundException;
+import util.exception.ServiceProviderNotPendingException;
 
 @Stateless
 @Local(ServiceProviderEntitySessionBeanLocal.class)
@@ -37,15 +40,23 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     }
     
     @Override
-    public Long addNewServiceProvider(ServiceProviderEntity newServiceProviderEntity) throws EntityAttributeNullException {
+    public Long addNewServiceProvider(ServiceProviderEntity newServiceProviderEntity) throws EntityAttributeNullException, ServiceProviderAlreadyExistsException {
         if (newServiceProviderEntity.getName().isEmpty() || newServiceProviderEntity.getBizCategory() == null ||
                 newServiceProviderEntity.getBizRegNum().isEmpty() || newServiceProviderEntity.getCity().isEmpty() ||
                 newServiceProviderEntity.getBizAddress().isEmpty() || newServiceProviderEntity.getEmail().isEmpty() ||
                 newServiceProviderEntity.getPhoneNum().isEmpty() || newServiceProviderEntity.getPassword().isEmpty()) {
             throw new EntityAttributeNullException("Error: Some values are null! Creation of Service Provider aborted.\n");
         } else {
-            em.persist(newServiceProviderEntity);
-            em.flush();
+            try {
+                em.persist(newServiceProviderEntity);
+                em.flush();
+            } catch (PersistenceException ex) {
+                if ((ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) &&
+                        ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
+                    throw new ServiceProviderAlreadyExistsException("Error: Service provider already exists!");
+                }
+            }
+            
             return newServiceProviderEntity.getServiceProviderId();
         }
     }
@@ -121,14 +132,24 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     @Override
     public List<ServiceProviderEntity> retrieveAllServiceProviders() {
         Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s ORDER BY s.serviceProviderId ASC");
-        return query.getResultList();
+        List<ServiceProviderEntity> allServiceProviders = query.getResultList(); 
+        for (ServiceProviderEntity s : allServiceProviders) {
+            s.getAppointments().size();
+            s.getRatings().size();
+        }
+        return allServiceProviders;
     }
     
     @Override
     public List<ServiceProviderEntity> retrieveAllPendingServiceProviders() {
         Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.status = :inPending ORDER BY s.serviceProviderId ASC");
         query.setParameter("inPending", ServiceProviderStatusEnum.PENDING);
-        return query.getResultList();
+        List<ServiceProviderEntity> pendingServiceProviders = query.getResultList();
+        for (ServiceProviderEntity s : pendingServiceProviders) {
+            s.getAppointments().size();
+            s.getRatings().size();
+        }
+        return pendingServiceProviders;
     }
     
     @Override

@@ -20,6 +20,7 @@ import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
 import util.exception.ServiceProviderAlreadyBlockedException;
 import util.exception.ServiceProviderNotFoundException;
+import util.exception.ServiceProviderNotPendingException;
 
 public class AdminModule {
 
@@ -186,19 +187,19 @@ public class AdminModule {
                 } else if (!viewed) {
                     try {
                         appointments = adminEntitySessionBeanRemote.retrieveAppointmentEntityByCustomerId(customerId);
-                        System.out.printf("%4s%27s%16s%16s%27s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No. \n");
+                        System.out.printf("%-15s%-20s%-16s%-16s%-27s\n", "Name", "Business Category", "Date", "Time", "Appointment No.");
                         
-                        // lazy fetching issues fixed
-                        // need to print business category in text
                         for (AppointmentEntity a : appointments) {
-                            System.out.printf("%4s%27s%16s%16s%27s\n", a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(), 
-                                    a.getServiceProviderEntity().getBizCategory().getCategory(),
+                            System.out.printf("%-15s%-20s%-16s%-16s%-27s\n",
+                                    a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(), 
+                                    a.getServiceProviderEntity().getBizCategory(),
                                     dateFormat.format(a.getStartTimestamp()),
                                     timeFormat.format(a.getStartTimestamp()),
                                     a.getAppointmentNum());
                         }
 
-                        System.out.println("Enter 0 to go back to the previous menu.\n");
+                        System.out.println();
+                        System.out.println("Enter 0 to go back to the previous menu.");
                         //viewed = true; If this is set to true, this loop never entered again. 
                     } catch (CustomerNotFoundException ex) {
                         System.out.println(ex.getMessage());
@@ -216,8 +217,7 @@ public class AdminModule {
         long serviceProviderId = 0;
         boolean viewed = false;
         List<AppointmentEntity> appointments;
-        
-        // date and time formatting
+
         String datePattern = "yyyy-MM-dd";
         String timePattern = "HH:mm";
         DateFormat dateFormat = new SimpleDateFormat(datePattern);
@@ -236,17 +236,16 @@ public class AdminModule {
                 } else if (!viewed) {
                     try {
                         appointments = adminEntitySessionBeanRemote.retrieveAppointmentEntityByServiceProviderId(serviceProviderId);
-                        System.out.printf("%4s%27s%16s%16s%27s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No. ");
-                        System.out.println();
-                        //FORMATTING ISSUES
+                        System.out.printf("%-15s%-20s%-16s%-16s%-27s\n", "Name", "Business Category", "Date", "Time", "Appointment No.");
                         for (AppointmentEntity a : appointments) {
-                            System.out.printf("%4s%27s%16s%16s%27s\n", a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(),
+                            System.out.printf("%-15s%-20s%-16s%-16s%-27s\n", a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(),
                                     a.getServiceProviderEntity().getBizCategory().getCategory(),
                                     dateFormat.format(a.getStartTimestamp()),
                                     timeFormat.format(a.getStartTimestamp()),
                                     a.getAppointmentNum());
                         }
-                        System.out.println("Enter 0 to go back to the previous menu.\n");
+                        System.out.println();
+                        System.out.println("Enter 0 to go back to the previous menu.");
                        // viewed = true; --> If this is set to true, then this loop will not be added. 
                     } catch (ServiceProviderNotFoundException ex) {
                         System.out.println(ex.getMessage());
@@ -261,14 +260,14 @@ public class AdminModule {
     private void viewServiceProviders() {
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Admin terminal :: View service provider ***\n");
-        System.out.printf("%10s%15s%15s%15s%15s%15s\n", "Id ", "| Name ", "| Business category ", "| City ", "| Overall rating ", "| Status ");
+        System.out.printf("%-4s%-20s%-20s%-15s%-20s%-15s\n", "Id", "Name", "Business category", "City", "Overall rating", "Status");
 
         List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviders();
 
         for (ServiceProviderEntity s : serviceProviders) {
             double averageRating = serviceProviderEntitySessionBeanRemote.getAverageRating(s);
             String doubleFormat = String.format("%.2f", averageRating);
-            System.out.printf("%10s%15s%15s%15s%15s%15s\n",
+            System.out.printf("%-4s%-20s%-20s%-15s%-20s%-15s\n",
                     s.getServiceProviderId(),
                     s.getName(),
                     s.getBizCategory(),
@@ -276,7 +275,7 @@ public class AdminModule {
                     averageRating == -1.0 ? "Not rated yet!": doubleFormat,
                     statusEnumConverter(s.getStatus()));
         }
-
+        System.out.println(); 
         System.out.print("Press any key to continue...> ");
         sc.nextLine();
     }
@@ -296,12 +295,12 @@ public class AdminModule {
         Long serviceProviderId;
         System.out.println("*** Admin terminal :: Approve service provider ***\n");
         System.out.println("List of service providers with pending approval:\n");
-        System.out.printf("%10s%15s%15s%15s%15s%20s%15s%15s\n", "Id ", "| Name ", "| Business category ", "| Business Reg. No. ", "| City ", "| Address ", "| Email ", "| Phone ");
+        System.out.printf("%-5s%-15s%-20s%-15s%-15s%-20s%-15s%-15s\n", "Id ", "Name", "Business category", "Business Reg. No.", "City", "Address", "Email", "Phone");
 
         List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveAllPendingServiceProviders();
 
         for (ServiceProviderEntity s : serviceProviders) {
-            System.out.printf("%10s%15s%15s%15s%15s%20s%15s%15s\n",
+            System.out.printf("%-5s%-15s%-20s%-15s%-15s%-20s%-15s%-15s\n",
                     s.getServiceProviderId(),
                     s.getName(),
                     s.getBizCategory(),
@@ -311,6 +310,8 @@ public class AdminModule {
                     s.getEmail(),
                     s.getPhoneNum());
         }
+        
+        System.out.println();
 
         while (true) {
             System.out.println("Enter 0 to go back to the previous menu.");
@@ -326,15 +327,20 @@ public class AdminModule {
                 } else {
                     try {
                         ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
-                        serviceProviderEntitySessionBeanRemote.approveServiceProviderStatus(serviceProviderEntity);
-                        System.out.println(serviceProviderEntity.getName() + "'s registration is approved.");
-                    } catch (EntityAttributeNullException | ServiceProviderNotFoundException ex) {
+                        if (serviceProviders.contains(serviceProviderEntity)) {
+                            serviceProviderEntitySessionBeanRemote.approveServiceProviderStatus(serviceProviderEntity);
+                            System.out.println(serviceProviderEntity.getName() + "'s registration is approved.");
+                        } else {
+                            throw new ServiceProviderNotPendingException("Error: Service provider with id " + serviceProviderId + " is not pending!");
+                        }
+                    } catch (EntityAttributeNullException | ServiceProviderNotPendingException | ServiceProviderNotFoundException ex) {
                         System.out.println(ex.getMessage());
-                    }
+                    } 
                 }
             } else {
                 System.out.println("Error: Invalid input type entered! Please enter the correct input.");
             }
+            System.out.println();
         }
     }
 
@@ -342,13 +348,13 @@ public class AdminModule {
         Scanner sc = new Scanner(System.in);
         Long serviceProviderId;
         System.out.println("*** Admin terminal :: Block service provider ***\n");
-        System.out.println("List of service providers with pending approval:\n");
-        System.out.printf("%10s%15s%15s%15s%15s%20s%15s%15s\n", "Id ", "| Name ", "| Business category ", "| Business Reg. No. ", "| City ", "| Address ", "| Email ", "| Phone ");
+        System.out.println("List of service providers:\n");
+        System.out.printf("%-10s%-15s%-15s%-15s%-15s%-20s%-15s%-15s\n", "Id ", "Name", "Business category", "Business Reg. No.", "City", "Address", "Email", "Phone");
 
         List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviders();
 
         for (ServiceProviderEntity s : serviceProviders) {
-            System.out.printf("%10s%15s%15s%15s%15s%20s%15s%15s\n",
+            System.out.printf("%-10s%-15s%-15s%-15s%-15s%-20s%-15s%-15s\n",
                     s.getServiceProviderId(),
                     s.getName(),
                     s.getBizCategory(),
@@ -358,6 +364,8 @@ public class AdminModule {
                     s.getEmail(),
                     s.getPhoneNum());
         }
+        
+        System.out.println();
 
         while (true) {
             System.out.println("Enter 0 to go back to the previous menu.");
@@ -378,7 +386,7 @@ public class AdminModule {
                         } catch (EntityAttributeNullException | ServiceProviderAlreadyBlockedException ex) {
                             System.out.println(ex.getMessage());
                         }
-                        System.out.println(serviceProviderEntity.getName() + "'s registration is approved.");
+                        System.out.println(serviceProviderEntity.getName() + "has been successfully blocked.");
                     } catch (ServiceProviderNotFoundException ex) {
                         System.out.println(ex.getMessage());
                     }
@@ -409,7 +417,7 @@ public class AdminModule {
                    try {
                        CategoryEntity newCat = new CategoryEntity(name); 
                         categorySessionBeanRemote.addNewCategory(newCat); //THROWING NULL POINTER
-                      System.out.println("The business category â€œ"+ name +"â€? is added.");
+                      System.out.println("The business category "+ name + " is added.");
                    } catch (EntityAttributeNullException | NullPointerException ex) {
                        System.out.println("Unable to create category. Please enter a valid input!");
                    }

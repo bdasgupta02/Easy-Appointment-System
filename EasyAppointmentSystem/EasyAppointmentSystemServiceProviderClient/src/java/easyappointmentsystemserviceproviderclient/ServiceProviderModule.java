@@ -19,6 +19,7 @@ import util.exception.AppointmentCancellationException;
 import util.exception.AppointmentNotFoundException;
 import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
+import util.exception.ServiceProviderAlreadyExistsException;
 import util.exception.ServiceProviderNotFoundException;
 
 public class ServiceProviderModule {
@@ -85,7 +86,6 @@ public class ServiceProviderModule {
         Scanner scanner = new Scanner(System.in);
         ServiceProviderEntity newServiceProviderEntity = new ServiceProviderEntity();
         
-        // NEED INPUT VALIDATION
         try{
             System.out.println("*** Service Provider Terminal :: Registration Operation ***\n");
            
@@ -102,9 +102,16 @@ public class ServiceProviderModule {
             
             System.out.println();
             
-            System.out.print("Enter Business Category> ");
-            newServiceProviderEntity.setBizCategory(allCategories.get(scanner.nextInt())); 
-            scanner.nextLine();
+            while (true) {
+                System.out.print("Enter Business Category> ");
+                try {
+                    newServiceProviderEntity.setBizCategory(allCategories.get(scanner.nextInt() - 1)); 
+                    scanner.nextLine();
+                    break;
+                } catch (ArrayIndexOutOfBoundsException ex) {
+                    System.out.println("Error: No such category exists!");
+                }
+            }
             
             System.out.print("Enter Business Registration Number> ");
             newServiceProviderEntity.setBizRegNum(scanner.nextLine().trim());
@@ -154,8 +161,9 @@ public class ServiceProviderModule {
             
         } catch (InputMismatchException ex) {
             System.out.println("Input is invalid! Please try again.");
-        } catch (EntityAttributeNullException ex) {
+        } catch (EntityAttributeNullException | ServiceProviderAlreadyExistsException ex) {
             System.out.println(ex.getMessage());
+            System.out.println();
         }
     }
     

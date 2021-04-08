@@ -52,13 +52,12 @@ public class AppointmentEntity implements Serializable {
     public AppointmentEntity() {
     }
 
-    public AppointmentEntity(CustomerEntity customerEntity, ServiceProviderEntity serviceProviderEntity, Date startTime, Date endTime, String appointmentNum) {
+    public AppointmentEntity(CustomerEntity customerEntity, ServiceProviderEntity serviceProviderEntity, Date startTime, Date endTime) {
         this();
         this.customerEntity = customerEntity;
         this.serviceProviderEntity = serviceProviderEntity;
         this.startTimestamp = startTime;
         this.endTimestamp = endTime;
-        this.appointmentNum = appointmentNum;
         this.cancelled = false;
     }
 

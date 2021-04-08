@@ -70,7 +70,7 @@ public class DataInitializationBean {
             categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Health"));
             categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Fashion"));
             categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Education"));
-            adminEntitySessionBeanLocal.createNewAdminEntity(new AdminEntity("admin01@easyappointment.com", "001001", "Admin01", ""));
+            adminEntitySessionBeanLocal.createNewAdminEntity(new AdminEntity("admin01@easyappointment.com", "001001", "Admin01", "001001"));
             customerEntitySessionBeanLocal.createCustomerEntity(new CustomerEntity("id", "Liza", "Mozart", "address", new Character('F'), 30, "Singapore", "liza@gmail.com", new Long(345240), "password"));
             try {
             serviceProviderEntitySessionBeanLocal.addNewServiceProvider(
@@ -79,10 +79,11 @@ public class DataInitializationBean {
             } catch (CategoryNotFoundException ex) {
                 System.out.println("Category not found while initializing a service provider!");
             }
-            // Creating a dummy appointment for testing
+            
+            
             AppointmentEntity aEty = null;
             try {
-                aEty = new AppointmentEntity(customerEntitySessionBeanLocal.retrieveCustomerEntityById(1L), serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(new Long(1)), new Date(), new Date(), "2");
+                aEty = new AppointmentEntity(customerEntitySessionBeanLocal.retrieveCustomerEntityById(1L), serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(new Long(1)), new Date(), new Date());
             } catch (CustomerNotFoundException ex) {
                 System.out.println("Tried initialising appointment with Customer id: 1. Customer not found!");
             } catch (ServiceProviderNotFoundException ex) {
