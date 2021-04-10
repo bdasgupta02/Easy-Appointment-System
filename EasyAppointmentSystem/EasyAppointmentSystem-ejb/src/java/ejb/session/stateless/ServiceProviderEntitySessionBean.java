@@ -68,7 +68,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         if (serviceProvider != null) {
             return serviceProvider;
         } else {
-            throw new ServiceProviderNotFoundException("Error: Service provider with id " + serviceProviderId + " does not exist!\n");
+            throw new ServiceProviderNotFoundException("Error: Service provider with id " + serviceProviderId + " does not exist!");
         } 
     }
     

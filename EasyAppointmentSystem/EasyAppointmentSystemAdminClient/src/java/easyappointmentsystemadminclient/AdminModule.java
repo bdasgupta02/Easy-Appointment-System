@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Scanner;
 import util.enumeration.ServiceProviderStatusEnum;
+import util.exception.CategoryAlreadyExistsException;
 import util.exception.CategoryInUseException;
 import util.exception.CategoryNotFoundException;
 import util.exception.CustomerNotFoundException;
@@ -99,7 +100,7 @@ public class AdminModule {
             adminMainMenu();
 
         } catch (NullPointerException | InvalidLoginException ex) {
-            System.out.println("Login unsuccessful. Please enter valid login details ." + ex.getMessage() + "\n");
+            System.out.println("Login unsuccessful. Please enter valid login details." + ex.getMessage() + "\n");
         }
 
     }
@@ -155,7 +156,7 @@ public class AdminModule {
                     System.out.println("Error: Invalid input type entered! Please enter the correct input.");
                 }
             }
-            if (response == 9) {
+            if (response == 10) {
                 break;
             }
         }
@@ -183,6 +184,7 @@ public class AdminModule {
                 if (customerId < 0) {
                     System.out.println("Error: Invalid input value! Please enter the correct input.");
                 } else if (customerId == 0) {
+                    System.out.println();
                     break;
                 } else if (!viewed) {
                     try {
@@ -295,12 +297,12 @@ public class AdminModule {
         Long serviceProviderId;
         System.out.println("*** Admin terminal :: Approve service provider ***\n");
         System.out.println("List of service providers with pending approval:\n");
-        System.out.printf("%-5s%-15s%-20s%-15s%-15s%-20s%-15s%-15s\n", "Id ", "Name", "Business category", "Business Reg. No.", "City", "Address", "Email", "Phone");
+        System.out.printf("%-5s%-15s%-17s%-17s%-15s%-25s%-15s%-15s\n", "Id ", "Name", "Business category", "Business Reg. No.", "City", "Address", "Email", "Phone");
 
         List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveAllPendingServiceProviders();
 
         for (ServiceProviderEntity s : serviceProviders) {
-            System.out.printf("%-5s%-15s%-20s%-15s%-15s%-20s%-15s%-15s\n",
+            System.out.printf("%-5s%-15s%-17s%-17s%-15s%-25s%-15s%-15s\n",
                     s.getServiceProviderId(),
                     s.getName(),
                     s.getBizCategory(),
@@ -349,12 +351,12 @@ public class AdminModule {
         Long serviceProviderId;
         System.out.println("*** Admin terminal :: Block service provider ***\n");
         System.out.println("List of service providers:\n");
-        System.out.printf("%-10s%-15s%-15s%-15s%-15s%-20s%-15s%-15s\n", "Id ", "Name", "Business category", "Business Reg. No.", "City", "Address", "Email", "Phone");
+        System.out.printf("%-5s%-15s%-20s%-17s%-15s%-25s%-15s%-15s\n", "Id ", "Name", "Business category", "Business Reg. No.", "City", "Address", "Email", "Phone");
 
         List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviders();
 
         for (ServiceProviderEntity s : serviceProviders) {
-            System.out.printf("%-10s%-15s%-15s%-15s%-15s%-20s%-15s%-15s\n",
+            System.out.printf("%-5s%-15s%-20s%-17s%-15s%-25s%-15s%-15s\n",
                     s.getServiceProviderId(),
                     s.getName(),
                     s.getBizCategory(),
@@ -383,10 +385,10 @@ public class AdminModule {
                         ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
                         try {
                             serviceProviderEntitySessionBeanRemote.blockServiceProviderStatus(serviceProviderEntity);
+                            System.out.println(serviceProviderEntity.getName() + "has been successfully blocked.");
                         } catch (EntityAttributeNullException | ServiceProviderAlreadyBlockedException ex) {
                             System.out.println(ex.getMessage());
                         }
-                        System.out.println(serviceProviderEntity.getName() + "has been successfully blocked.");
                     } catch (ServiceProviderNotFoundException ex) {
                         System.out.println(ex.getMessage());
                     }
@@ -394,7 +396,9 @@ public class AdminModule {
             } else {
                 System.out.println("Error: Invalid input type entered! Please enter the correct input.");
             }
+            System.out.println();
         }
+        System.out.println();
     }
 
     private void addBusinessCategory() {
@@ -406,26 +410,26 @@ public class AdminModule {
             System.out.print("\nEnter 0 to go back to the previous menu.\n" +
                                 "Enter a new business category> ");
             name = sc.nextLine().trim();
-            System.out.println("Name is: " + name);
-            if(name != null)
-            {
-               if(name.equals("0"))
-               {
+            if(name != null) {
+               if(name.equals("0")) {
                    break;
-               } else 
-               {
+               } else {
                    try {
                        CategoryEntity newCat = new CategoryEntity(name); 
-                        categorySessionBeanRemote.addNewCategory(newCat); //THROWING NULL POINTER
-                      System.out.println("The business category "+ name + " is added.");
+                       categorySessionBeanRemote.addNewCategory(newCat);
+                       System.out.println("Name is: " + name);
+                       System.out.println("The business category "+ name + " is added.");
                    } catch (EntityAttributeNullException | NullPointerException ex) {
                        System.out.println("Unable to create category. Please enter a valid input!");
+                   } catch (CategoryAlreadyExistsException ex) {
+                       System.out.println(ex.getMessage());
                    }
                }
             } else {
                 System.out.println("Please enter a valid input!");
             }
         }
+        System.out.println();
     }
 
     private void removeBusinessCategory() {
@@ -444,7 +448,7 @@ public class AdminModule {
             }
             System.out.println();  
             System.out.println("Enter 0 to go back to the previous menu.");
-            System.out.print("Enter Business Category> ");
+            System.out.print("Enter Business Category Number> ");
              if (sc.hasNextInt()) {
                  idToDelete = sc.nextInt();
                  sc.nextLine();
@@ -454,7 +458,11 @@ public class AdminModule {
                   break;
               } else {
                      try {
+                         if (idToDelete > allCategories.size()) {
+                             throw new CategoryNotFoundException("category with ID: " + idToDelete + " does not exist!");
+                         }
                          categorySessionBeanRemote.deleteCategory(allCategories.get(idToDelete - 1).getCategory());
+                         System.out.println("Category deleted successfully!");
                      } catch (CategoryNotFoundException | CategoryInUseException ex) {
                          System.out.println("Category could not be deleted because " + ex.getMessage());
                      }
@@ -462,6 +470,7 @@ public class AdminModule {
             } else {
                 System.out.println("Error: Invalid input type entered! Please enter the correct input.");
             }
+             System.out.println();
           }
     }
 

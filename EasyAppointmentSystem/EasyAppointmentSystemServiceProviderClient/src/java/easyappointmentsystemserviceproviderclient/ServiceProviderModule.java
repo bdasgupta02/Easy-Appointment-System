@@ -61,10 +61,9 @@ public class ServiceProviderModule {
                     } else if(response == 2) {
                         try {
                             doLogin();
-                            System.out.println("Login successful!\n");
                             loginMenuServiceProviderOperation();
-                        } catch(InvalidLoginException ex) {
-                           System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
+                        } catch (InvalidLoginException ex) {
+                            System.out.println(ex.getMessage());
                         }
                     } else if(response == 3) {
                         break;
@@ -191,15 +190,12 @@ public class ServiceProviderModule {
         emailAdd = scanner.nextLine().trim();
         System.out.print("Enter password> ");
         password = scanner.nextLine().trim();
-        
-        try {
-            if(emailAdd.length() > 0 && password.length() > 0) {
-                currentServiceProvider = serviceProviderEntitySessionBeanRemote.login(emailAdd, password);      
-            } else {
-                throw new InvalidLoginException("Missing login credential!");
-            } 
-        } catch (InvalidLoginException ex) {
-            System.out.println(ex.getMessage());
+       
+        if(emailAdd.length() > 0 && password.length() > 0) {
+            currentServiceProvider = serviceProviderEntitySessionBeanRemote.login(emailAdd, password);
+            System.out.println("Login successful!\n");
+        } else {
+            throw new InvalidLoginException("Missing login credential!");
         }
     }
     

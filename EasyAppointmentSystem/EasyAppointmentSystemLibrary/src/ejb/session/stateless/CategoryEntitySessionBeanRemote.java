@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.CategoryEntity;
 import java.util.List;
 import javax.ejb.Remote;
+import util.exception.CategoryAlreadyExistsException;
 import util.exception.CategoryInUseException;
 import util.exception.CategoryNotFoundException;
 import util.exception.EntityAttributeNullException;
@@ -15,7 +16,7 @@ import util.exception.EntityAttributeNullException;
 
 public interface CategoryEntitySessionBeanRemote {
     
-    public Long addNewCategory(CategoryEntity newCategoryEntity) throws EntityAttributeNullException;
+    public Long addNewCategory(CategoryEntity newCategoryEntity) throws EntityAttributeNullException, CategoryAlreadyExistsException;
     public CategoryEntity retrieveCategoryByCategoryId(Long categoryId) throws CategoryNotFoundException;
     public CategoryEntity retrieveCategoryByCategoryName(String categoeryName) throws CategoryNotFoundException;
     public List<CategoryEntity> retrieveAllCategories();

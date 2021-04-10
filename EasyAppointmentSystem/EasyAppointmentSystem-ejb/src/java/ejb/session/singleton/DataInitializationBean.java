@@ -26,9 +26,11 @@ import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
 import javax.ejb.Startup;
 import util.enumeration.ServiceProviderStatusEnum;
+import util.exception.CategoryAlreadyExistsException;
 import util.exception.CategoryNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.EntityAttributeNullException;
+import util.exception.ServiceProviderAlreadyExistsException;
 import util.exception.ServiceProviderNotFoundException;
 
 /**
@@ -67,17 +69,19 @@ public class DataInitializationBean {
 
     private void initializeData() {
         try {
-            categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Health"));
-            categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Fashion"));
-            categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Education"));
             adminEntitySessionBeanLocal.createNewAdminEntity(new AdminEntity("admin01@easyappointment.com", "001001", "Admin01", "001001"));
             customerEntitySessionBeanLocal.createCustomerEntity(new CustomerEntity("id", "Liza", "Mozart", "address", new Character('F'), 30, "Singapore", "liza@gmail.com", new Long(345240), "password"));
             try {
-            serviceProviderEntitySessionBeanLocal.addNewServiceProvider(
+                categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Health"));
+                categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Fashion"));
+                categoryEntitySessionBeanLocal.addNewCategory(new CategoryEntity("Education"));
+                serviceProviderEntitySessionBeanLocal.addNewServiceProvider(
                     new ServiceProviderEntity("0012345678", categoryEntitySessionBeanLocal.retrieveCategoryByCategoryId(1L), "Zalora", "51 Bras Basah Road #07-01/04", "Bras Basah", "test@Zalora.com", "123456", "65551234", ServiceProviderStatusEnum.APPROVED,
                             new ArrayList<RatingEntity>(), new ArrayList<AppointmentEntity>()));
             } catch (CategoryNotFoundException ex) {
                 System.out.println("Category not found while initializing a service provider!");
+            } catch (ServiceProviderAlreadyExistsException | CategoryAlreadyExistsException ex) {
+                ex.getMessage();
             }
             
             
