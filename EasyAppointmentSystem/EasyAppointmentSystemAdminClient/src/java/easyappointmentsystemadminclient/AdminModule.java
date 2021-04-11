@@ -64,6 +64,7 @@ public class AdminModule {
                     sc.nextLine();
                     System.out.println("Error: Invalid input type entered! Please enter the correct input.");
                     System.out.println();
+                    break;
                 } else {
                     response = sc.nextInt();
 
@@ -129,6 +130,7 @@ public class AdminModule {
             while (response < 1 || response > 10) {
                 if (sc.hasNextInt()) {
                     response = sc.nextInt();
+                    sc.nextLine();
                     if (response == 1) {
                         viewCustomerAppointments();
                     } else if (response == 2) {
@@ -153,7 +155,9 @@ public class AdminModule {
                         System.out.println("Error: Invalid input value! Please enter the correct input.");
                     }
                 } else {
+                    sc.nextLine();
                     System.out.println("Error: Invalid input type entered! Please enter the correct input.");
+                    break;
                 }
             }
             if (response == 10) {
@@ -208,7 +212,9 @@ public class AdminModule {
                     } 
                 }
             } else {
+                sc.nextLine();
                 System.out.println("Error: Invalid input type entered! Please enter the correct input.");
+                break;
             }
         }
     }
@@ -254,7 +260,9 @@ public class AdminModule {
                     }
                 }
             } else {
+                sc.nextLine();
                 System.out.println("Error: Invalid input type entered! Please enter the correct input.");
+                break;
             }
         }
     }
@@ -340,7 +348,9 @@ public class AdminModule {
                     } 
                 }
             } else {
+                sc.nextLine();
                 System.out.println("Error: Invalid input type entered! Please enter the correct input.");
+                break;
             }
             System.out.println();
         }
@@ -394,7 +404,9 @@ public class AdminModule {
                     }
                 }
             } else {
+                sc.nextLine();
                 System.out.println("Error: Invalid input type entered! Please enter the correct input.");
+                break;
             }
             System.out.println();
         }
@@ -452,11 +464,11 @@ public class AdminModule {
              if (sc.hasNextInt()) {
                  idToDelete = sc.nextInt();
                  sc.nextLine();
-              if (idToDelete < 0) {
-                  System.out.println("Error: Invalid input value! Please enter the correct input.");
-              } else if (idToDelete == 0) {
-                  break;
-              } else {
+                 if (idToDelete < 0) {
+                     System.out.println("Error: Invalid input value! Please enter the correct input.");
+                 } else if (idToDelete == 0) {
+                     break;
+                 } else {
                      try {
                          if (idToDelete > allCategories.size()) {
                              throw new CategoryNotFoundException("category with ID: " + idToDelete + " does not exist!");
@@ -468,7 +480,9 @@ public class AdminModule {
                      }
               }
             } else {
+                sc.nextLine();
                 System.out.println("Error: Invalid input type entered! Please enter the correct input.");
+                break;
             }
              System.out.println();
           }
@@ -509,7 +523,9 @@ public class AdminModule {
                     }
                 }
             } else {
+                sc.nextLine();
                 System.out.println("Error: Invalid input type entered! Please enter the correct input.");
+                break;
             }
         }
     }
@@ -541,6 +557,7 @@ public class AdminModule {
                 }
             } else {
                 System.out.println("Error: Invalid input type entered! Please enter the correct input.");
+                break;
             }
         }
     }

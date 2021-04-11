@@ -220,16 +220,10 @@ public class ServiceProviderModule {
                     System.out.println();
                     if(response == 1) {
                         viewProfile();
-                        System.out.println("Press any key to go back to the main menu");
-                        scanner.nextLine();
                     } else if (response == 2) {
                         editProfile();
                     } else if (response == 3) {
                         viewAppointments();
-                        System.out.println();
-                        System.out.println("Press any key to go back to the main menu");
-                        scanner.nextLine();
-                        System.out.println();
                     } else if (response == 4) {
                         cancelAppointments();
                     } else if (response == 5) {
@@ -249,10 +243,13 @@ public class ServiceProviderModule {
     }
     
     public void viewProfile() {
+        Scanner scanner = new Scanner(System.in);
         System.out.println("*** Service Provider Terminal :: Your Profile ***\n");
         System.out.println("-----------------------------------------------------------------------------");
         System.out.printf("%22s%40s\n", "Name: ", currentServiceProvider.getName());
-        System.out.printf("%22s%40s\n", "Average Rating: ", serviceProviderEntitySessionBeanRemote.getAverageRating(currentServiceProvider));
+        double averageRating = serviceProviderEntitySessionBeanRemote.getAverageRating(currentServiceProvider);
+        String doubleFormat = String.format("%.2f", averageRating);
+        System.out.printf("%22s%40s\n", "Average Rating: ", averageRating == -1.0 ? "Not rated yet!": doubleFormat);
         System.out.printf("%22s%40s\n", "Registration Number: ", currentServiceProvider.getBizRegNum());
         System.out.printf("%22s%40s\n", "Business Address: ", currentServiceProvider.getBizAddress());
         System.out.printf("%22s%40s\n", "City: ", currentServiceProvider.getCity());
@@ -262,6 +259,8 @@ public class ServiceProviderModule {
         System.out.println();
         System.out.println("-----------------------------------------------------------------------------");
         System.out.println();
+        System.out.println("Press any key to go back to the main menu");
+        scanner.nextLine();
     }
     
     public void editProfile() {
@@ -311,6 +310,7 @@ public class ServiceProviderModule {
     }
     
     public void viewAppointments() {
+        Scanner scanner = new Scanner(System.in);
         System.out.println("*** Service Provider Terminal :: View Appointments ***");
         System.out.println();
         System.out.println("Appointments\n");
@@ -338,6 +338,8 @@ public class ServiceProviderModule {
                         a.getAppointmentNum());
             }
         }
+        System.out.println("Press any key to go back to the main menu");
+        scanner.nextLine();
     }
     
     

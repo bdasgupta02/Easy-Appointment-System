@@ -71,6 +71,8 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         ServiceProviderEntity serviceProvider = em.find(ServiceProviderEntity.class, serviceProviderId);
         if (serviceProvider != null) {
             em.refresh(serviceProvider);
+            serviceProvider.getAppointments().size();
+            serviceProvider.getRatings().size();
             return serviceProvider;
         } else {
             throw new ServiceProviderNotFoundException("Error: Service provider with id " + serviceProviderId + " does not exist!");
@@ -106,7 +108,10 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         query.setParameter("inEmail", email);
 
         try {
-            return (ServiceProviderEntity) query.getSingleResult();
+            ServiceProviderEntity serviceProvider = (ServiceProviderEntity) query.getSingleResult();
+            serviceProvider.getAppointments().size();
+            serviceProvider.getRatings().size();
+            return serviceProvider;
         } catch (NoResultException | NonUniqueResultException ex) {
             throw new ServiceProviderNotFoundException();
         }
@@ -118,6 +123,8 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
             ServiceProviderEntity serviceProviderEntity = retrieveServiceProviderByEmail(emailAdd);
 
             if (serviceProviderEntity.getPassword().equals(password)) {
+                serviceProviderEntity.getAppointments().size();
+                serviceProviderEntity.getRatings().size();
                 return serviceProviderEntity;
             } else {
                 throw new InvalidLoginException("Error:Invalid password!");
@@ -178,6 +185,11 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     public List<ServiceProviderEntity> retrieveAllApprovedServiceProviders() {
         Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.status = :inApproved ORDER BY s.serviceProviderId ASC");
         query.setParameter("inApproved", ServiceProviderStatusEnum.APPROVED);
+        List<ServiceProviderEntity> serviceProviders = query.getResultList();
+        for (ServiceProviderEntity s : serviceProviders) {
+            s.getAppointments().size();
+            s.getRatings().size();
+        }
         return query.getResultList();
     }
 
@@ -191,6 +203,10 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
             query.setParameter("inCity", city);
             query.setParameter("inApproved", ServiceProviderStatusEnum.APPROVED);
             List<ServiceProviderEntity> queryResults = query.getResultList();
+            for (ServiceProviderEntity s : queryResults) {
+                s.getAppointments().size();
+                s.getRatings().size();
+            }
             List<ServiceProviderEntity> dateResults = sortDate(date, queryResults);
             return dateResults;
         } catch (CategoryNotFoundException ex) {
