@@ -574,12 +574,17 @@ public class CustomerWebServiceClient {
         }
     }
 
-    // add more
+    // check for 12 hour clock
     private boolean checkTimeString(String time) {
+        int hour = Integer.parseInt(time.substring(0,2));
+        int minute = Integer.parseInt(time.substring(3,5));
         if (time.length() != 5) {
             return false;
-        }
-        if (time.charAt(2) != ':') {
+        } else if (time.charAt(2) != ':') {
+            return false;
+        } else if (hour > 12 || hour < 0) {
+            return false;
+        } else if (minute > 60 || minute < 0) {
             return false;
         }
         return true;
