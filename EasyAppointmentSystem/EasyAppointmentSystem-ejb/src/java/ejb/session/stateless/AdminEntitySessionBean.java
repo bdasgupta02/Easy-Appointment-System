@@ -69,6 +69,7 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
     public AdminEntity retrieveAdminByAdminID(Long adminId) throws AdminNotFoundException {
         AdminEntity admin = em.find(AdminEntity.class, adminId);
         if(admin != null){
+            em.refresh(admin);
             return admin;
         } else{
             throw new AdminNotFoundException("Admin with id: " + adminId + " not found!");

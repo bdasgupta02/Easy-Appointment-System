@@ -36,6 +36,7 @@ public class RatingEntitySessionBean implements RatingEntitySessionBeanRemote, R
     public RatingEntity retrieveRatingEntityById(Long ratingId) throws RatingNotFoundException {
         RatingEntity ratingEntity = em.find(RatingEntity.class, ratingId);
         if (ratingEntity != null) {
+            em.refresh(ratingEntity);
             return ratingEntity;
         } else {
             throw new RatingNotFoundException("Error: Rating with id " + ratingId + " does not exist!\n");

@@ -49,6 +49,7 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanRemot
     public CategoryEntity retrieveCategoryByCategoryId(Long categoryId) throws CategoryNotFoundException{
         CategoryEntity categoryEntity = em.find(CategoryEntity.class, categoryId);
         if (categoryEntity != null) {
+            em.refresh(categoryEntity);
             return categoryEntity;
         } else {
             throw new CategoryNotFoundException("Category with id " + categoryId + " does not exist!\n");

@@ -58,6 +58,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         AppointmentEntity appointmentEntity = em.find(AppointmentEntity.class, appointmentId);
         
         if (appointmentEntity != null) {
+            em.refresh(appointmentEntity);
             return appointmentEntity;
         } else {
             throw new AppointmentNotFoundException("Error: Appointment ID: " + appointmentId + " does not exist!");

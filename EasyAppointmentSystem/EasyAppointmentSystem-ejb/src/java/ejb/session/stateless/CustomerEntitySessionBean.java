@@ -48,8 +48,8 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
     @Override
     public CustomerEntity retrieveCustomerEntityById(Long customerId) throws CustomerNotFoundException {
         CustomerEntity customerEntity = em.find(CustomerEntity.class, customerId);
-
         if (customerEntity != null) {
+            em.refresh(customerEntity);
             return customerEntity;
         } else {
             throw new CustomerNotFoundException("Customer ID: " + customerId + " does not exist!");

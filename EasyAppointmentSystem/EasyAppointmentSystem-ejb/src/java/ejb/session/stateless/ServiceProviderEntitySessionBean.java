@@ -68,7 +68,6 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
 
     @Override
     public ServiceProviderEntity retrieveServiceProviderEntityById(Long serviceProviderId) throws ServiceProviderNotFoundException {
-
         ServiceProviderEntity serviceProvider = em.find(ServiceProviderEntity.class, serviceProviderId);
         if (serviceProvider != null) {
             em.refresh(serviceProvider);
