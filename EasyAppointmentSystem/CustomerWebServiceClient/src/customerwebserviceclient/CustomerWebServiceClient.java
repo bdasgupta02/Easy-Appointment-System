@@ -53,14 +53,15 @@ public class CustomerWebServiceClient {
             System.out.println("2: Login");
             System.out.println("3: Exit\n");
             response = 0;
-            OUTER:
             while (response < 1 || response > 3) {
                 System.out.print("> ");
                 if (!scanner.hasNextInt()) {
                     scanner.nextLine();
                     System.out.println("Error: Invalid input type entered! Please enter the correct input.\n");
+                    break;
                 } else {
                     response = scanner.nextInt();
+                    scanner.nextLine();
                     switch (response) {
                         case 1:
                             registerInterface();
@@ -69,7 +70,7 @@ public class CustomerWebServiceClient {
                             loginInterface();
                             break;
                         case 3:
-                            break OUTER;
+                            break;
                         default:
                             System.out.println("Error: Invalid input value! Please enter the correct input.\n");
                             break;
@@ -297,7 +298,7 @@ public class CustomerWebServiceClient {
             city = scanner.nextLine().trim();
 
             List<ServiceProviderEntity> serviceProviders = searchServiceProvidersByCategoryCityDate(categoryId, city, toXMLGregorianCalendar(date));
-            System.out.printf("%-5s%-20s%-20s%-15s%-35s%-25s%-15s\n", "Id ", "Name", "Business Reg. No.", "City", "Address", "Email", "Avarege Rating");
+            System.out.printf("%-5s%-20s%-20s%-15s%-35s%-25s%-15s\n", "Id ", "Name", "Business Reg. No.", "City", "Address", "Email", "Average Rating");
             serviceProviders.forEach(s -> {
                 try {
                     Double rating = getRatingForService(s.getServiceProviderId());
