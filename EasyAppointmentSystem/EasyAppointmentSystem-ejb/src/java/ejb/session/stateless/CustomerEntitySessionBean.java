@@ -86,7 +86,6 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
         CustomerEntity customerEntity = retrieveCustomerEntityById(customerId);
         customerEntity.getAppointments().size();
         List<AppointmentEntity> appointments = customerEntity.getAppointments();
-        System.out.println("APPOINTMENT SIZE ====================" + appointments.size());
         return appointments;
     }
     

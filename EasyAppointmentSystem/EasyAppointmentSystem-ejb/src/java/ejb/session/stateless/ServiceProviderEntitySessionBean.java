@@ -230,7 +230,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
                 // if existing appointments end and if the slot time is more than 2 hours away from now
                 if (emptySlots.get(i).equals(a.getStartTimestamp())) {
                     isEmpty = false;
-                } else if (emptySlots.get(i).before(new Date(System.currentTimeMillis() + (86400 * 1000 * 2)))) {
+                } else if (emptySlots.get(i).before(new Date(System.currentTimeMillis() + (3600 * 1000 * 2)))) {
                     isEmpty = false;
                 }
             }
