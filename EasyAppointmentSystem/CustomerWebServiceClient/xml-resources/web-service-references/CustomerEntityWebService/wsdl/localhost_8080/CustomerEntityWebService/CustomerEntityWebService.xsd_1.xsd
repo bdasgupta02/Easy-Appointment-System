@@ -2,6 +2,8 @@
 
 <xs:element name="AppointmentCancellationException" type="tns:AppointmentCancellationException"/>
 
+<xs:element name="AppointmentNotFoundException" type="tns:AppointmentNotFoundException"/>
+
 <xs:element name="CustomerNotFoundException" type="tns:CustomerNotFoundException"/>
 
 <xs:element name="DateProcessingException" type="tns:DateProcessingException"/>
@@ -9,6 +11,8 @@
 <xs:element name="EntityAttributeNullException" type="tns:EntityAttributeNullException"/>
 
 <xs:element name="RatingWithoutAppointmentException" type="tns:RatingWithoutAppointmentException"/>
+
+<xs:element name="ServiceProviderAlreadyRatedException" type="tns:ServiceProviderAlreadyRatedException"/>
 
 <xs:element name="ServiceProviderNotFoundException" type="tns:ServiceProviderNotFoundException"/>
 
@@ -27,6 +31,18 @@
 <xs:element name="freeSlotsPerServiceProviderAndDate" type="tns:freeSlotsPerServiceProviderAndDate"/>
 
 <xs:element name="freeSlotsPerServiceProviderAndDateResponse" type="tns:freeSlotsPerServiceProviderAndDateResponse"/>
+
+<xs:element name="getAllCategories" type="tns:getAllCategories"/>
+
+<xs:element name="getAllCategoriesResponse" type="tns:getAllCategoriesResponse"/>
+
+<xs:element name="getRatingForService" type="tns:getRatingForService"/>
+
+<xs:element name="getRatingForServiceResponse" type="tns:getRatingForServiceResponse"/>
+
+<xs:element name="getServiceProviderFromAppointmentId" type="tns:getServiceProviderFromAppointmentId"/>
+
+<xs:element name="getServiceProviderFromAppointmentIdResponse" type="tns:getServiceProviderFromAppointmentIdResponse"/>
 
 <xs:element name="login" type="tns:login"/>
 
@@ -60,8 +76,8 @@
 
 <xs:complexType name="serviceProviderEntity">
 <xs:sequence>
-<xs:element name="avgRating" type="xs:float"/>
 <xs:element name="bizAddress" type="xs:string" minOccurs="0"/>
+<xs:element name="bizCategory" type="tns:categoryEntity" minOccurs="0"/>
 <xs:element name="bizRegNum" type="xs:string" minOccurs="0"/>
 <xs:element name="city" type="xs:string" minOccurs="0"/>
 <xs:element name="email" type="xs:string" minOccurs="0"/>
@@ -70,6 +86,13 @@
 <xs:element name="phoneNum" type="xs:string" minOccurs="0"/>
 <xs:element name="serviceProviderId" type="xs:long" minOccurs="0"/>
 <xs:element name="status" type="tns:serviceProviderStatusEnum" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="categoryEntity">
+<xs:sequence>
+<xs:element name="category" type="xs:string" minOccurs="0"/>
+<xs:element name="categoryId" type="xs:long" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -90,27 +113,8 @@
 <xs:element name="appointmentId" type="xs:long" minOccurs="0"/>
 <xs:element name="appointmentNum" type="xs:string" minOccurs="0"/>
 <xs:element name="cancelled" type="xs:boolean" minOccurs="0"/>
-<xs:element name="customerEntity" type="tns:customerEntity" minOccurs="0"/>
 <xs:element name="endTimestamp" type="xs:dateTime" minOccurs="0"/>
-<xs:element name="serviceProviderEntity" type="tns:serviceProviderEntity" minOccurs="0"/>
 <xs:element name="startTimestamp" type="xs:dateTime" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="customerEntity">
-<xs:sequence>
-<xs:element name="address" type="xs:string" minOccurs="0"/>
-<xs:element name="age" type="xs:int" minOccurs="0"/>
-<xs:element name="appointments" type="tns:appointmentEntity" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="city" type="xs:string" minOccurs="0"/>
-<xs:element name="customerId" type="xs:long" minOccurs="0"/>
-<xs:element name="email" type="xs:string" minOccurs="0"/>
-<xs:element name="firstName" type="xs:string" minOccurs="0"/>
-<xs:element name="gender" type="xs:unsignedShort" minOccurs="0"/>
-<xs:element name="identityNo" type="xs:string" minOccurs="0"/>
-<xs:element name="lastName" type="xs:string" minOccurs="0"/>
-<xs:element name="password" type="xs:string" minOccurs="0"/>
-<xs:element name="phone" type="xs:long" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -136,13 +140,30 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="getRatingForService">
+<xs:sequence>
+<xs:element name="arg0" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getRatingForServiceResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:double" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="ServiceProviderNotFoundException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="createAppointmentEntity">
 <xs:sequence>
 <xs:element name="arg0" type="xs:long" minOccurs="0"/>
 <xs:element name="arg1" type="xs:long" minOccurs="0"/>
 <xs:element name="arg2" type="xs:dateTime" minOccurs="0"/>
 <xs:element name="arg3" type="xs:dateTime" minOccurs="0"/>
-<xs:element name="arg4" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -152,7 +173,7 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="ServiceProviderNotFoundException">
+<xs:complexType name="EntityAttributeNullException">
 <xs:sequence>
 <xs:element name="message" type="xs:string" minOccurs="0"/>
 </xs:sequence>
@@ -176,7 +197,7 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="EntityAttributeNullException">
+<xs:complexType name="ServiceProviderAlreadyRatedException">
 <xs:sequence>
 <xs:element name="message" type="xs:string" minOccurs="0"/>
 </xs:sequence>
@@ -201,6 +222,20 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="searchServiceProvidersByCategoryCityDate">
+<xs:sequence>
+<xs:element name="arg0" type="xs:long" minOccurs="0"/>
+<xs:element name="arg1" type="xs:string" minOccurs="0"/>
+<xs:element name="arg2" type="xs:dateTime" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="searchServiceProvidersByCategoryCityDateResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:serviceProviderEntity" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="login">
 <xs:sequence>
 <xs:element name="arg0" type="xs:string" minOccurs="0"/>
@@ -214,13 +249,29 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="customerEntity">
+<xs:sequence>
+<xs:element name="address" type="xs:string" minOccurs="0"/>
+<xs:element name="age" type="xs:int" minOccurs="0"/>
+<xs:element name="city" type="xs:string" minOccurs="0"/>
+<xs:element name="customerId" type="xs:long" minOccurs="0"/>
+<xs:element name="email" type="xs:string" minOccurs="0"/>
+<xs:element name="firstName" type="xs:string" minOccurs="0"/>
+<xs:element name="gender" type="xs:unsignedShort" minOccurs="0"/>
+<xs:element name="identityNo" type="xs:string" minOccurs="0"/>
+<xs:element name="lastName" type="xs:string" minOccurs="0"/>
+<xs:element name="password" type="xs:string" minOccurs="0"/>
+<xs:element name="phone" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="createCustomerEntity">
 <xs:sequence>
 <xs:element name="arg0" type="xs:string" minOccurs="0"/>
 <xs:element name="arg1" type="xs:string" minOccurs="0"/>
 <xs:element name="arg2" type="xs:string" minOccurs="0"/>
 <xs:element name="arg3" type="xs:string" minOccurs="0"/>
-<xs:element name="arg4" type="xs:unsignedShort" minOccurs="0"/>
+<xs:element name="arg4" type="xs:string" minOccurs="0"/>
 <xs:element name="arg5" type="xs:int" minOccurs="0"/>
 <xs:element name="arg6" type="xs:string" minOccurs="0"/>
 <xs:element name="arg7" type="xs:string" minOccurs="0"/>
@@ -235,17 +286,31 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="searchServiceProvidersByCategoryCityDate">
+<xs:complexType name="getAllCategories">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="getAllCategoriesResponse">
 <xs:sequence>
-<xs:element name="arg0" type="xs:long" minOccurs="0"/>
-<xs:element name="arg1" type="xs:string" minOccurs="0"/>
-<xs:element name="arg2" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="return" type="tns:categoryEntity" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="searchServiceProvidersByCategoryCityDateResponse">
+<xs:complexType name="getServiceProviderFromAppointmentId">
 <xs:sequence>
-<xs:element name="return" type="tns:serviceProviderEntity" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="arg0" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getServiceProviderFromAppointmentIdResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:serviceProviderEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="AppointmentNotFoundException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 

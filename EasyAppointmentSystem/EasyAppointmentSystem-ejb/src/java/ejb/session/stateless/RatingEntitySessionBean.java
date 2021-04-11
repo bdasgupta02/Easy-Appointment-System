@@ -1,11 +1,14 @@
 package ejb.session.stateless;
 
+import entity.CustomerEntity;
 import entity.RatingEntity;
+import entity.ServiceProviderEntity;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import util.exception.EntityAttributeNullException;
 import util.exception.RatingNotFoundException;
 
@@ -56,6 +59,19 @@ public class RatingEntitySessionBean implements RatingEntitySessionBeanRemote, R
             em.remove(ratingEntity);
         } else {
             throw new RatingNotFoundException("Error: Rating with id " + ratingId + " does not exist!\n");
+        }
+    }
+    
+    @Override
+    public boolean isAlreadyRated(ServiceProviderEntity serviceProvider, CustomerEntity customer) {
+        Query query = em.createQuery("SELECT r FROM RatingEntity r WHERE r.serviceProviderEntity = :inServiceProvider AND r.customerEntity = :inCustomer");
+        query.setParameter("inServiceProvider", serviceProvider);
+        query.setParameter("inCustomer", customer);
+        Object rating = query.getResultList();
+        if (rating == null) {
+            return false;
+        } else {
+            return true;
         }
     }
 }

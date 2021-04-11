@@ -1,6 +1,7 @@
 package ejb.session.stateless;
 
 import entity.AppointmentEntity;
+import entity.CategoryEntity;
 import entity.CustomerEntity;
 import entity.RatingEntity;
 import entity.ServiceProviderEntity;
@@ -9,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.Remote;
 import javax.ejb.Local;
@@ -19,74 +21,78 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import util.enumeration.ServiceProviderStatusEnum;
+import util.exception.CategoryNotFoundException;
 import util.exception.DateProcessingException;
 import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
 import util.exception.ServiceProviderAlreadyBlockedException;
 import util.exception.ServiceProviderAlreadyExistsException;
 import util.exception.ServiceProviderNotFoundException;
-import util.exception.ServiceProviderNotPendingException;
 
 @Stateless
 @Local(ServiceProviderEntitySessionBeanLocal.class)
 @Remote(ServiceProviderEntitySessionBeanRemote.class)
 
 public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySessionBeanLocal, ServiceProviderEntitySessionBeanRemote {
-    
+
     @PersistenceContext(unitName = "EasyAppointmentSystem-ejbPU")
     private EntityManager em;
 
+    @EJB
+    private CategoryEntitySessionBeanLocal categoryEntitySessionBeanLocal;
+
     public ServiceProviderEntitySessionBean() {
     }
-    
+
     @Override
     public Long addNewServiceProvider(ServiceProviderEntity newServiceProviderEntity) throws EntityAttributeNullException, ServiceProviderAlreadyExistsException {
-        if (newServiceProviderEntity.getName().isEmpty() || newServiceProviderEntity.getBizCategory() == null ||
-                newServiceProviderEntity.getBizRegNum().isEmpty() || newServiceProviderEntity.getCity().isEmpty() ||
-                newServiceProviderEntity.getBizAddress().isEmpty() || newServiceProviderEntity.getEmail().isEmpty() ||
-                newServiceProviderEntity.getPhoneNum().isEmpty() || newServiceProviderEntity.getPassword().isEmpty()) {
+        if (newServiceProviderEntity.getName().isEmpty() || newServiceProviderEntity.getBizCategory() == null
+                || newServiceProviderEntity.getBizRegNum().isEmpty() || newServiceProviderEntity.getCity().isEmpty()
+                || newServiceProviderEntity.getBizAddress().isEmpty() || newServiceProviderEntity.getEmail().isEmpty()
+                || newServiceProviderEntity.getPhoneNum().isEmpty() || newServiceProviderEntity.getPassword().isEmpty()) {
             throw new EntityAttributeNullException("Error: Some values are null! Creation of Service Provider aborted.\n");
         } else {
             try {
                 em.persist(newServiceProviderEntity);
                 em.flush();
             } catch (PersistenceException ex) {
-                if ((ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) &&
-                        ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
+                if ((ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException"))
+                        && ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
                     throw new ServiceProviderAlreadyExistsException("Error: Service provider already exists!");
                 }
             }
-            
+
             return newServiceProviderEntity.getServiceProviderId();
         }
     }
-    
+
     @Override
     public ServiceProviderEntity retrieveServiceProviderEntityById(Long serviceProviderId) throws ServiceProviderNotFoundException {
-       
+
         ServiceProviderEntity serviceProvider = em.find(ServiceProviderEntity.class, serviceProviderId);
         if (serviceProvider != null) {
+            em.refresh(serviceProvider);
             return serviceProvider;
         } else {
             throw new ServiceProviderNotFoundException("Error: Service provider with id " + serviceProviderId + " does not exist!");
-        } 
+        }
     }
-    
+
     @Override
     public void updateServiceProviderEntity(ServiceProviderEntity serviceProviderEntity) throws EntityAttributeNullException {
-        if (serviceProviderEntity.getName().isEmpty() || serviceProviderEntity.getBizCategory() == null ||
-                serviceProviderEntity.getBizRegNum().isEmpty() || serviceProviderEntity.getCity().isEmpty() ||
-                serviceProviderEntity.getBizAddress().isEmpty() || serviceProviderEntity.getEmail().isEmpty() ||
-                serviceProviderEntity.getPhoneNum().isEmpty() || serviceProviderEntity.getPassword().isEmpty()) {
+        if (serviceProviderEntity.getName().isEmpty() || serviceProviderEntity.getBizCategory() == null
+                || serviceProviderEntity.getBizRegNum().isEmpty() || serviceProviderEntity.getCity().isEmpty()
+                || serviceProviderEntity.getBizAddress().isEmpty() || serviceProviderEntity.getEmail().isEmpty()
+                || serviceProviderEntity.getPhoneNum().isEmpty() || serviceProviderEntity.getPassword().isEmpty()) {
             throw new EntityAttributeNullException("Error: Some values are null! Update of Service Provider aborted.\n");
         } else {
             em.merge(serviceProviderEntity);
             em.flush();
         }
     }
-    
+
     @Override
-    public void deleteServiceProviderEntity(Long serviceProviderId) throws ServiceProviderNotFoundException{
+    public void deleteServiceProviderEntity(Long serviceProviderId) throws ServiceProviderNotFoundException {
         ServiceProviderEntity serviceProvider = em.find(ServiceProviderEntity.class, serviceProviderId);
         if (serviceProvider != null) {
             em.remove(serviceProvider);
@@ -94,52 +100,52 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
             throw new ServiceProviderNotFoundException("Error: Service provider with id " + serviceProviderId + " does not exist!\n");
         }
     }
-    
+
     @Override
     public ServiceProviderEntity retrieveServiceProviderByEmail(String email) throws ServiceProviderNotFoundException {
         Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.email = :inEmail");
         query.setParameter("inEmail", email);
-        
+
         try {
             return (ServiceProviderEntity) query.getSingleResult();
-        } catch(NoResultException | NonUniqueResultException ex) {
+        } catch (NoResultException | NonUniqueResultException ex) {
             throw new ServiceProviderNotFoundException();
         }
     }
-    
+
     @Override
     public ServiceProviderEntity login(String emailAdd, String password) throws InvalidLoginException {
         try {
             ServiceProviderEntity serviceProviderEntity = retrieveServiceProviderByEmail(emailAdd);
-            
-            if(serviceProviderEntity.getPassword().equals(password)) {                
+
+            if (serviceProviderEntity.getPassword().equals(password)) {
                 return serviceProviderEntity;
             } else {
                 throw new InvalidLoginException("Error:Invalid password!");
             }
-        } catch(ServiceProviderNotFoundException ex) {
+        } catch (ServiceProviderNotFoundException ex) {
             throw new InvalidLoginException("Error: Username does not exist!");
         }
     }
-    
+
     @Override
     public List<AppointmentEntity> retrieveAppointmentsByServiceProviderId(Long serviceProviderId) throws ServiceProviderNotFoundException {
         ServiceProviderEntity serviceProviderEntity = retrieveServiceProviderEntityById(serviceProviderId);
         serviceProviderEntity.getAppointments().size();
         return serviceProviderEntity.getAppointments();
     }
-    
+
     @Override
     public List<ServiceProviderEntity> retrieveAllServiceProviders() {
         Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s ORDER BY s.serviceProviderId ASC");
-        List<ServiceProviderEntity> allServiceProviders = query.getResultList(); 
+        List<ServiceProviderEntity> allServiceProviders = query.getResultList();
         for (ServiceProviderEntity s : allServiceProviders) {
             s.getAppointments().size();
             s.getRatings().size();
         }
         return allServiceProviders;
     }
-    
+
     @Override
     public List<ServiceProviderEntity> retrieveAllPendingServiceProviders() {
         Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.status = :inPending ORDER BY s.serviceProviderId ASC");
@@ -151,40 +157,64 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         }
         return pendingServiceProviders;
     }
-    
+
     @Override
     public void approveServiceProviderStatus(ServiceProviderEntity serviceProviderEntity) throws EntityAttributeNullException {
         serviceProviderEntity.setStatus(ServiceProviderStatusEnum.APPROVED);
         updateServiceProviderEntity(serviceProviderEntity);
     }
-    
+
     @Override
     public void blockServiceProviderStatus(ServiceProviderEntity serviceProviderEntity) throws ServiceProviderAlreadyBlockedException, EntityAttributeNullException {
-        
+
         if (serviceProviderEntity.getStatus() == ServiceProviderStatusEnum.BLOCKED) {
             throw new ServiceProviderAlreadyBlockedException("Error: Service provider already blocked!");
         }
-        
+
         serviceProviderEntity.setStatus(ServiceProviderStatusEnum.BLOCKED);
         updateServiceProviderEntity(serviceProviderEntity);
     }
-    
+
     @Override
     public List<ServiceProviderEntity> retrieveAllApprovedServiceProviders() {
         Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.status = :inApproved ORDER BY s.serviceProviderId ASC");
         query.setParameter("inApproved", ServiceProviderStatusEnum.APPROVED);
         return query.getResultList();
     }
-    
+
     @Override
     public List<ServiceProviderEntity> retrieveSearchResult(Long categoryId, String city, Date date) {
-        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.bizCategory = :inCategory AND s.city = :inCity AND s. ORDER BY s.serviceProviderId ASC");
-        query.setParameter("inCategory", categoryId);
-        query.setParameter("inCity", city);
-        query.setParameter("inDate", date);
-        return query.getResultList();
+        categoryId++;
+        try {
+            CategoryEntity category = categoryEntitySessionBeanLocal.retrieveCategoryByCategoryId(categoryId);
+            Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.bizCategory = :inCategory AND s.city = :inCity AND s.status = :inApproved ORDER BY s.serviceProviderId ASC");
+            query.setParameter("inCategory", category);
+            query.setParameter("inCity", city);
+            query.setParameter("inApproved", ServiceProviderStatusEnum.APPROVED);
+            List<ServiceProviderEntity> queryResults = query.getResultList();
+            List<ServiceProviderEntity> dateResults = sortDate(date, queryResults);
+            return dateResults;
+        } catch (CategoryNotFoundException ex) {
+            System.out.println("Error while searching for Service Providers: Category does not exist!");
+            return new ArrayList<>();
+        }
     }
-    
+
+    private List<ServiceProviderEntity> sortDate(Date date, List<ServiceProviderEntity> serviceProviders) {
+        List<ServiceProviderEntity> newServiceProviders = new ArrayList<>();
+        for (ServiceProviderEntity s : serviceProviders) {
+            try {
+                String dateString = new SimpleDateFormat("yyyy-MM-dd").format(date);
+                if (nextSlotFreePerDate(s.getServiceProviderId(), dateString).size() > 0) {
+                    newServiceProviders.add(s);
+                }
+            } catch (DateProcessingException | ServiceProviderNotFoundException ex) {
+                System.out.println("Error: Date parsing error!");
+            }
+        }
+        return newServiceProviders;
+    }
+
     // revised slot going to be added if chosen by customer
     @Override
     public List<Date> nextSlotFreePerDate(Long serviceProviderId, String date) throws DateProcessingException, ServiceProviderNotFoundException {
@@ -195,23 +225,27 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         List<Date> revisedSlots = new ArrayList<>();
         
         for (int i = 0; i < emptySlots.size(); i++) {
-            boolean isEmpty = false;
+            boolean isEmpty = true;
             for (AppointmentEntity a : appointments) {
-                
+
                 // if existing appointments end and if the slot time is more than 2 hours away from now
-                if (!emptySlots.get(i).equals(a.getStartTimestamp()) && emptySlots.get(i).after(new Date(System.currentTimeMillis() + (2 * 3600 * 1000)))) {
-                    isEmpty = true;
+                if (emptySlots.get(i).equals(a.getStartTimestamp())) {
+                    isEmpty = false;
+                } else if (emptySlots.get(i).before(new Date(System.currentTimeMillis() + (86400 * 1000 * 2)))) {
+                    isEmpty = false;
                 }
             }
-            if (isEmpty) revisedSlots.add(emptySlots.get(i));
+            if (isEmpty) {
+                revisedSlots.add(emptySlots.get(i));
+            }
         }
         return revisedSlots;
     }
-    
+
     // duration is set to 1 hour
     private List<Date> initEmptySlots(String date) throws DateProcessingException {
         List<Date> emptySlots = new ArrayList<>();
-        for (int i = 8; i < 19; i++) {
+        for (int i = 8; i < 18; i++) {
             String newHour = i + "";
             String newMinute = "30";
             try {
@@ -222,7 +256,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         }
         return emptySlots;
     }
-    
+
     @Override
     public Double getAverageRating(ServiceProviderEntity serviceProviderEntity) {
         List<RatingEntity> ratingEntities = serviceProviderEntity.getRatings();

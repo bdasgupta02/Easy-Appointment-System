@@ -1,10 +1,12 @@
 package ejb.session.ws;
 
 import ejb.session.stateless.AppointmentEntitySessionBeanLocal;
+import ejb.session.stateless.CategoryEntitySessionBeanLocal;
 import ejb.session.stateless.CustomerEntitySessionBeanLocal;
 import ejb.session.stateless.RatingEntitySessionBeanLocal;
 import ejb.session.stateless.ServiceProviderEntitySessionBeanLocal;
 import entity.AppointmentEntity;
+import entity.CategoryEntity;
 import entity.CustomerEntity;
 import entity.RatingEntity;
 import entity.ServiceProviderEntity;
@@ -16,10 +18,12 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.ejb.Stateless;
 import util.exception.AppointmentCancellationException;
+import util.exception.AppointmentNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.DateProcessingException;
 import util.exception.EntityAttributeNullException;
 import util.exception.RatingWithoutAppointmentException;
+import util.exception.ServiceProviderAlreadyRatedException;
 import util.exception.ServiceProviderNotFoundException;
 
 @WebService(serviceName = "CustomerEntityWebService")
@@ -34,6 +38,8 @@ public class CustomerEntityWebService {
     private AppointmentEntitySessionBeanLocal appointmentEntitySessionBeanLocal;
     @EJB
     private RatingEntitySessionBeanLocal ratingEntitySessionBeanLocal;
+    @EJB
+    private CategoryEntitySessionBeanLocal categoryEntitySessionBeanLocal;
     
     
     @WebMethod
@@ -42,21 +48,17 @@ public class CustomerEntityWebService {
     }
     
     @WebMethod
-    public Long createAppointmentEntity(@WebParam Long customerId, @WebParam Long serviceProviderId, @WebParam Date startTimestamp, @WebParam Date endTimestamp, @WebParam String appointmentNum) throws CustomerNotFoundException, ServiceProviderNotFoundException {
+    public Long createAppointmentEntity(@WebParam Long customerId, @WebParam Long serviceProviderId, @WebParam Date startTimestamp, @WebParam Date endTimestamp) throws CustomerNotFoundException, ServiceProviderNotFoundException, EntityAttributeNullException {
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerEntityById(customerId);
         ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(serviceProviderId);
-        try {
-            AppointmentEntity appointmentEntity = new AppointmentEntity();
-            appointmentEntity.setStartTimestamp(startTimestamp);
-            appointmentEntity.setEndTimestamp(endTimestamp);
-            appointmentEntity.setCustomerEntity(customerEntity);
-            appointmentEntity.setServiceProviderEntity(serviceProviderEntity);
-            appointmentEntity.setAppointmentNum(appointmentNum);
+        AppointmentEntity appointmentEntity = new AppointmentEntity();
+        appointmentEntity.setStartTimestamp(startTimestamp);
+        appointmentEntity.setEndTimestamp(endTimestamp);
+        appointmentEntity.setCustomerEntity(customerEntity);
+        appointmentEntity.setServiceProviderEntity(serviceProviderEntity);
+        appointmentEntity.setCancelled(Boolean.FALSE);
             
-            return appointmentEntitySessionBeanLocal.createAppointmentEntity(appointmentEntity);
-        } catch (EntityAttributeNullException ex) {
-            return new Long(-1);
-        }
+        return appointmentEntitySessionBeanLocal.createAppointmentEntity(appointmentEntity);
     }
     
     @WebMethod
@@ -65,13 +67,15 @@ public class CustomerEntityWebService {
     }
     
     @WebMethod
-    public void rateServiceProvider(@WebParam Long serviceProviderId, @WebParam Long customerId, @WebParam Integer rating) throws RatingWithoutAppointmentException, ServiceProviderNotFoundException, CustomerNotFoundException, EntityAttributeNullException {
+    public void rateServiceProvider(@WebParam Long serviceProviderId, @WebParam Long customerId, @WebParam Integer rating) throws RatingWithoutAppointmentException, ServiceProviderNotFoundException, CustomerNotFoundException, EntityAttributeNullException, ServiceProviderAlreadyRatedException {
         ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(serviceProviderId);
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerEntityById(customerId);
         
         // check if there is at least 1 appointment for a customer with a service provider
         if (!customerEntitySessionBeanLocal.checkForAppointmentWithServiceProvider(serviceProviderId, customerId)) {
             throw new RatingWithoutAppointmentException("Error: Service provider could not be rated because you haven't had an appointment with them!\n");
+        } else if (ratingEntitySessionBeanLocal.isAlreadyRated(serviceProviderEntity, customerEntity)) {
+            throw new ServiceProviderAlreadyRatedException("Error: You have already rated this service provider before!\n");
         }
         
         // make a new rating entity
@@ -84,7 +88,9 @@ public class CustomerEntityWebService {
     
     @WebMethod
     public CustomerEntity login(@WebParam String email, @WebParam String password) throws CustomerNotFoundException {
-        return customerEntitySessionBeanLocal.retrieveCustomerEntityByEmail(email);
+        CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerEntityByEmail(email);
+        if (!customerEntity.getPassword().equals(password)) return null;
+        return customerEntity;
     }
     
     @WebMethod
@@ -95,7 +101,7 @@ public class CustomerEntityWebService {
     // need to add check for unique attribute
     @WebMethod
     public Long createCustomerEntity(@WebParam String identityNo, @WebParam String firstName, @WebParam String lastName, 
-            @WebParam String address, @WebParam Character gender, @WebParam Integer age, @WebParam String city, @WebParam String email, 
+            @WebParam String address, @WebParam String gender, @WebParam Integer age, @WebParam String city, @WebParam String email, 
             @WebParam Long phone, @WebParam String password) throws EntityAttributeNullException {
             
         CustomerEntity customerEntity = new CustomerEntity();
@@ -104,7 +110,7 @@ public class CustomerEntityWebService {
         customerEntity.setCity(city);
         customerEntity.setEmail(email);
         customerEntity.setFirstName(firstName);
-        customerEntity.setGender(gender);
+        customerEntity.setGender(gender.charAt(0));
         customerEntity.setIdentityNo(identityNo);
         customerEntity.setLastName(lastName);
         customerEntity.setPassword(password);
@@ -123,4 +129,18 @@ public class CustomerEntityWebService {
         return customerEntitySessionBeanLocal.retrieveAppointmentsByCustomerId(customerId);
     }
     
+    @WebMethod
+    public List<CategoryEntity> getAllCategories() {
+        return categoryEntitySessionBeanLocal.retrieveAllCategories();
+    }
+    
+    @WebMethod
+    public Double getRatingForService(@WebParam Long serviceProviderId) throws ServiceProviderNotFoundException {
+        return serviceProviderEntitySessionBeanLocal.getAverageRating(serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(serviceProviderId));
+    }
+    
+    @WebMethod
+    public ServiceProviderEntity getServiceProviderFromAppointmentId(@WebParam Long appointmentId) throws AppointmentNotFoundException {
+        return appointmentEntitySessionBeanLocal.retrieveAppointmentEntityById(appointmentId).getServiceProviderEntity();
+    }
 }

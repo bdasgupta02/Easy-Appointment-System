@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.xml.bind.annotation.XmlTransient;
 import util.enumeration.ServiceProviderStatusEnum;
 
 @Entity
@@ -179,6 +180,7 @@ public class ServiceProviderEntity implements Serializable {
         this.status = status;
     }  
 
+    @XmlTransient
     public List<AppointmentEntity> getAppointments() {
         return appointments;
     }
@@ -187,6 +189,7 @@ public class ServiceProviderEntity implements Serializable {
         this.getAppointments().add(newAppointment);
     }
 
+    @XmlTransient
     public List<RatingEntity> getRatings() {
         return ratings;
     }

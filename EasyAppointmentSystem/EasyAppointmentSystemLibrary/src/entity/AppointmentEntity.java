@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 public class AppointmentEntity implements Serializable {
@@ -103,15 +104,17 @@ public class AppointmentEntity implements Serializable {
     public String toString() {
         return "entity.AppointmentEntity[ id=" + appointmentId + " ]";
     }
-
+    
+    @XmlTransient
     public CustomerEntity getCustomerEntity() {
         return customerEntity;
     }
-
+    
     public void setCustomerEntity(CustomerEntity customerEntity) {
         this.customerEntity = customerEntity;
     }
 
+    @XmlTransient
     public ServiceProviderEntity getServiceProviderEntity() {
         return serviceProviderEntity;
     }

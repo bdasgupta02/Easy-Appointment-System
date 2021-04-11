@@ -16,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 public class CustomerEntity implements Serializable {
@@ -48,12 +49,21 @@ public class CustomerEntity implements Serializable {
     @OneToMany(mappedBy = "customerEntity")
     @JoinColumn(nullable = false)
     private List<RatingEntity> ratings;
+
+    @XmlTransient
+    public List<RatingEntity> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(List<RatingEntity> ratings) {
+        this.ratings = ratings;
+    }
     
     @OneToMany(cascade = REMOVE, mappedBy = "customerEntity")
     @JoinColumn(nullable = false)
     private List<AppointmentEntity> appointments;
     
-
+    @XmlTransient
     public List<AppointmentEntity> getAppointments() {
         return appointments;
     }
