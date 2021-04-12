@@ -2,6 +2,7 @@ package ejb.session.stateless;
 
 import entity.AppointmentEntity;
 import entity.CategoryEntity;
+import entity.CustomerEntity;
 import entity.RatingEntity;
 import entity.ServiceProviderEntity;
 import java.text.ParseException;
