@@ -323,7 +323,7 @@ public class CustomerWebServiceClient {
                             s.getCity(),
                             s.getBizAddress(),
                             s.getEmail(),
-                            rating == UNRATED ? "Unrated" : String.format("%.2f", rating));
+                            rating == UNRATED ? "0 (Unrated)" : String.format("%.2f", rating));
                 } catch (ServiceProviderNotFoundException_Exception ex) {
                     System.out.println("Error: Service Provider with Id: " + s.getServiceProviderId() + " does not exist!\n");
                 }
