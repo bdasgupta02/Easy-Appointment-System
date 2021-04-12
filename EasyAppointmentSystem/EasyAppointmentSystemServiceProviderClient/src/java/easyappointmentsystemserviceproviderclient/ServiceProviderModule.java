@@ -117,7 +117,7 @@ public class ServiceProviderModule {
             newServiceProviderEntity.setBizRegNum(scanner.nextLine().trim());
             
             System.out.print("Enter City> ");
-            newServiceProviderEntity.setCity(scanner.nextLine().trim());
+            newServiceProviderEntity.setCity(scanner.nextLine().trim().toLowerCase());
             
             while (true) {
                 System.out.print("Enter Phone> ");

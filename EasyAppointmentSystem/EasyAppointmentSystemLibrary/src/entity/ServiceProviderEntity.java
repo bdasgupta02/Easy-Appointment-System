@@ -63,7 +63,7 @@ public class ServiceProviderEntity implements Serializable {
         this.bizCategory = bizCategory;
         this.name = name;
         this.bizAddress = bizAddress;
-        this.city = city;
+        this.city = city.toLowerCase();
         this.email = email;
         this.password = password;
         this.phoneNum = phoneNum;

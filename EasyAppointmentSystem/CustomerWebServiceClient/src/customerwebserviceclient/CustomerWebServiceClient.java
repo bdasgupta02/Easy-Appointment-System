@@ -2,6 +2,7 @@ package customerwebserviceclient;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
@@ -153,7 +154,7 @@ public class CustomerWebServiceClient {
                 if (gender.charAt(0) == 'M' || gender.charAt(0) == 'F') {
                     break;
                 } else {
-                    System.out.println("Error: Invalid password! Please enter M or F.");
+                    System.out.println("Error: Invalid gender! Please enter M or F.");
                 }
             }
 
@@ -176,7 +177,7 @@ public class CustomerWebServiceClient {
             address = scanner.nextLine().trim();
 
             System.out.print("Enter City> ");
-            city = scanner.nextLine().trim();
+            city = scanner.nextLine().trim().toLowerCase();
 
             while (true) {
                 System.out.print("Enter Email> ");
@@ -289,11 +290,22 @@ public class CustomerWebServiceClient {
             while (true) {
                 System.out.print("Enter Date (YYYY-MM-DD)> ");
                 dateString = scanner.nextLine().trim();
+                String[] dateArray = dateString.split("-");
                 try {
-                    date = new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
+                    if(Integer.parseInt(dateArray[1]) > 12 ||Integer.parseInt(dateArray[1]) < 0 || Integer.parseInt(dateArray[2]) > 31 || Integer.parseInt(dateArray[2]) < 0){
+                        throw new ParseException("Wrong month or day",1 );
+                    } else {
+                        date = new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
+                        Calendar cal = Calendar.getInstance();
+                        cal.setTime(date);
+                        if(cal.get(Calendar.DAY_OF_WEEK) ==Calendar.SUNDAY){
+                            throw new ParseException("Cannot book on Sundays!",1);
+                        }
+                    }
                     break;
+                    
                 } catch (ParseException ex) {
-                    System.out.println("Error: Invalid date! Please try again.\n");
+                    System.out.println("Error: Invalid date: " + ex.getMessage() +" Please try again.\n");
                 }
             }
             
@@ -303,7 +315,7 @@ public class CustomerWebServiceClient {
             } 
 
             System.out.print("Enter City> ");
-            city = scanner.nextLine().trim();
+            city = scanner.nextLine().trim().toLowerCase();
 
             List<ServiceProviderEntity> serviceProviders = null;
             try {
