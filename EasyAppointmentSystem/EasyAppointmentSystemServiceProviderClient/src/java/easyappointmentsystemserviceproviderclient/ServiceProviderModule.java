@@ -245,23 +245,28 @@ public class ServiceProviderModule {
     
     public void viewProfile() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("*** Service Provider Terminal :: Your Profile ***\n");
-        System.out.println("-----------------------------------------------------------------------------");
-        System.out.printf("%22s%40s\n", "Name: ", currentServiceProvider.getName());
-        double averageRating = serviceProviderEntitySessionBeanRemote.getAverageRating(currentServiceProvider);
-        String doubleFormat = String.format("%.2f", averageRating);
-        System.out.printf("%22s%40s\n", "Average Rating: ", averageRating == -1.0 ? "Not rated yet!": doubleFormat);
-        System.out.printf("%22s%40s\n", "Registration Number: ", currentServiceProvider.getBizRegNum());
-        System.out.printf("%22s%40s\n", "Business Address: ", currentServiceProvider.getBizAddress());
-        System.out.printf("%22s%40s\n", "City: ", currentServiceProvider.getCity());
-        System.out.printf("%22s%40s\n", "Email: ", currentServiceProvider.getEmail());
-        System.out.printf("%22s%40s\n", "Contact Number: ", currentServiceProvider.getPhoneNum());
-        System.out.printf("%22s%40s\n", "Status: ", currentServiceProvider.getStatus());
-        System.out.println();
-        System.out.println("-----------------------------------------------------------------------------");
-        System.out.println();
-        System.out.println("Press any key to go back to the main menu");
-        scanner.nextLine();
+      try {
+             currentServiceProvider = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(currentServiceProvider.getServiceProviderId());
+             System.out.println("*** Service Provider Terminal :: Your Profile ***\n");
+             System.out.println("-----------------------------------------------------------------------------");
+             System.out.printf("%22s%40s\n", "Name: ", currentServiceProvider.getName());
+             double averageRating = serviceProviderEntitySessionBeanRemote.getAverageRating(currentServiceProvider);
+             String doubleFormat = String.format("%.2f", averageRating);
+             System.out.printf("%22s%40s\n", "Average Rating: ", averageRating == -1.0 ? "Not rated yet!": doubleFormat);
+             System.out.printf("%22s%40s\n", "Registration Number: ", currentServiceProvider.getBizRegNum());
+             System.out.printf("%22s%40s\n", "Business Address: ", currentServiceProvider.getBizAddress());
+             System.out.printf("%22s%40s\n", "City: ", currentServiceProvider.getCity());
+             System.out.printf("%22s%40s\n", "Email: ", currentServiceProvider.getEmail());
+             System.out.printf("%22s%40s\n", "Contact Number: ", currentServiceProvider.getPhoneNum());
+             System.out.printf("%22s%40s\n", "Status: ", currentServiceProvider.getStatus());
+             System.out.println();
+             System.out.println("-----------------------------------------------------------------------------");
+             System.out.println();
+             System.out.println("Press any key to go back to the main menu");
+             scanner.nextLine();
+         } catch (ServiceProviderNotFoundException ex) {
+             System.out.println(ex.getMessage());
+         }
     }
     
     public void editProfile() {
