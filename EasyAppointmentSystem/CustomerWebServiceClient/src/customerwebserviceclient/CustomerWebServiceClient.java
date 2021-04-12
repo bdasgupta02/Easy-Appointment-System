@@ -4,16 +4,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import ws.client.AppointmentAlreadyExistsException_Exception;
 import ws.client.AppointmentCancellationException_Exception;
 import ws.client.AppointmentEntity;
 import ws.client.AppointmentNotFoundException_Exception;
@@ -312,6 +312,7 @@ public class CustomerWebServiceClient {
                System.out.println("Error: "+ ex.getMessage());
             }
             System.out.printf("%-5s%-20s%-20s%-15s%-35s%-25s%-15s\n", "Id ", "Name", "Business Reg. No.", "City", "Address", "Email", "Average Rating");
+            HashSet<Long> searchSet = new HashSet<>();
             serviceProviders.forEach(s -> {
                 try {
                     Double rating = getRatingForService(s.getServiceProviderId());
@@ -326,6 +327,7 @@ public class CustomerWebServiceClient {
                 } catch (ServiceProviderNotFoundException_Exception ex) {
                     System.out.println("Error: Service Provider with Id: " + s.getServiceProviderId() + " does not exist!\n");
                 }
+                searchSet.add(s.getServiceProviderId());
             });
 
             if (searchOnly) {
@@ -358,6 +360,9 @@ public class CustomerWebServiceClient {
                     System.out.print("Service Provider Id> ");
                     response = scanner.nextLong();
                     if (response == 0) {
+                        break;
+                    } else if (!searchSet.contains(response)) {
+                        System.out.println("Error: Please input the correct Service Provider Id from the list given!\n");
                         break;
                     }
                     scanner.nextLine();
@@ -458,6 +463,8 @@ public class CustomerWebServiceClient {
                 System.out.println("Error creating appointment: Some values were null!\n");
             } catch (ServiceProviderNotFoundException_Exception ex) {
                 System.out.println("Error creating appointment: Service Provider with Id: " + serviceProviderId + " is not found!\n");
+            } catch (AppointmentAlreadyExistsException_Exception ex) {
+                 System.out.println("Error creating appointment: You already have an appointment at this time!\n");
             }
         } else {
             System.out.println("Error: Your slot chosen is invalid! Please try again.\n");
@@ -640,12 +647,6 @@ public class CustomerWebServiceClient {
         port.cancelAppointment(arg0, arg1, arg2);
     }
 
-    private static Long createAppointmentEntity(java.lang.Long arg0, javax.xml.datatype.XMLGregorianCalendar arg1, javax.xml.datatype.XMLGregorianCalendar arg2, java.lang.String arg3, java.lang.String arg4) throws EntityAttributeNullException_Exception, InvalidLoginException_Exception, ServiceProviderNotFoundException_Exception {
-        ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
-        ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
-        return port.createAppointmentEntity(arg0, arg1, arg2, arg3, arg4);
-    }
-
     private static Long createCustomerEntity(java.lang.String arg0, java.lang.String arg1, java.lang.String arg2, java.lang.String arg3, java.lang.String arg4, java.lang.Integer arg5, java.lang.String arg6, java.lang.String arg7, java.lang.Long arg8, java.lang.String arg9) throws EntityAttributeNullException_Exception {
         ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
         ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
@@ -710,6 +711,12 @@ public class CustomerWebServiceClient {
         ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
         ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
         return port.searchServiceProvidersByCategoryCityDate(arg0, arg1, arg2, arg3, arg4);
+    }
+
+    private static Long createAppointmentEntity(java.lang.Long arg0, javax.xml.datatype.XMLGregorianCalendar arg1, javax.xml.datatype.XMLGregorianCalendar arg2, java.lang.String arg3, java.lang.String arg4) throws InvalidLoginException_Exception, ServiceProviderNotFoundException_Exception, EntityAttributeNullException_Exception, AppointmentAlreadyExistsException_Exception {
+        ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
+        ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
+        return port.createAppointmentEntity(arg0, arg1, arg2, arg3, arg4);
     }
 
 }

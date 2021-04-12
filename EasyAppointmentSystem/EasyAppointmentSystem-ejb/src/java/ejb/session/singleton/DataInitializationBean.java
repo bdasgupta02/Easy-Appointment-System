@@ -26,6 +26,7 @@ import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
 import javax.ejb.Startup;
 import util.enumeration.ServiceProviderStatusEnum;
+import util.exception.AppointmentAlreadyExistsException;
 import util.exception.CategoryAlreadyExistsException;
 import util.exception.CategoryNotFoundException;
 import util.exception.CustomerNotFoundException;
@@ -99,9 +100,11 @@ public class DataInitializationBean {
                 AppointmentEntity a4Ety = new AppointmentEntity(customerEntitySessionBeanLocal.retrieveCustomerEntityById(2L), serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(new Long(2)), new Date(year,03,30,13,30), new Date(year,03,30,14,30));
                 apptEtySessionBeanLocal.createAppointmentEntity(a4Ety);
             } catch (CustomerNotFoundException ex) {
-                System.out.println("Tried initialising appointment with Customer id: 1. Customer not found!");
+                System.out.println("Tried initialising appointment with Customer. Customer not found!");
             } catch (ServiceProviderNotFoundException ex) {
-                System.out.println("Tried initialising appointment with Service providder id: 1. Service provider not found!");
+                System.out.println("Tried initialising appointment with Service provider. Service provider not found!");
+            } catch (AppointmentAlreadyExistsException ex) {
+                System.out.println("Tried initialising appointment. Appointment already exists!");
             }
         } catch (EntityAttributeNullException ex) {
             System.out.println("Some values are null. Data initialization has not been completed!");

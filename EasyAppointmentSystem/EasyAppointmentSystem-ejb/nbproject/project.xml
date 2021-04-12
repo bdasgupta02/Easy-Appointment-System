@@ -8,6 +8,7 @@
         <data xmlns="http://www.netbeans.org/ns/j2ee-ejbjarproject/3">
             <name>EasyAppointmentSystem-ejb</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
+            <explicit-platform explicit-source-supported="true"/>
             <included-library dirs="200">libs.IS2103.classpath</included-library>
             <included-library dirs="200">reference.EasyAppointmentSystemLibrary.jar</included-library>
             <source-roots>
