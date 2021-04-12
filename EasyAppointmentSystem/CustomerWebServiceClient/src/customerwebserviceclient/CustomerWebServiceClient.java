@@ -8,6 +8,8 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -20,6 +22,7 @@ import ws.client.CustomerEntity;
 import ws.client.CustomerNotFoundException_Exception;
 import ws.client.DateProcessingException_Exception;
 import ws.client.EntityAttributeNullException_Exception;
+import ws.client.InvalidLoginException_Exception;
 import ws.client.RatingWithoutAppointmentException_Exception;
 import ws.client.ServiceProviderAlreadyRatedException_Exception;
 import ws.client.ServiceProviderEntity;
@@ -28,6 +31,8 @@ import ws.client.ServiceProviderNotFoundException_Exception;
 public class CustomerWebServiceClient {
 
     private CustomerEntity customerEntity;
+    private String loggedEmail;
+    private String loggedPassword;
     public static final int DID_NOT_MATCH = -1;
     public static final boolean SEARCH_ONLY = true;
     public static final boolean NOT_SEARCH_ONLY = false;
@@ -94,12 +99,14 @@ public class CustomerWebServiceClient {
             String password = scanner.nextLine().trim();
             this.customerEntity = CustomerWebServiceClient.login(email, password);
             if (this.customerEntity != null) {
+                loggedEmail = email;
+                loggedPassword = password;
                 System.out.println("Login successful!\n");
                 mainMenu();
             } else {
                 System.out.println("Login unsuccessful. Please enter a valid password!.\n");
             }
-        } catch (NullPointerException | CustomerNotFoundException_Exception ex) {
+        } catch (NullPointerException | InvalidLoginException_Exception ex) {
             System.out.println("Login unsuccessful. Please enter valid login details. Details: " + ex.getMessage());
         }
     }
@@ -194,6 +201,7 @@ public class CustomerWebServiceClient {
     private void mainMenu() {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
+         
 
         while (true) {
             System.out.println("*** Customer terminal :: Main ***\n");
@@ -297,7 +305,12 @@ public class CustomerWebServiceClient {
             System.out.print("Enter City> ");
             city = scanner.nextLine().trim();
 
-            List<ServiceProviderEntity> serviceProviders = searchServiceProvidersByCategoryCityDate(categoryId, city, toXMLGregorianCalendar(date));
+            List<ServiceProviderEntity> serviceProviders = null;
+            try {
+                serviceProviders = searchServiceProvidersByCategoryCityDate(categoryId, city, toXMLGregorianCalendar(date), loggedEmail, loggedPassword);
+            } catch (InvalidLoginException_Exception ex) {
+               System.out.println("Error: "+ ex.getMessage());
+            }
             System.out.printf("%-5s%-20s%-20s%-15s%-35s%-25s%-15s\n", "Id ", "Name", "Business Reg. No.", "City", "Address", "Email", "Average Rating");
             serviceProviders.forEach(s -> {
                 try {
@@ -353,7 +366,7 @@ public class CustomerWebServiceClient {
                     System.out.println("Available Appointment slots:");
                     List<XMLGregorianCalendar> slots;
                     try {
-                        slots = freeSlotsPerServiceProviderAndDate(response, dateString);
+                        slots = freeSlotsPerServiceProviderAndDate(response, dateString, loggedEmail, loggedPassword);
                         for (int i = 1; i <= slots.size(); i++) {
                             Date slotDate = slots.get(i - 1).toGregorianCalendar().getTime();
                             System.out.print(new SimpleDateFormat("hh:mm").format(slotDate) + " ");
@@ -401,6 +414,8 @@ public class CustomerWebServiceClient {
                         }
                     } catch (ServiceProviderNotFoundException_Exception | DateProcessingException_Exception ex) {
                         System.out.println("Error: Service Provider ID is incorrect! Please try again.\n");
+                    } catch (InvalidLoginException_Exception ex) {
+                       System.out.println("Error: " + ex.getMessage());
                     }
                 }
             } else {
@@ -435,9 +450,9 @@ public class CustomerWebServiceClient {
 
         if (valid) {
             try {
-                Long appointmentId = createAppointmentEntity(customerId, serviceProviderId, toXMLGregorianCalendar(start), toXMLGregorianCalendar(end));
+                Long appointmentId = createAppointmentEntity(serviceProviderId, toXMLGregorianCalendar(start), toXMLGregorianCalendar(end), loggedEmail, loggedPassword);
                 System.out.println("The appointment with " + serviceProvider.getName() + " at " + new SimpleDateFormat("hh:mm").format(start) + " on " + new SimpleDateFormat("yyyy-MM-dd").format(start) + " is confirmed.\n");
-            } catch (CustomerNotFoundException_Exception ex) {
+            } catch (InvalidLoginException_Exception ex) {
                 System.out.println("Error creating appointment: Customer with Id: " + customerId + " is not found!\n");
             } catch (EntityAttributeNullException_Exception ex) {
                 System.out.println("Error creating appointment: Some values were null!\n");
@@ -461,7 +476,7 @@ public class CustomerWebServiceClient {
     public void viewOrCancelAppointments(boolean toCancel) {
         Scanner scanner = new Scanner(System.in);
         try {
-            List<AppointmentEntity> appointments = retrieveAppointmentsByCustomerId(customerEntity.getCustomerId());
+            List<AppointmentEntity> appointments = retrieveAppointmentsByCustomerId(customerEntity.getCustomerId(), loggedEmail, loggedPassword);
             if (toCancel) {
                 System.out.println("*** Customer Terminal :: Cancel Appointment ***\n");
             } else {
@@ -512,10 +527,12 @@ public class CustomerWebServiceClient {
                         int chosenIdx = matchAppointmentId(appointments, response);
                         if (chosenIdx > DID_NOT_MATCH) {
                             try {
-                                cancelAppointment(appointments.get(chosenIdx).getAppointmentId());
+                                cancelAppointment(appointments.get(chosenIdx).getAppointmentId(), loggedEmail, loggedPassword);
                                 System.out.println("You have successfully cancelled Appointment Id: " + appointments.get(chosenIdx).getAppointmentId());
                             } catch (AppointmentCancellationException_Exception ex) {
                                 System.out.println(ex.getMessage());
+                            } catch (InvalidLoginException_Exception ex) {
+                                System.out.println("Error: "+ ex.getMessage());
                             }
                         } else {
                             System.out.println("Error: Please enter a valid Appointment Id from the list above!\n");
@@ -529,6 +546,8 @@ public class CustomerWebServiceClient {
 
         } catch (CustomerNotFoundException_Exception | AppointmentNotFoundException_Exception ex) {
             System.out.println(ex.getMessage());
+        } catch (InvalidLoginException_Exception ex) {
+         System.out.println("Error: "+ ex.getMessage());
         }
     }
 
@@ -567,11 +586,13 @@ public class CustomerWebServiceClient {
         }
 
         try {
-            rateServiceProvider(serviceProviderId, customerEntity.getCustomerId(), rating);
+            rateServiceProvider(serviceProviderId, rating, loggedEmail, loggedPassword);
             System.out.println("You have successfully rated Service Provider with Id: " + serviceProviderId + " with a rating of " + rating + " out of 5!\n");
         } catch (ServiceProviderNotFoundException_Exception | EntityAttributeNullException_Exception
                 | RatingWithoutAppointmentException_Exception | CustomerNotFoundException_Exception | ServiceProviderAlreadyRatedException_Exception ex) {
             System.out.println(ex.getMessage());
+        } catch (InvalidLoginException_Exception ex) {
+           System.out.println("Error: "+ ex.getMessage());
         }
     }
 
@@ -613,10 +634,16 @@ public class CustomerWebServiceClient {
         return xmlDate;
     }
 
-    private static void cancelAppointment(java.lang.Long arg0) throws AppointmentCancellationException_Exception {
+    private static void cancelAppointment(java.lang.Long arg0, java.lang.String arg1, java.lang.String arg2) throws AppointmentCancellationException_Exception, InvalidLoginException_Exception {
         ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
         ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
-        port.cancelAppointment(arg0);
+        port.cancelAppointment(arg0, arg1, arg2);
+    }
+
+    private static Long createAppointmentEntity(java.lang.Long arg0, javax.xml.datatype.XMLGregorianCalendar arg1, javax.xml.datatype.XMLGregorianCalendar arg2, java.lang.String arg3, java.lang.String arg4) throws EntityAttributeNullException_Exception, InvalidLoginException_Exception, ServiceProviderNotFoundException_Exception {
+        ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
+        ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
+        return port.createAppointmentEntity(arg0, arg1, arg2, arg3, arg4);
     }
 
     private static Long createCustomerEntity(java.lang.String arg0, java.lang.String arg1, java.lang.String arg2, java.lang.String arg3, java.lang.String arg4, java.lang.Integer arg5, java.lang.String arg6, java.lang.String arg7, java.lang.Long arg8, java.lang.String arg9) throws EntityAttributeNullException_Exception {
@@ -625,10 +652,10 @@ public class CustomerWebServiceClient {
         return port.createCustomerEntity(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
     }
 
-    private static java.util.List<javax.xml.datatype.XMLGregorianCalendar> freeSlotsPerServiceProviderAndDate(java.lang.Long arg0, java.lang.String arg1) throws ServiceProviderNotFoundException_Exception, DateProcessingException_Exception {
+    private static java.util.List<javax.xml.datatype.XMLGregorianCalendar> freeSlotsPerServiceProviderAndDate(java.lang.Long arg0, java.lang.String arg1, java.lang.String arg2, java.lang.String arg3) throws DateProcessingException_Exception, ServiceProviderNotFoundException_Exception, InvalidLoginException_Exception {
         ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
         ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
-        return port.freeSlotsPerServiceProviderAndDate(arg0, arg1);
+        return port.freeSlotsPerServiceProviderAndDate(arg0, arg1, arg2, arg3);
     }
 
     private static java.util.List<ws.client.CategoryEntity> getAllCategories() {
@@ -637,34 +664,10 @@ public class CustomerWebServiceClient {
         return port.getAllCategories();
     }
 
-    private static java.util.List<ws.client.AppointmentEntity> retrieveAppointmentsByCustomerId(java.lang.Long arg0) throws CustomerNotFoundException_Exception {
-        ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
-        ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
-        return port.retrieveAppointmentsByCustomerId(arg0);
-    }
-
-    private static java.util.List<ws.client.ServiceProviderEntity> searchServiceProvidersByCategoryCityDate(java.lang.Long arg0, java.lang.String arg1, javax.xml.datatype.XMLGregorianCalendar arg2) {
-        ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
-        ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
-        return port.searchServiceProvidersByCategoryCityDate(arg0, arg1, arg2);
-    }
-
     private static Double getRatingForService(java.lang.Long arg0) throws ServiceProviderNotFoundException_Exception {
         ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
         ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
         return port.getRatingForService(arg0);
-    }
-
-    private static CustomerEntity login(java.lang.String arg0, java.lang.String arg1) throws CustomerNotFoundException_Exception {
-        ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
-        ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
-        return port.login(arg0, arg1);
-    }
-
-    private static Long createAppointmentEntity(java.lang.Long arg0, java.lang.Long arg1, javax.xml.datatype.XMLGregorianCalendar arg2, javax.xml.datatype.XMLGregorianCalendar arg3) throws CustomerNotFoundException_Exception, EntityAttributeNullException_Exception, ServiceProviderNotFoundException_Exception {
-        ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
-        ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
-        return port.createAppointmentEntity(arg0, arg1, arg2, arg3);
     }
 
     private static ServiceProviderEntity getServiceProviderFromAppointmentId(java.lang.Long arg0) throws AppointmentNotFoundException_Exception {
@@ -673,9 +676,40 @@ public class CustomerWebServiceClient {
         return port.getServiceProviderFromAppointmentId(arg0);
     }
 
-    private static void rateServiceProvider(java.lang.Long arg0, java.lang.Long arg1, java.lang.Integer arg2) throws RatingWithoutAppointmentException_Exception, ServiceProviderNotFoundException_Exception, CustomerNotFoundException_Exception, EntityAttributeNullException_Exception, ServiceProviderAlreadyRatedException_Exception {
+    private static ServiceProviderEntity getServiceProviderFromAppointmentId_1(java.lang.Long arg0) throws AppointmentNotFoundException_Exception {
         ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
         ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
-        port.rateServiceProvider(arg0, arg1, arg2);
+        return port.getServiceProviderFromAppointmentId(arg0);
     }
+
+    private static CustomerEntity login(java.lang.String arg0, java.lang.String arg1) throws InvalidLoginException_Exception {
+        ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
+        ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
+        return port.login(arg0, arg1);
+    }
+
+    private static void rateServiceProvider(java.lang.Long arg0, java.lang.Integer arg1, java.lang.String arg2, java.lang.String arg3) throws RatingWithoutAppointmentException_Exception, InvalidLoginException_Exception, ServiceProviderNotFoundException_Exception, EntityAttributeNullException_Exception, ServiceProviderAlreadyRatedException_Exception, CustomerNotFoundException_Exception {
+        ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
+        ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
+        port.rateServiceProvider(arg0, arg1, arg2, arg3);
+    }
+
+    private static java.util.List<ws.client.AppointmentEntity> retrieveAppointmentsByCustomerId(java.lang.Long arg0, java.lang.String arg1, java.lang.String arg2) throws CustomerNotFoundException_Exception, InvalidLoginException_Exception {
+        ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
+        ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
+        return port.retrieveAppointmentsByCustomerId(arg0, arg1, arg2);
+    }
+
+    private static java.util.List<ws.client.ServiceProviderEntity> searchApprovedServiceProviders() {
+        ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
+        ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
+        return port.searchApprovedServiceProviders();
+    }
+
+    private static java.util.List<ws.client.ServiceProviderEntity> searchServiceProvidersByCategoryCityDate(java.lang.Long arg0, java.lang.String arg1, javax.xml.datatype.XMLGregorianCalendar arg2, java.lang.String arg3, java.lang.String arg4) throws InvalidLoginException_Exception {
+        ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
+        ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
+        return port.searchServiceProvidersByCategoryCityDate(arg0, arg1, arg2, arg3, arg4);
+    }
+
 }

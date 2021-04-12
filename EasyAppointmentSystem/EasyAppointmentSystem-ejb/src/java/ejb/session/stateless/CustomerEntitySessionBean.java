@@ -4,6 +4,8 @@ import entity.AppointmentEntity;
 import entity.CustomerEntity;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -16,6 +18,7 @@ import javax.persistence.Query;
 import util.exception.AppointmentCancellationException;
 import util.exception.CustomerNotFoundException;
 import util.exception.EntityAttributeNullException;
+import util.exception.InvalidLoginException;
 import util.security.CryptographicHelper;
 
 @Stateless
@@ -128,4 +131,19 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
         }
         return false;
     }
+
+    @Override
+    public CustomerEntity customerLogin(String email, String password) throws InvalidLoginException {
+        CustomerEntity customerEntity;
+        try {
+            customerEntity = retrieveCustomerEntityByEmail(email);
+        } catch (CustomerNotFoundException ex) {
+            throw new InvalidLoginException("Customer email not found!"); 
+        }
+        String inputPassword = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(password));
+        if (!customerEntity.getPassword().equals(inputPassword)) throw new InvalidLoginException("Customer login credentials are invalid!");
+        return customerEntity;
+    }
+    
+    
 }

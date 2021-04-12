@@ -3,7 +3,7 @@
   <services/>
   <clients>
     <client name="CustomerEntityWebService">
-      <wsdl-url>http://localhost:8080/CustomerEntityWebService/CustomerEntityWebService?wsdl</wsdl-url>
+      <wsdl-url>http://localhost:8080/CustomerEntityWebService/CustomerEntityWebService?WSDL</wsdl-url>
       <local-wsdl-file>localhost_8080/CustomerEntityWebService/CustomerEntityWebService.wsdl</local-wsdl-file>
       <package-name forceReplace="true">ws.client</package-name>
       <catalog-file>catalog.xml</catalog-file>
@@ -22,7 +22,7 @@
         </wsimport-option>
         <wsimport-option>
           <wsimport-option-name>wsdlLocation</wsimport-option-name>
-          <wsimport-option-value>http://localhost:8080/CustomerEntityWebService/CustomerEntityWebService?wsdl</wsimport-option-value>
+          <wsimport-option-value>http://localhost:8080/CustomerEntityWebService/CustomerEntityWebService?WSDL</wsimport-option-value>
         </wsimport-option>
         <wsimport-option>
           <wsimport-option-name>xnocompile</wsimport-option-name>

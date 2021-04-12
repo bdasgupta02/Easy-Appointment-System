@@ -12,6 +12,7 @@ import util.exception.CategoryAlreadyExistsException;
 import util.exception.CategoryInUseException;
 import util.exception.CategoryNotFoundException;
 import util.exception.EntityAttributeNullException;
+import util.exception.InvalidLoginException;
 
 
 public interface CategoryEntitySessionBeanLocal {
@@ -22,4 +23,6 @@ public interface CategoryEntitySessionBeanLocal {
     public List<CategoryEntity> retrieveAllCategories();
     public void updateCategory(CategoryEntity updatedCategoryEntity) throws CategoryNotFoundException;
     public void deleteCategory(String categoryName) throws CategoryNotFoundException, CategoryInUseException;
+ 
+    
 }

@@ -66,7 +66,7 @@ public class DataInitializationBean {
 
     private void initializeData() {
         try {
-            adminEntitySessionBeanLocal.createNewAdminEntity(new AdminEntity("admin01@easyappointment.com", "123456", "Admin01", "001001"));
+            adminEntitySessionBeanLocal.createNewAdminEntity(new AdminEntity("admin01@easyappointment.com", "001001", "Admin01", "Staff"));
             customerEntitySessionBeanLocal.createCustomerEntity(new CustomerEntity("S9054321P", "Liza", "Mozart", "address", new Character('F'), 30, "Singapore", "liza@gmail.com", new Long(87654321), "123456"));
             customerEntitySessionBeanLocal.createCustomerEntity(new CustomerEntity("S7898470J", "Robert", "Bach", "address", new Character('M'), 40, "Singapore", "robert@gmail.com", new Long(24681012), "123456"));
             try {

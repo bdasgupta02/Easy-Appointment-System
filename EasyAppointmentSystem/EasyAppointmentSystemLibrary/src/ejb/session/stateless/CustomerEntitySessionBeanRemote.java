@@ -11,6 +11,7 @@ import java.util.List;
 import util.exception.AppointmentCancellationException;
 import util.exception.CustomerNotFoundException;
 import util.exception.EntityAttributeNullException;
+import util.exception.InvalidLoginException;
 
 
 public interface CustomerEntitySessionBeanRemote {
@@ -31,4 +32,6 @@ public interface CustomerEntitySessionBeanRemote {
     
     public Boolean checkForAppointmentWithServiceProvider(Long serviceProviderId, Long customerId) throws CustomerNotFoundException;
     
+    public CustomerEntity customerLogin(String email, String password) throws InvalidLoginException;
+
 }

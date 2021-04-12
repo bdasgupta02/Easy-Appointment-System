@@ -22,6 +22,7 @@ import util.exception.AppointmentNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.DateProcessingException;
 import util.exception.EntityAttributeNullException;
+import util.exception.InvalidLoginException;
 import util.exception.RatingWithoutAppointmentException;
 import util.exception.ServiceProviderAlreadyRatedException;
 import util.exception.ServiceProviderNotFoundException;
@@ -49,8 +50,9 @@ public class CustomerEntityWebService {
     }
     
     @WebMethod
-    public Long createAppointmentEntity(@WebParam Long customerId, @WebParam Long serviceProviderId, @WebParam Date startTimestamp, @WebParam Date endTimestamp) throws CustomerNotFoundException, ServiceProviderNotFoundException, EntityAttributeNullException {
-        CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerEntityById(customerId);
+    public Long createAppointmentEntity(@WebParam Long serviceProviderId, @WebParam Date startTimestamp, @WebParam Date endTimestamp, @WebParam String email, @WebParam String password) throws InvalidLoginException, ServiceProviderNotFoundException, EntityAttributeNullException {
+        CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(email, password);
+        System.out.println("**** EasyAppointmentSystem*** Customer has logged in remotely: " + customerEntity.getFirstName());
         ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(serviceProviderId);
         AppointmentEntity appointmentEntity = new AppointmentEntity();
         appointmentEntity.setStartTimestamp(startTimestamp);
@@ -63,17 +65,19 @@ public class CustomerEntityWebService {
     }
     
     @WebMethod
-    public List<ServiceProviderEntity> searchServiceProvidersByCategoryCityDate(@WebParam Long categoryId, @WebParam String city, @WebParam Date date) {
+    public List<ServiceProviderEntity> searchServiceProvidersByCategoryCityDate(@WebParam Long categoryId, @WebParam String city, @WebParam Date date,@WebParam String email, @WebParam String password ) throws InvalidLoginException {
+       CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(email, password);
+        System.out.println("**** EasyAppointmentSystem*** Customer has logged in remotely: " + customerEntity.getFirstName());
         return serviceProviderEntitySessionBeanLocal.retrieveSearchResult(categoryId, city, date);
     }
     
     @WebMethod
-    public void rateServiceProvider(@WebParam Long serviceProviderId, @WebParam Long customerId, @WebParam Integer rating) throws RatingWithoutAppointmentException, ServiceProviderNotFoundException, CustomerNotFoundException, EntityAttributeNullException, ServiceProviderAlreadyRatedException {
-        ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(serviceProviderId);
-        CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerEntityById(customerId);
-        
+    public void rateServiceProvider(@WebParam Long serviceProviderId, @WebParam Integer rating, @WebParam String email, @WebParam String password) throws RatingWithoutAppointmentException, ServiceProviderNotFoundException, CustomerNotFoundException, EntityAttributeNullException, ServiceProviderAlreadyRatedException, InvalidLoginException {
+        CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(email, password);
+        System.out.println("**** EasyAppointmentSystem*** Customer has logged in remotely: " + customerEntity.getFirstName());
+        ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(serviceProviderId); 
         // check if there is at least 1 appointment for a customer with a service provider
-        if (!customerEntitySessionBeanLocal.checkForAppointmentWithServiceProvider(serviceProviderId, customerId)) {
+        if (!customerEntitySessionBeanLocal.checkForAppointmentWithServiceProvider(serviceProviderId, customerEntity.getCustomerId())) {
             throw new RatingWithoutAppointmentException("Error: Service provider could not be rated because you haven't had an appointment with them!\n");
         } else if (ratingEntitySessionBeanLocal.isAlreadyRated(serviceProviderEntity, customerEntity)) {
             throw new ServiceProviderAlreadyRatedException("Error: You have already rated this service provider before!\n");
@@ -88,15 +92,14 @@ public class CustomerEntityWebService {
     }
     
     @WebMethod
-    public CustomerEntity login(@WebParam String email, @WebParam String password) throws CustomerNotFoundException {
-        CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerEntityByEmail(email);
-        String inputPassword = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(password));
-        if (!customerEntity.getPassword().equals(inputPassword)) return null;
-        return customerEntity;
+    public CustomerEntity login(@WebParam String email, @WebParam String password) throws InvalidLoginException {
+        return customerEntitySessionBeanLocal.customerLogin(email, password);
     }
     
     @WebMethod
-    public List<Date> freeSlotsPerServiceProviderAndDate(@WebParam Long serviceProviderId, @WebParam String date) throws DateProcessingException, ServiceProviderNotFoundException {
+    public List<Date> freeSlotsPerServiceProviderAndDate(@WebParam Long serviceProviderId, @WebParam String date, @WebParam String email, @WebParam String password) throws DateProcessingException, ServiceProviderNotFoundException, InvalidLoginException {
+        CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(email, password);
+        System.out.println("**** EasyAppointmentSystem*** Customer has logged in remotely: " + customerEntity.getFirstName());
         return serviceProviderEntitySessionBeanLocal.nextSlotFreePerDate(serviceProviderId, date);
     }
     
@@ -122,12 +125,16 @@ public class CustomerEntityWebService {
     }
     
     @WebMethod
-    public void cancelAppointment(@WebParam Long appointmentId) throws AppointmentCancellationException {
+    public void cancelAppointment(@WebParam Long appointmentId, @WebParam String email, @WebParam String password) throws AppointmentCancellationException, InvalidLoginException {
+       CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(email, password);
+        System.out.println("**** EasyAppointmentSystem*** Customer has logged in remotely: " + customerEntity.getFirstName());
         customerEntitySessionBeanLocal.cancelAppointment(appointmentId);
     }
     
     @WebMethod
-    public List<AppointmentEntity> retrieveAppointmentsByCustomerId(@WebParam Long customerId) throws CustomerNotFoundException {
+    public List<AppointmentEntity> retrieveAppointmentsByCustomerId(@WebParam Long customerId, @WebParam String email, @WebParam String password) throws CustomerNotFoundException, InvalidLoginException {
+       CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(email, password);
+        System.out.println("**** EasyAppointmentSystem*** Customer has logged in remotely: " + customerEntity.getFirstName());
         return customerEntitySessionBeanLocal.retrieveAppointmentsByCustomerId(customerId);
     }
     
