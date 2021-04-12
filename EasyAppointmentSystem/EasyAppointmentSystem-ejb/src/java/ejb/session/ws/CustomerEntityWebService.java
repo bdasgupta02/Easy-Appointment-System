@@ -27,7 +27,6 @@ import util.exception.InvalidLoginException;
 import util.exception.RatingWithoutAppointmentException;
 import util.exception.ServiceProviderAlreadyRatedException;
 import util.exception.ServiceProviderNotFoundException;
-import util.security.CryptographicHelper;
 
 @WebService(serviceName = "CustomerEntityWebService")
 @Stateless()
@@ -104,7 +103,6 @@ public class CustomerEntityWebService {
         return serviceProviderEntitySessionBeanLocal.nextSlotFreePerDate(serviceProviderId, date);
     }
     
-    // need to add check for unique attribute
     @WebMethod
     public Long createCustomerEntity(@WebParam String identityNo, @WebParam String firstName, @WebParam String lastName, 
             @WebParam String address, @WebParam String gender, @WebParam Integer age, @WebParam String city, @WebParam String email, 

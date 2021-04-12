@@ -16,7 +16,6 @@ import util.exception.CategoryAlreadyExistsException;
 import util.exception.CategoryInUseException;
 import util.exception.CategoryNotFoundException;
 import util.exception.EntityAttributeNullException;
-import util.exception.ServiceProviderNotFoundException;
 
 @Stateless
 @Remote(CategoryEntitySessionBeanRemote.class)

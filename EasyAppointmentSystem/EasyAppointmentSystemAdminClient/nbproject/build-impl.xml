@@ -840,24 +840,21 @@ exists or setup the property manually. For example like this:
     </target>
     <target depends="compile" if="is.server.weblogic" name="library-inclusion-in-archive">
         <basename file="${reference.EasyAppointmentSystemLibrary.jar}" property="manifest.reference.EasyAppointmentSystemLibrary.jar"/>
-        <basename file="${libs.CopyLibs.classpath}" property="manifest.libs.CopyLibs.classpath"/>
         <basename file="${libs.jpa20-persistence.classpath}" property="manifest.libs.jpa20-persistence.classpath"/>
         <basename file="${libs.IS2103.classpath}" property="manifest.libs.IS2103.classpath"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Extension-List" value="jar-1 jar-2 jar-3 jar-4 "/>
+            <attribute name="Extension-List" value="jar-1 jar-2 jar-3 "/>
             <attribute name="jar-1-Extension-Name" value="${manifest.reference.EasyAppointmentSystemLibrary.jar}"/>
-            <attribute name="jar-2-Extension-Name" value="${manifest.libs.CopyLibs.classpath}"/>
-            <attribute name="jar-3-Extension-Name" value="${manifest.libs.jpa20-persistence.classpath}"/>
-            <attribute name="jar-4-Extension-Name" value="${manifest.libs.IS2103.classpath}"/>
+            <attribute name="jar-2-Extension-Name" value="${manifest.libs.jpa20-persistence.classpath}"/>
+            <attribute name="jar-3-Extension-Name" value="${manifest.libs.IS2103.classpath}"/>
         </manifest>
     </target>
     <target depends="compile" if="dist.ear.dir" name="library-inclusion-in-manifest">
         <copyfiles files="${reference.EasyAppointmentSystemLibrary.jar}" manifestproperty="manifest.reference.EasyAppointmentSystemLibrary.jar" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${libs.CopyLibs.classpath}" manifestproperty="manifest.libs.CopyLibs.classpath" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.jpa20-persistence.classpath}" manifestproperty="manifest.libs.jpa20-persistence.classpath" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.IS2103.classpath}" manifestproperty="manifest.libs.IS2103.classpath" todir="${dist.ear.dir}/lib"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Class-Path" value="${manifest.reference.EasyAppointmentSystemLibrary.jar} lib/${manifest.reference.EasyAppointmentSystemLibrary.jar} ${manifest.libs.CopyLibs.classpath} lib/${manifest.libs.CopyLibs.classpath} ${manifest.libs.jpa20-persistence.classpath} lib/${manifest.libs.jpa20-persistence.classpath} ${manifest.libs.IS2103.classpath} lib/${manifest.libs.IS2103.classpath} "/>
+            <attribute name="Class-Path" value="${manifest.reference.EasyAppointmentSystemLibrary.jar} lib/${manifest.reference.EasyAppointmentSystemLibrary.jar} ${manifest.libs.jpa20-persistence.classpath} lib/${manifest.libs.jpa20-persistence.classpath} ${manifest.libs.IS2103.classpath} lib/${manifest.libs.IS2103.classpath} "/>
         </manifest>
     </target>
     <target name="-copy-meta-inf">

@@ -3,7 +3,6 @@ package ejb.session.stateless;
 import entity.CustomerEntity;
 import entity.RatingEntity;
 import entity.ServiceProviderEntity;
-import javax.ejb.Remote;
 import util.exception.EntityAttributeNullException;
 import util.exception.RatingNotFoundException;
 

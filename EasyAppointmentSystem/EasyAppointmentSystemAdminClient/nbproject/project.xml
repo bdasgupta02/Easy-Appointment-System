@@ -13,7 +13,6 @@
                 <root id="test.src.dir"/>
             </test-roots>
             <included-library dirs="200">reference.EasyAppointmentSystemLibrary.jar</included-library>
-            <included-library dirs="200">libs.CopyLibs.classpath</included-library>
             <included-library dirs="200">libs.jpa20-persistence.classpath</included-library>
             <included-library dirs="200">libs.IS2103.classpath</included-library>
         </data>

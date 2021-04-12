@@ -32,12 +32,7 @@ public class AppointmentEntity implements Serializable {
     private ServiceProviderEntity serviceProviderEntity;
     
     // it's much easier to process and more logical if start and ends are
-    // timestamps instead of time, with an extra date field.
-    
-    /*@Column(nullable=false)
-    @Temporal(TemporalType.DATE)
-    private Date date;*/
-    
+    // timestamps instead of time, and they record .
     @Column(nullable=false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date startTimestamp;

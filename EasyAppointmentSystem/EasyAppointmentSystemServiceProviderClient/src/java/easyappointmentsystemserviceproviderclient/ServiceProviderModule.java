@@ -5,7 +5,6 @@ import ejb.session.stateless.CategoryEntitySessionBeanRemote;
 import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import entity.AppointmentEntity;
 import entity.CategoryEntity;
-import entity.RatingEntity;
 import entity.ServiceProviderEntity;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

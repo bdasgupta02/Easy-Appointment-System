@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ejb.session.stateless;
 
 import entity.AppointmentEntity;
@@ -15,7 +10,6 @@ import util.exception.InvalidLoginException;
 import util.exception.ServiceProviderAlreadyBlockedException;
 import util.exception.ServiceProviderAlreadyExistsException;
 import util.exception.ServiceProviderNotFoundException;
-import util.exception.ServiceProviderNotPendingException;
 import util.exception.UniqueFieldExistsException;
 
 public interface ServiceProviderEntitySessionBeanLocal {

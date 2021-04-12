@@ -4,8 +4,6 @@ import entity.AppointmentEntity;
 import entity.CustomerEntity;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -96,12 +94,7 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
     }
     
     @Override
-    public void cancelAppointment(Long appointmentId) throws AppointmentCancellationException {
-        
-        // added cancelled indicator in appointment entity for this
-        // but check if you change cancelled to true in list<> attribute of customer entity,
-        // does it change it automatically in apt entity?
-        // this method should only be called after displaying a list by the prev method        
+    public void cancelAppointment(Long appointmentId) throws AppointmentCancellationException {    
         appointmentEntitySessionBeanLocal.cancelAppointment(appointmentId);
         
     }

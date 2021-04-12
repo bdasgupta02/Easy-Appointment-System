@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ejb.session.singleton;
 
 import ejb.session.stateless.AdminEntitySessionBeanLocal;
@@ -18,8 +13,6 @@ import entity.RatingEntity;
 import entity.ServiceProviderEntity;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -33,7 +26,6 @@ import util.exception.CustomerNotFoundException;
 import util.exception.EntityAttributeNullException;
 import util.exception.ServiceProviderAlreadyExistsException;
 import util.exception.ServiceProviderNotFoundException;
-import util.security.CryptographicHelper;
 
 @Singleton
 @LocalBean
