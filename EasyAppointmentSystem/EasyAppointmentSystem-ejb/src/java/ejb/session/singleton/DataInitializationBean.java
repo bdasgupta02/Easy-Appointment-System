@@ -32,6 +32,7 @@ import util.exception.CustomerNotFoundException;
 import util.exception.EntityAttributeNullException;
 import util.exception.ServiceProviderAlreadyExistsException;
 import util.exception.ServiceProviderNotFoundException;
+import util.security.CryptographicHelper;
 
 @Singleton
 @LocalBean
@@ -65,7 +66,7 @@ public class DataInitializationBean {
 
     private void initializeData() {
         try {
-            adminEntitySessionBeanLocal.createNewAdminEntity(new AdminEntity("admin01@easyappointment.com", "001001", "Admin01", "001001"));
+            adminEntitySessionBeanLocal.createNewAdminEntity(new AdminEntity("admin01@easyappointment.com", "123456", "Admin01", "001001"));
             customerEntitySessionBeanLocal.createCustomerEntity(new CustomerEntity("S9054321P", "Liza", "Mozart", "address", new Character('F'), 30, "Singapore", "liza@gmail.com", new Long(87654321), "123456"));
             customerEntitySessionBeanLocal.createCustomerEntity(new CustomerEntity("S7898470J", "Robert", "Bach", "address", new Character('M'), 40, "Singapore", "robert@gmail.com", new Long(24681012), "123456"));
             try {
@@ -89,13 +90,13 @@ public class DataInitializationBean {
             
             try {
                 int year = 2021 - 1900;
-                AppointmentEntity a1Ety = new AppointmentEntity(customerEntitySessionBeanLocal.retrieveCustomerEntityById(1L), serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(new Long(1)), new Date(year,04,11,9,30), new Date(2021,04,11,10,30));
+                AppointmentEntity a1Ety = new AppointmentEntity(customerEntitySessionBeanLocal.retrieveCustomerEntityById(1L), serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(new Long(1)), new Date(year,03,11,9,30), new Date(year,03,11,10,30));
                 apptEtySessionBeanLocal.createAppointmentEntity(a1Ety);
-                AppointmentEntity a2Ety = new AppointmentEntity(customerEntitySessionBeanLocal.retrieveCustomerEntityById(1L), serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(new Long(2)), new Date(year,04,24,11,30), new Date(2021,04,24,12,30));
+                AppointmentEntity a2Ety = new AppointmentEntity(customerEntitySessionBeanLocal.retrieveCustomerEntityById(1L), serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(new Long(2)), new Date(year,03,24,11,30), new Date(year,03,24,12,30));
                 apptEtySessionBeanLocal.createAppointmentEntity(a2Ety);
-                AppointmentEntity a3Ety = new AppointmentEntity(customerEntitySessionBeanLocal.retrieveCustomerEntityById(2L), serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(new Long(1)), new Date(year,04,10,15,30), new Date(2021,04,10,16,30));
+                AppointmentEntity a3Ety = new AppointmentEntity(customerEntitySessionBeanLocal.retrieveCustomerEntityById(2L), serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(new Long(1)), new Date(year,03,10,15,30), new Date(year,03,10,16,30));
                 apptEtySessionBeanLocal.createAppointmentEntity(a3Ety);
-                AppointmentEntity a4Ety = new AppointmentEntity(customerEntitySessionBeanLocal.retrieveCustomerEntityById(2L), serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(new Long(2)), new Date(year,04,30,13,30), new Date(2021,04,30,14,30));
+                AppointmentEntity a4Ety = new AppointmentEntity(customerEntitySessionBeanLocal.retrieveCustomerEntityById(2L), serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(new Long(2)), new Date(year,03,30,13,30), new Date(year,03,30,14,30));
                 apptEtySessionBeanLocal.createAppointmentEntity(a4Ety);
             } catch (CustomerNotFoundException ex) {
                 System.out.println("Tried initialising appointment with Customer id: 1. Customer not found!");

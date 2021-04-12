@@ -28,6 +28,7 @@ import util.exception.InvalidLoginException;
 import util.exception.ServiceProviderAlreadyBlockedException;
 import util.exception.ServiceProviderAlreadyExistsException;
 import util.exception.ServiceProviderNotFoundException;
+import util.security.CryptographicHelper;
 
 @Stateless
 @Local(ServiceProviderEntitySessionBeanLocal.class)
@@ -53,6 +54,8 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
             throw new EntityAttributeNullException("Error: Some values are null! Creation of Service Provider aborted.\n");
         } else {
             try {
+                String hashedPassword = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(newServiceProviderEntity.getPassword()));
+                newServiceProviderEntity.setPassword(hashedPassword);
                 em.persist(newServiceProviderEntity);
                 em.flush();
             } catch (PersistenceException ex) {
@@ -121,8 +124,10 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     public ServiceProviderEntity login(String emailAdd, String password) throws InvalidLoginException {
         try {
             ServiceProviderEntity serviceProviderEntity = retrieveServiceProviderByEmail(emailAdd);
-
-            if (serviceProviderEntity.getPassword().equals(password)) {
+            String hashedPassword = serviceProviderEntity.getPassword();
+            String hashedInputPassword = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(password));
+            
+            if (hashedInputPassword.equals(hashedPassword)) {
                 serviceProviderEntity.getAppointments().size();
                 serviceProviderEntity.getRatings().size();
                 return serviceProviderEntity;

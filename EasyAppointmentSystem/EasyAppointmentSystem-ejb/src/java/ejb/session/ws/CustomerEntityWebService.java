@@ -25,6 +25,7 @@ import util.exception.EntityAttributeNullException;
 import util.exception.RatingWithoutAppointmentException;
 import util.exception.ServiceProviderAlreadyRatedException;
 import util.exception.ServiceProviderNotFoundException;
+import util.security.CryptographicHelper;
 
 @WebService(serviceName = "CustomerEntityWebService")
 @Stateless()
@@ -89,7 +90,8 @@ public class CustomerEntityWebService {
     @WebMethod
     public CustomerEntity login(@WebParam String email, @WebParam String password) throws CustomerNotFoundException {
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerEntityByEmail(email);
-        if (!customerEntity.getPassword().equals(password)) return null;
+        String inputPassword = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(password));
+        if (!customerEntity.getPassword().equals(inputPassword)) return null;
         return customerEntity;
     }
     

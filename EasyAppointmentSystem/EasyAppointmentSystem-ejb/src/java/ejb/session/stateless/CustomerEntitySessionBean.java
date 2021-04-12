@@ -16,6 +16,7 @@ import javax.persistence.Query;
 import util.exception.AppointmentCancellationException;
 import util.exception.CustomerNotFoundException;
 import util.exception.EntityAttributeNullException;
+import util.security.CryptographicHelper;
 
 @Stateless
 @Local(CustomerEntitySessionBeanLocal.class)
@@ -37,6 +38,8 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
                 && newCustomerEntity.getGender() != null && newCustomerEntity.getAge() != null
                 && newCustomerEntity.getEmail() != null && newCustomerEntity.getCity() != null
                 && newCustomerEntity.getPassword() != null && newCustomerEntity.getPhone() != null) {
+            String hashedPassword = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(newCustomerEntity.getPassword()));
+            newCustomerEntity.setPassword(hashedPassword);
             em.persist(newCustomerEntity);
             em.flush();
             return newCustomerEntity.getCustomerId();

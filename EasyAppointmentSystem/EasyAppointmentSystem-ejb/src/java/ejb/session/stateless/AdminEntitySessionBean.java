@@ -27,6 +27,7 @@ import util.exception.CustomerNotFoundException;
 import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
 import util.exception.ServiceProviderNotFoundException;
+import util.security.CryptographicHelper;
 
 /**
  *
@@ -56,12 +57,13 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
          if (adminEty.getEmail() != null 
                  && adminEty.getPassword() != null && adminEty.getFirstName() != null 
                  && adminEty.getLastName()  != null){
-           em.persist(adminEty);
-           em.flush();
-           return adminEty.getId();
-        } else {
-            throw new EntityAttributeNullException("Some values are null! Update aborted.");
-        }
+             adminEty.setPassword(CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(adminEty.getPassword())));
+             em.persist(adminEty);
+             em.flush();
+             return adminEty.getId();
+         } else {
+             throw new EntityAttributeNullException("Some values are null! Update aborted.");
+         }
       
     }
 
@@ -92,7 +94,8 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
          
         try{
             AdminEntity admin = retrieveAdminByEmail(email);
-            if(admin.getPassword().equals(password)){
+            String inputPassword = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(password));
+            if(admin.getPassword().equals(inputPassword)){
                 return admin;
             } else{
                 throw new InvalidLoginException("Password is wrong.");
