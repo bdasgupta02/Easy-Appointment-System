@@ -123,7 +123,9 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         Date today = new Date();
         Date appointmentDate = appointmentEntity.getStartTimestamp();
         double hours = (appointmentDate.getTime() - today.getTime()) / (1000 * 3600);
-        if (hours < 24) {
+        if (hours < 0) {
+            throw new AppointmentCancellationException("Error: Appointment from the past cannot be cancelled!");
+        } else if (hours < 24) {
             throw new AppointmentCancellationException("Error: Less than 24H to appointment. Appointment cannot be cancelled.");
         }
         

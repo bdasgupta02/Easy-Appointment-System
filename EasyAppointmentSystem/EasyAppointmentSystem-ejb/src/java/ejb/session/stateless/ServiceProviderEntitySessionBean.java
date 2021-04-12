@@ -249,7 +249,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
             for (AppointmentEntity a : appointments) {
 
                 // if existing appointments end and if the slot time is more than 2 hours away from now
-                if (emptySlots.get(i).equals(a.getStartTimestamp())) {
+                if (emptySlots.get(i).equals(a.getStartTimestamp()) && !a.getCancelled()) {
                     isEmpty = false;
                 } else if (emptySlots.get(i).before(new Date(System.currentTimeMillis() + (3600 * 1000 * 2)))) {
                     isEmpty = false;

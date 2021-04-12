@@ -10,6 +10,7 @@ import entity.ServiceProviderEntity;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -315,7 +316,7 @@ public class ServiceProviderModule {
         System.out.println();
         System.out.println("Appointments\n");
         List<AppointmentEntity> appointments = new ArrayList<AppointmentEntity>();
-        System.out.printf("%-20s%-14s%-10s%-15s\n", "Name", "Date", "Time", "Appoint No.");
+        System.out.printf("%-20s%-14s%-10s%-15s%-20s\n", "Name", "Date", "Time", "Appoint No.", "Status");
         try {
             appointments = serviceProviderEntitySessionBeanRemote.retrieveAppointmentsByServiceProviderId(currentServiceProvider.getServiceProviderId());
         } catch (ServiceProviderNotFoundException ex) {
@@ -331,11 +332,19 @@ public class ServiceProviderModule {
             DateFormat timeFormat = new SimpleDateFormat(timePattern);
             
             for (AppointmentEntity a : appointments) {
-                System.out.printf("%-20s%-14s%-10s%-15s\n", 
+                String apptStatus = "";
+                if (a.getCancelled()) {
+                    apptStatus = "Cancelled";
+                } else if (a.getStartTimestamp().getTime() - new Date(System.currentTimeMillis()).getTime() < 0) {
+                    apptStatus = "Already taken";
+                } else {
+                    apptStatus = "Active";
+                }
+                System.out.printf("%-20s%-14s%-10s%-15s%-20s\n", 
                         a.getCustomerEntity().getFirstName() + " " + a.getCustomerEntity().getLastName(),
                         dateFormat.format(a.getStartTimestamp()),
                         timeFormat.format(a.getStartTimestamp()),
-                        a.getAppointmentNum());
+                        a.getAppointmentNum(), apptStatus);
             }
         }
         System.out.println("Press any key to go back to the main menu");
