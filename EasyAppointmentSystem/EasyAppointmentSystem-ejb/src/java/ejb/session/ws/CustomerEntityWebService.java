@@ -20,6 +20,7 @@ import javax.ejb.Stateless;
 import util.exception.AppointmentAlreadyExistsException;
 import util.exception.AppointmentCancellationException;
 import util.exception.AppointmentNotFoundException;
+import util.exception.CustomerAlreadyExistsException;
 import util.exception.CustomerNotFoundException;
 import util.exception.DateProcessingException;
 import util.exception.EntityAttributeNullException;
@@ -106,7 +107,7 @@ public class CustomerEntityWebService {
     @WebMethod
     public Long createCustomerEntity(@WebParam String identityNo, @WebParam String firstName, @WebParam String lastName, 
             @WebParam String address, @WebParam String gender, @WebParam Integer age, @WebParam String city, @WebParam String email, 
-            @WebParam Long phone, @WebParam String password) throws EntityAttributeNullException {
+            @WebParam Long phone, @WebParam String password) throws EntityAttributeNullException, CustomerAlreadyExistsException {
             
         CustomerEntity customerEntity = new CustomerEntity();
         customerEntity.setAddress(address);

@@ -37,6 +37,9 @@
 <message name="EntityAttributeNullException">
 <part name="fault" element="tns:EntityAttributeNullException"/>
 </message>
+<message name="CustomerAlreadyExistsException">
+<part name="fault" element="tns:CustomerAlreadyExistsException"/>
+</message>
 <message name="createAppointmentEntity">
 <part name="parameters" element="tns:createAppointmentEntity"/>
 </message>
@@ -126,6 +129,7 @@
 <input wsam:Action="http://ws.session.ejb/CustomerEntityWebService/createCustomerEntityRequest" message="tns:createCustomerEntity"/>
 <output wsam:Action="http://ws.session.ejb/CustomerEntityWebService/createCustomerEntityResponse" message="tns:createCustomerEntityResponse"/>
 <fault message="tns:EntityAttributeNullException" name="EntityAttributeNullException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/createCustomerEntity/Fault/EntityAttributeNullException"/>
+<fault message="tns:CustomerAlreadyExistsException" name="CustomerAlreadyExistsException" wsam:Action="http://ws.session.ejb/CustomerEntityWebService/createCustomerEntity/Fault/CustomerAlreadyExistsException"/>
 </operation>
 <operation name="createAppointmentEntity">
 <input wsam:Action="http://ws.session.ejb/CustomerEntityWebService/createAppointmentEntityRequest" message="tns:createAppointmentEntity"/>
@@ -226,6 +230,9 @@
 </output>
 <fault name="EntityAttributeNullException">
 <soap:fault name="EntityAttributeNullException" use="literal"/>
+</fault>
+<fault name="CustomerAlreadyExistsException">
+<soap:fault name="CustomerAlreadyExistsException" use="literal"/>
 </fault>
 </operation>
 <operation name="createAppointmentEntity">

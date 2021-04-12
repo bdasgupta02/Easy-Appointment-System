@@ -4,13 +4,14 @@ import entity.AppointmentEntity;
 import entity.CustomerEntity;
 import java.util.List;
 import util.exception.AppointmentCancellationException;
+import util.exception.CustomerAlreadyExistsException;
 import util.exception.CustomerNotFoundException;
 import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
 
 public interface CustomerEntitySessionBeanLocal {
 
-    public Long createCustomerEntity(CustomerEntity newCustomerEntity) throws EntityAttributeNullException;
+    public Long createCustomerEntity(CustomerEntity newCustomerEntity) throws EntityAttributeNullException, CustomerAlreadyExistsException;
 
     public CustomerEntity retrieveCustomerEntityById(Long customerId) throws CustomerNotFoundException;
 

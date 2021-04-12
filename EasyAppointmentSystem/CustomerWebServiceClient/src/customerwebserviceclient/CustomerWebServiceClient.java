@@ -18,6 +18,7 @@ import ws.client.AppointmentCancellationException_Exception;
 import ws.client.AppointmentEntity;
 import ws.client.AppointmentNotFoundException_Exception;
 import ws.client.CategoryEntity;
+import ws.client.CustomerAlreadyExistsException_Exception;
 import ws.client.CustomerEntity;
 import ws.client.CustomerNotFoundException_Exception;
 import ws.client.DateProcessingException_Exception;
@@ -163,7 +164,6 @@ public class CustomerWebServiceClient {
             while (true) {
                 System.out.print("Enter Phone> ");
                 phone = scanner.nextLong();
-                scanner.nextLine();
                 if (String.valueOf(phone).length() == 8) {
                     break;
                 } else {
@@ -192,7 +192,7 @@ public class CustomerWebServiceClient {
             System.out.println("You have successfully registered as a customer! Please proceed to login.");
         } catch (InputMismatchException ex) {
             System.out.println("Input is invalid! Please try again.");
-        } catch (EntityAttributeNullException_Exception ex) {
+        } catch (EntityAttributeNullException_Exception | CustomerAlreadyExistsException_Exception ex) {
             System.out.println(ex.getMessage());
             System.out.println();
         }
@@ -276,7 +276,7 @@ public class CustomerWebServiceClient {
             System.out.println();
 
             while (true) {
-                System.out.print("Enter Business Category> ");
+                System.out.print("Enter Business Category number from above> ");
                 try {
                     categoryId = new Long(scanner.nextInt() - 1);
                     scanner.nextLine();
@@ -647,12 +647,6 @@ public class CustomerWebServiceClient {
         port.cancelAppointment(arg0, arg1, arg2);
     }
 
-    private static Long createCustomerEntity(java.lang.String arg0, java.lang.String arg1, java.lang.String arg2, java.lang.String arg3, java.lang.String arg4, java.lang.Integer arg5, java.lang.String arg6, java.lang.String arg7, java.lang.Long arg8, java.lang.String arg9) throws EntityAttributeNullException_Exception {
-        ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
-        ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
-        return port.createCustomerEntity(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
-    }
-
     private static java.util.List<javax.xml.datatype.XMLGregorianCalendar> freeSlotsPerServiceProviderAndDate(java.lang.Long arg0, java.lang.String arg1, java.lang.String arg2, java.lang.String arg3) throws DateProcessingException_Exception, ServiceProviderNotFoundException_Exception, InvalidLoginException_Exception {
         ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
         ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
@@ -717,6 +711,12 @@ public class CustomerWebServiceClient {
         ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
         ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
         return port.createAppointmentEntity(arg0, arg1, arg2, arg3, arg4);
+    }
+
+    private static Long createCustomerEntity(java.lang.String arg0, java.lang.String arg1, java.lang.String arg2, java.lang.String arg3, java.lang.String arg4, java.lang.Integer arg5, java.lang.String arg6, java.lang.String arg7, java.lang.Long arg8, java.lang.String arg9) throws CustomerAlreadyExistsException_Exception, EntityAttributeNullException_Exception {
+        ws.client.CustomerEntityWebService_Service service = new ws.client.CustomerEntityWebService_Service();
+        ws.client.CustomerEntityWebService port = service.getCustomerEntityWebServicePort();
+        return port.createCustomerEntity(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
     }
 
 }

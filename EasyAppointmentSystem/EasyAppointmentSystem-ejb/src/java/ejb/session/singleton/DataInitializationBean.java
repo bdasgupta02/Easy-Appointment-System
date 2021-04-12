@@ -22,6 +22,7 @@ import util.enumeration.ServiceProviderStatusEnum;
 import util.exception.AppointmentAlreadyExistsException;
 import util.exception.CategoryAlreadyExistsException;
 import util.exception.CategoryNotFoundException;
+import util.exception.CustomerAlreadyExistsException;
 import util.exception.CustomerNotFoundException;
 import util.exception.EntityAttributeNullException;
 import util.exception.ServiceProviderAlreadyExistsException;
@@ -100,6 +101,8 @@ public class DataInitializationBean {
             }
         } catch (EntityAttributeNullException ex) {
             System.out.println("Some values are null. Data initialization has not been completed!");
+        } catch (CustomerAlreadyExistsException ex) {
+            System.out.println("Tried initialising customer. Customer already exists!");
         }
     }
 

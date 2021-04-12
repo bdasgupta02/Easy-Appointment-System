@@ -6,6 +6,8 @@
 
 <xs:element name="AppointmentNotFoundException" type="tns:AppointmentNotFoundException"/>
 
+<xs:element name="CustomerAlreadyExistsException" type="tns:CustomerAlreadyExistsException"/>
+
 <xs:element name="CustomerNotFoundException" type="tns:CustomerNotFoundException"/>
 
 <xs:element name="DateProcessingException" type="tns:DateProcessingException"/>
@@ -303,6 +305,12 @@
 <xs:complexType name="createCustomerEntityResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="CustomerAlreadyExistsException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
