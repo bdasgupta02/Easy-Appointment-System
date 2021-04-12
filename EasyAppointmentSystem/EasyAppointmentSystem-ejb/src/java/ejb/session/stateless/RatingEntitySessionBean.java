@@ -3,6 +3,7 @@ package ejb.session.stateless;
 import entity.CustomerEntity;
 import entity.RatingEntity;
 import entity.ServiceProviderEntity;
+import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -68,8 +69,8 @@ public class RatingEntitySessionBean implements RatingEntitySessionBeanRemote, R
         Query query = em.createQuery("SELECT r FROM RatingEntity r WHERE r.serviceProviderEntity = :inServiceProvider AND r.customerEntity = :inCustomer");
         query.setParameter("inServiceProvider", serviceProvider);
         query.setParameter("inCustomer", customer);
-        Object rating = query.getResultList();
-        if (rating == null) {
+        List ratings = (List) query.getResultList();
+        if (ratings == null || ratings.size() == 0) {
             return false;
         } else {
             return true;

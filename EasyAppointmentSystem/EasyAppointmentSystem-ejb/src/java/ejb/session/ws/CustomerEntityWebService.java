@@ -17,6 +17,7 @@ import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.ejb.Stateless;
+import util.exception.AppointmentAlreadyExistsException;
 import util.exception.AppointmentCancellationException;
 import util.exception.AppointmentNotFoundException;
 import util.exception.CustomerNotFoundException;
@@ -50,7 +51,7 @@ public class CustomerEntityWebService {
     }
     
     @WebMethod
-    public Long createAppointmentEntity(@WebParam Long serviceProviderId, @WebParam Date startTimestamp, @WebParam Date endTimestamp, @WebParam String email, @WebParam String password) throws InvalidLoginException, ServiceProviderNotFoundException, EntityAttributeNullException {
+    public Long createAppointmentEntity(@WebParam Long serviceProviderId, @WebParam Date startTimestamp, @WebParam Date endTimestamp, @WebParam String email, @WebParam String password) throws InvalidLoginException, ServiceProviderNotFoundException, EntityAttributeNullException, AppointmentAlreadyExistsException {
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(email, password);
         System.out.println("**** EasyAppointmentSystem*** Customer has logged in remotely: " + customerEntity.getFirstName());
         ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(serviceProviderId);

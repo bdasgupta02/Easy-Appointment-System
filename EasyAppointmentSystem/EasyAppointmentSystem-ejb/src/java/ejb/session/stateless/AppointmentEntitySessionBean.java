@@ -17,10 +17,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.AppointmentAlreadyExistsException;
 import util.exception.AppointmentCancellationException;
 import util.exception.AppointmentNotFoundException;
 import util.exception.EntityAttributeNullException;
-
 
 @Stateless
 @Local(AppointmentEntitySessionBeanLocal.class)
@@ -32,19 +32,28 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
 
     // CRUD
     @Override
-    public Long createAppointmentEntity(AppointmentEntity newAppointmentEntity) throws EntityAttributeNullException {
-        
-        if (newAppointmentEntity.getCustomerEntity() != null &&
-                newAppointmentEntity.getStartTimestamp() != null &&
-                newAppointmentEntity.getServiceProviderEntity() != null &&
-                newAppointmentEntity.getEndTimestamp() != null) {
-            
+    public Long createAppointmentEntity(AppointmentEntity newAppointmentEntity) throws EntityAttributeNullException, AppointmentAlreadyExistsException {
+
+        if (newAppointmentEntity.getCustomerEntity() != null
+                && newAppointmentEntity.getStartTimestamp() != null
+                && newAppointmentEntity.getServiceProviderEntity() != null
+                && newAppointmentEntity.getEndTimestamp() != null) {
+
             Long serviceProviderId = newAppointmentEntity.getServiceProviderEntity().getServiceProviderId();
             String date = (new SimpleDateFormat("MMdd")).format(newAppointmentEntity.getStartTimestamp());
             String time = (new SimpleDateFormat("HHmm")).format(newAppointmentEntity.getStartTimestamp());
             String appointmentNum = serviceProviderId + date + time;
             newAppointmentEntity.setAppointmentNum(appointmentNum);
-            
+
+            Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.customerEntity = :inCustomer AND a.startTimestamp = :inStartTime");
+            query.setParameter("inCustomer", newAppointmentEntity.getCustomerEntity());
+            query.setParameter("inStartTime", newAppointmentEntity.getStartTimestamp());
+
+            List ratings = (List) query.getResultList();
+            if (ratings != null && !ratings.isEmpty()) {
+                throw new AppointmentAlreadyExistsException("Error: Appointment with Customer Id: " + newAppointmentEntity.getCustomerEntity().getCustomerId() + " already exists at the specified time!");
+            }
+
             em.persist(newAppointmentEntity);
             em.flush();
             return newAppointmentEntity.getAppointmentId();
@@ -52,11 +61,11 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
             throw new EntityAttributeNullException("Error: Some values are null, creation of Appointment aborted.");
         }
     }
-    
+
     @Override
     public AppointmentEntity retrieveAppointmentEntityById(Long appointmentId) throws AppointmentNotFoundException {
         AppointmentEntity appointmentEntity = em.find(AppointmentEntity.class, appointmentId);
-        
+
         if (appointmentEntity != null) {
             em.refresh(appointmentEntity);
             return appointmentEntity;
@@ -64,49 +73,49 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
             throw new AppointmentNotFoundException("Error: Appointment ID: " + appointmentId + " does not exist!");
         }
     }
-    
+
     @Override
     public void updateAppointmentEntity(AppointmentEntity appointmentEntity) throws EntityAttributeNullException {
-        if (appointmentEntity.getAppointmentNum() != null && appointmentEntity.getCustomerEntity() != null &&
-                appointmentEntity.getStartTimestamp() != null &&
-                appointmentEntity.getServiceProviderEntity() != null &&
-                appointmentEntity.getEndTimestamp() != null) {
+        if (appointmentEntity.getAppointmentNum() != null && appointmentEntity.getCustomerEntity() != null
+                && appointmentEntity.getStartTimestamp() != null
+                && appointmentEntity.getServiceProviderEntity() != null
+                && appointmentEntity.getEndTimestamp() != null) {
             em.merge(appointmentEntity);
         } else {
             throw new EntityAttributeNullException("Error: Some values are null, update of Appointment aborted.");
         }
     }
-    
+
     @Override
     public void deleteAppointmentEntity(Long appointmentId) throws AppointmentNotFoundException {
-        
+
         // code chunk automatically throws exception if entity not found
         AppointmentEntity appointmentEntity = retrieveAppointmentEntityById(appointmentId);
         em.remove(appointmentEntity);
     }
-    
+
     @Override
-    public List<AppointmentEntity>  retrieveAppointmentEntityByCustomerId(Long customerId) throws AppointmentNotFoundException {
+    public List<AppointmentEntity> retrieveAppointmentEntityByCustomerId(Long customerId) throws AppointmentNotFoundException {
         Query q = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.customerEntity.customerId = :inCustomerId");
         q.setParameter("inCustomerId", customerId);
-        try{
-            return (List<AppointmentEntity>)q.getResultList();
-        }catch( NoResultException ex){
+        try {
+            return (List<AppointmentEntity>) q.getResultList();
+        } catch (NoResultException ex) {
             throw new AppointmentNotFoundException();
         }
     }
-    
+
     @Override
     public AppointmentEntity retrieveAppointmentEntityByAppointmentNumber(String appointmentNum) throws AppointmentNotFoundException {
         Query q = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.appointmentNum = :inAppointNum");
         q.setParameter("inAppointNum", appointmentNum);
-        try{
+        try {
             return (AppointmentEntity) q.getSingleResult();
-        }catch(NoResultException ex){
+        } catch (NoResultException ex) {
             throw new AppointmentNotFoundException("Error: Appointment Number: " + appointmentNum + " does not exist!");
         }
     }
-    
+
     @Override
     public void cancelAppointment(Long appointmentId) throws AppointmentCancellationException {
         AppointmentEntity appointmentEntity;
@@ -118,8 +127,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         if (appointmentEntity.getCancelled()) {
             throw new AppointmentCancellationException("Error: Appointment ID: " + appointmentId + " is already cancelled!");
         }
-        
-        
+
         Date today = new Date();
         Date appointmentDate = appointmentEntity.getStartTimestamp();
         double hours = (appointmentDate.getTime() - today.getTime()) / (1000 * 3600);
@@ -128,7 +136,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         } else if (hours < 24) {
             throw new AppointmentCancellationException("Error: Less than 24H to appointment. Appointment cannot be cancelled.");
         }
-        
+
         appointmentEntity.setCancelled(true);
         try {
             updateAppointmentEntity(appointmentEntity);
