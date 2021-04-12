@@ -16,6 +16,7 @@ import util.exception.ServiceProviderAlreadyBlockedException;
 import util.exception.ServiceProviderAlreadyExistsException;
 import util.exception.ServiceProviderNotFoundException;
 import util.exception.ServiceProviderNotPendingException;
+import util.exception.UniqueFieldExistsException;
 
 public interface ServiceProviderEntitySessionBeanLocal {
     
@@ -23,7 +24,7 @@ public interface ServiceProviderEntitySessionBeanLocal {
     
     public ServiceProviderEntity retrieveServiceProviderEntityById(Long serviceProviderId) throws ServiceProviderNotFoundException;
     
-    public void updateServiceProviderEntity(ServiceProviderEntity serviceProviderEntity) throws EntityAttributeNullException;
+    public void updateServiceProviderEntity(ServiceProviderEntity serviceProviderEntity) throws EntityAttributeNullException, UniqueFieldExistsException;
     
     public void deleteServiceProviderEntity(Long serviceProviderId) throws ServiceProviderNotFoundException;
     
@@ -37,9 +38,9 @@ public interface ServiceProviderEntitySessionBeanLocal {
 
     public List<ServiceProviderEntity> retrieveAllPendingServiceProviders();  
 
-    public void approveServiceProviderStatus(ServiceProviderEntity serviceProviderEntity) throws EntityAttributeNullException;
+    public void approveServiceProviderStatus(ServiceProviderEntity serviceProviderEntity) throws EntityAttributeNullException, UniqueFieldExistsException;
 
-    public void blockServiceProviderStatus(ServiceProviderEntity serviceProviderEntity) throws ServiceProviderAlreadyBlockedException, EntityAttributeNullException;
+    public void blockServiceProviderStatus(ServiceProviderEntity serviceProviderEntity) throws ServiceProviderAlreadyBlockedException, EntityAttributeNullException, UniqueFieldExistsException;
 
     public List<ServiceProviderEntity> retrieveAllApprovedServiceProviders();
 

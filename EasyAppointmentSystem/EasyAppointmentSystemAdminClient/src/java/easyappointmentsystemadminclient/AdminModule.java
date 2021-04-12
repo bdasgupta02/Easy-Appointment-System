@@ -22,6 +22,7 @@ import util.exception.InvalidLoginException;
 import util.exception.ServiceProviderAlreadyBlockedException;
 import util.exception.ServiceProviderNotFoundException;
 import util.exception.ServiceProviderNotPendingException;
+import util.exception.UniqueFieldExistsException;
 
 public class AdminModule {
 
@@ -343,7 +344,7 @@ public class AdminModule {
                         } else {
                             throw new ServiceProviderNotPendingException("Error: Service provider with id " + serviceProviderId + " is not pending!");
                         }
-                    } catch (EntityAttributeNullException | ServiceProviderNotPendingException | ServiceProviderNotFoundException ex) {
+                    } catch (EntityAttributeNullException | ServiceProviderNotPendingException | ServiceProviderNotFoundException | UniqueFieldExistsException ex) {
                         System.out.println(ex.getMessage());
                     } 
                 }
@@ -399,7 +400,7 @@ public class AdminModule {
                         } catch (EntityAttributeNullException | ServiceProviderAlreadyBlockedException ex) {
                             System.out.println(ex.getMessage());
                         }
-                    } catch (ServiceProviderNotFoundException ex) {
+                    } catch (ServiceProviderNotFoundException | UniqueFieldExistsException ex) {
                         System.out.println(ex.getMessage());
                     }
                 }
@@ -507,16 +508,16 @@ public class AdminModule {
                     break;
                 } else {
                     try {
-
-                      // resultList = [fullName, apptNum]
-                      List resultList = adminEntitySessionBeanRemote.sendEmail(customerId); 
-                      
-                      if (resultList==null){
-                          System.out.println("Customer has no appointments.");
-                      } else {
-                        System.out.println("An email is sent to " + resultList.get(0) + " for the appointment " + resultList.get(1));
-                        System.out.println();
-                      }
+                        // resultList = [fullName, apptNum]
+                        List resultList = adminEntitySessionBeanRemote.sendEmail(customerId); 
+                        if (resultList==null){
+                            System.out.println("Customer has no appointments.");
+                        } else {
+                            System.out.println("An email is sent to " + resultList.get(0) + " for the appointment " + resultList.get(1));
+                            System.out.println();
+                        }
+                    } catch (NullPointerException ex) {
+                        System.out.println("Customer has no upcoming appointments.");
                     } catch (Exception ex) {
                         System.out.println("Could not send reminder email: " + ex.getMessage());
                         System.out.println();

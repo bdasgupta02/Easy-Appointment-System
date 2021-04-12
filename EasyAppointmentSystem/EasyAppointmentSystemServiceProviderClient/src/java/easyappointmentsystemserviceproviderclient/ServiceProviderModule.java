@@ -22,6 +22,7 @@ import util.exception.EntityAttributeNullException;
 import util.exception.InvalidLoginException;
 import util.exception.ServiceProviderAlreadyExistsException;
 import util.exception.ServiceProviderNotFoundException;
+import util.exception.UniqueFieldExistsException;
 
 public class ServiceProviderModule {
     
@@ -265,48 +266,77 @@ public class ServiceProviderModule {
     }
     
     public void editProfile() {
-        System.out.println("*** Service Provider Terminal :: Edit Profile ***\n");
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.print("Enter city (blank if no change)> ");
-        String city = scanner.nextLine().trim();
-        if (!city.isEmpty()) {
-            currentServiceProvider.setCity(city);
-        }
-        
-        System.out.print("Enter business address (blank if no change)> ");
-        String businessAdd = scanner.nextLine().trim();
-        if (!businessAdd.isEmpty()) {
-            currentServiceProvider.setBizAddress(businessAdd);
-        }
-        
-        System.out.print("Enter emaill address (blank if no change> ");
-        String email = scanner.nextLine().trim();
-        if (!email.isEmpty()) {
-            currentServiceProvider.setEmail(email);
-        }
-        
-        System.out.print("Enter phone number (blank if no change> ");
-        String phoneNum = scanner.nextLine().trim();
-        if (!phoneNum.isEmpty()) {
-            currentServiceProvider.setPhoneNum(phoneNum);
-        }
-        
-        System.out.print("Enter password (blank if no change> ");
-        String password = scanner.nextLine().trim();
-        if (!password.isEmpty()) {
-            currentServiceProvider.setPassword(password);
-        }
-        
-        if (city.isEmpty() && businessAdd.isEmpty() && email.isEmpty() && phoneNum.isEmpty() && password.isEmpty()) {
-            System.out.println("No changes detected. Profile has not been updated!\n");
-        } else {
-            try {
-                serviceProviderEntitySessionBeanRemote.updateServiceProviderEntity(currentServiceProvider);
-            } catch (EntityAttributeNullException ex) {
-                System.out.println(ex.getMessage());
+        try {
+            ServiceProviderEntity serviceProviderToUpdate = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(currentServiceProvider.getServiceProviderId());
+            System.out.println("*** Service Provider Terminal :: Edit Profile ***\n");
+            Scanner scanner = new Scanner(System.in);
+            String email = "";
+            String phoneNum = "";
+            String password = "";
+
+            System.out.print("Enter city (blank if no change)> ");
+            String city = scanner.nextLine().trim();
+            if (!city.isEmpty()) {
+                serviceProviderToUpdate.setCity(city);
             }
-            System.out.println("Profile has been updated successfully!\n");
+
+            System.out.print("Enter business address (blank if no change)> ");
+            String businessAdd = scanner.nextLine().trim();
+            if (!businessAdd.isEmpty()) {
+                serviceProviderToUpdate.setBizAddress(businessAdd);
+            }
+
+            while (true) {
+                System.out.print("Enter emaill address (blank if no change> ");
+                email = scanner.nextLine().trim();
+                if (!email.isEmpty() & checkEmailIsValid(email)) {
+                    serviceProviderToUpdate.setEmail(email);
+                    break;
+                } else if (email.isEmpty()) {
+                    break;
+                } else {
+                    System.out.println("Please input a valid email address.");
+                }
+            }
+
+            while (true) {
+                System.out.print("Enter phone number (blank if no change> ");
+                phoneNum = scanner.nextLine().trim();
+                if (!phoneNum.isEmpty() && checkNoLetters(phoneNum) && phoneNum.length() == 8) {
+                    serviceProviderToUpdate.setPhoneNum(phoneNum);
+                    break;
+                } else if (phoneNum.isEmpty()) {
+                    break;
+                } else {
+                    System.out.println("Please input a valid phone number with 8 digits.");
+                }
+            }
+
+            while (true) {
+                System.out.print("Enter password (blank if no change> ");
+                password = scanner.nextLine().trim();
+                if (!password.isEmpty() && password.length() == 6 && checkNoLetters(password)) {
+                    serviceProviderToUpdate.setPassword(password);
+                    break;
+                } else if (password.isEmpty()) {
+                    break;
+                } else {
+                    System.out.println("Please input a valid password with 6 digits.");
+                }
+            }
+
+            if (city.isEmpty() && businessAdd.isEmpty() && email.isEmpty() && phoneNum.isEmpty() && password.isEmpty()) {
+                System.out.println("No changes detected. Profile has not been updated!\n");
+            } else {
+                try {
+                    serviceProviderEntitySessionBeanRemote.updateServiceProviderEntity(serviceProviderToUpdate);
+                    System.out.println("Profile has been updated successfully!\n");
+                } catch (EntityAttributeNullException | UniqueFieldExistsException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+        } catch (ServiceProviderNotFoundException ex) {
+            System.out.println(ex.getMessage());
         }
     }
     

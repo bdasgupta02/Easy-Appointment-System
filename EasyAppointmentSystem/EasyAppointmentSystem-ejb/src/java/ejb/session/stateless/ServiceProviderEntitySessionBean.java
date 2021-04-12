@@ -28,6 +28,7 @@ import util.exception.InvalidLoginException;
 import util.exception.ServiceProviderAlreadyBlockedException;
 import util.exception.ServiceProviderAlreadyExistsException;
 import util.exception.ServiceProviderNotFoundException;
+import util.exception.UniqueFieldExistsException;
 import util.security.CryptographicHelper;
 
 @Stateless
@@ -83,15 +84,28 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     }
 
     @Override
-    public void updateServiceProviderEntity(ServiceProviderEntity serviceProviderEntity) throws EntityAttributeNullException {
+    public void updateServiceProviderEntity(ServiceProviderEntity serviceProviderEntity) throws EntityAttributeNullException, UniqueFieldExistsException {
         if (serviceProviderEntity.getName().isEmpty() || serviceProviderEntity.getBizCategory() == null
                 || serviceProviderEntity.getBizRegNum().isEmpty() || serviceProviderEntity.getCity().isEmpty()
                 || serviceProviderEntity.getBizAddress().isEmpty() || serviceProviderEntity.getEmail().isEmpty()
                 || serviceProviderEntity.getPhoneNum().isEmpty() || serviceProviderEntity.getPassword().isEmpty()) {
             throw new EntityAttributeNullException("Error: Some values are null! Update of Service Provider aborted.\n");
         } else {
-            em.merge(serviceProviderEntity);
-            em.flush();
+            try {
+                ServiceProviderEntity outdatedServiceProvider = retrieveServiceProviderEntityById(serviceProviderEntity.getServiceProviderId());
+                String hashedPassword = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(serviceProviderEntity.getPassword()));
+                if (!outdatedServiceProvider.getPassword().equals(hashedPassword)) {
+                    serviceProviderEntity.setPassword(hashedPassword);
+                }
+                em.merge(serviceProviderEntity);
+                em.flush();
+            } catch (PersistenceException ex) {
+                if ((ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException"))
+                        && ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
+                    throw new UniqueFieldExistsException("Error: Service provider with email " + serviceProviderEntity.getEmail() + " already exists!");
+                }
+            } catch (ServiceProviderNotFoundException ex) {
+            }     
         }
     }
 
@@ -170,13 +184,13 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     }
 
     @Override
-    public void approveServiceProviderStatus(ServiceProviderEntity serviceProviderEntity) throws EntityAttributeNullException {
+    public void approveServiceProviderStatus(ServiceProviderEntity serviceProviderEntity) throws EntityAttributeNullException, UniqueFieldExistsException {
         serviceProviderEntity.setStatus(ServiceProviderStatusEnum.APPROVED);
         updateServiceProviderEntity(serviceProviderEntity);
     }
 
     @Override
-    public void blockServiceProviderStatus(ServiceProviderEntity serviceProviderEntity) throws ServiceProviderAlreadyBlockedException, EntityAttributeNullException {
+    public void blockServiceProviderStatus(ServiceProviderEntity serviceProviderEntity) throws ServiceProviderAlreadyBlockedException, EntityAttributeNullException, UniqueFieldExistsException {
 
         if (serviceProviderEntity.getStatus() == ServiceProviderStatusEnum.BLOCKED) {
             throw new ServiceProviderAlreadyBlockedException("Error: Service provider already blocked!");
