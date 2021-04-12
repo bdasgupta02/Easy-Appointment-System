@@ -54,6 +54,7 @@ public class ServiceProviderEntity implements Serializable {
     public ServiceProviderEntity() {
         this.appointments = new ArrayList<>();
         this.ratings = new ArrayList<>();
+        //comment
     }
 
     public ServiceProviderEntity(String bizRegNum, CategoryEntity bizCategory, String name, String bizAddress, 

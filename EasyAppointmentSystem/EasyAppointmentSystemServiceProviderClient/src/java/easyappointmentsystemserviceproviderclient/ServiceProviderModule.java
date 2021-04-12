@@ -245,6 +245,7 @@ public class ServiceProviderModule {
     
     public void viewProfile() {
         Scanner scanner = new Scanner(System.in);
+        //cmment
       try {
              currentServiceProvider = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(currentServiceProvider.getServiceProviderId());
              System.out.println("*** Service Provider Terminal :: Your Profile ***\n");
